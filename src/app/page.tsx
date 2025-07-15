@@ -1,14 +1,9 @@
-"use client";
-
-import Scene from "../components/scene";
+import Prompt from "../components/prompt";
 
 export default function HomePage() {
   return (
-    <div>
-      <main>
-        <h1>Upload and View STL</h1>
-        <Scene />
-      </main>
+    <div className="flex flex-1 items-center justify-center p-8">
+      <Prompt />
     </div>
   );
 }
