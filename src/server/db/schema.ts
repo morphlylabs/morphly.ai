@@ -12,8 +12,8 @@ import { index, sqliteTableCreator } from "drizzle-orm/sqlite-core";
  */
 export const createTable = sqliteTableCreator((name) => `client_${name}`);
 
-export const posts = createTable(
-  "post",
+export const models = createTable(
+  "models",
   (d) => ({
     id: d.integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
     name: d.text({ length: 256 }),
@@ -22,6 +22,7 @@ export const posts = createTable(
       .default(sql`(unixepoch())`)
       .notNull(),
     updatedAt: d.integer({ mode: "timestamp" }).$onUpdate(() => new Date()),
+    url: d.text({ length: 256 }).notNull(),
   }),
   (t) => [index("name_idx").on(t.name)],
 );

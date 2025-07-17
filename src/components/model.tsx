@@ -1,29 +1,51 @@
 "use client";
 
-import { useFrame } from "@react-three/fiber";
-import { useRef, useState } from "react";
-import { type BufferGeometry, type Mesh } from "three";
+import {
+  Grid,
+  Html,
+  OrbitControls,
+  Stage,
+  useProgress,
+} from "@react-three/drei";
+import { Canvas, useLoader } from "@react-three/fiber";
+import { Suspense } from "react";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 
-type ModelProps = { buffer: ArrayBuffer | null };
+function Loader() {
+  const { progress } = useProgress();
+  return <Html center>{progress.toFixed(2)}%</Html>;
+}
 
-export default function Model({ buffer }: ModelProps) {
-  const meshRef = useRef<Mesh>(null!);
-  const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
-
-  useFrame(() => {
-    if (buffer && !geometry) {
-      const loader = new STLLoader();
-      const geom = loader.parse(buffer);
-      setGeometry(geom);
-    }
-  });
-
-  if (!geometry) return null;
-
+function ModelMesh({ src }: { src: string }) {
+  const geometry = useLoader(STLLoader, src);
   return (
-    <mesh ref={meshRef} geometry={geometry} rotation-x={-Math.PI / 2}>
+    <mesh geometry={geometry}>
       <meshStandardMaterial color="silver" />
     </mesh>
+  );
+}
+
+interface Props {
+  src: string;
+}
+
+export default function Model({ src }: Props) {
+  return (
+    <div className="h-screen w-screen">
+      <Canvas>
+        <Suspense fallback={<Loader />}>
+          <Stage
+            preset="rembrandt"
+            intensity={1}
+            environment="studio"
+            adjustCamera={1.5}
+          >
+            <ModelMesh src={src} />
+          </Stage>
+          <Grid infiniteGrid />
+          <OrbitControls />
+        </Suspense>
+      </Canvas>
+    </div>
   );
 }
