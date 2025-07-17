@@ -32,7 +32,7 @@ interface Props {
 export default function Model({ src }: Props) {
   return (
     <div className="h-screen w-screen">
-      <Canvas>
+      <Canvas camera={{ position: [45, 45, 45] }}>
         <Stage
           preset="rembrandt"
           intensity={1}

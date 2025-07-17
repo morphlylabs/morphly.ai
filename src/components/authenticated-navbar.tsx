@@ -23,6 +23,10 @@ import { UserAvatar } from "./user-avatar";
 
 const navigationItems = [
   {
+    title: "My Models",
+    href: "/models",
+  },
+  {
     title: "Workspace",
     href: "#",
     items: [
@@ -145,9 +149,7 @@ export function AuthenticatedNavbar() {
               <NavigationMenuItem key={item.title}>
                 {item.items ? (
                   <>
-                    <NavigationMenuTrigger className="h-9">
-                      {item.title}
-                    </NavigationMenuTrigger>
+                    <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <div className="grid w-[400px] gap-3 p-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                         {item.items.map((subItem) => (
@@ -167,7 +169,7 @@ export function AuthenticatedNavbar() {
                   </>
                 ) : (
                   <NavigationMenuLink asChild>
-                    <Link href={item.href} className="p-3">
+                    <Link href={item.href} className="p-2">
                       {item.title}
                     </Link>
                   </NavigationMenuLink>

@@ -1,7 +1,7 @@
 import Model from "~/components/model";
 import { notFound, redirect } from "next/navigation";
-import { getModel } from "../../../actions/model.action";
-import { auth } from "../../../lib/auth";
+import { getModel } from "../../actions";
+import { auth } from "../../../../lib/auth";
 import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
