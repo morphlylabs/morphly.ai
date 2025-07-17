@@ -19,7 +19,7 @@ import {
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
+import { UserAvatar } from "./user-avatar";
 
 const navigationItems = [
   {
@@ -177,12 +177,9 @@ export function Navbar() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Right side - Theme toggle and Mobile menu */}
+        {/* Right side - Conditional rendering based on auth status */}
         <div className="flex items-center space-x-2">
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <UserAvatar />
           <MobileNavigation />
         </div>
       </div>

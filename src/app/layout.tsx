@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Navbar } from "~/components/navbar";
+import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -17,6 +18,7 @@ export default function RootLayout({
       <body>
         <Navbar />
         <main>{children}</main>
+        <Toaster />
       </body>
     </html>
   );
