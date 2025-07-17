@@ -46,14 +46,14 @@ export default function SignIn() {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
+      <CardHeader>
+        <CardTitle>Sign In</CardTitle>
         <CardDescription>
           Enter your email and password to access your account
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
+        <div className="my-2 space-y-1">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
@@ -64,7 +64,7 @@ export default function SignIn() {
             required
           />
         </div>
-        <div className="space-y-2">
+        <div className="my-2 space-y-1">
           <Label htmlFor="password">Password</Label>
           <Input
             id="password"
@@ -77,7 +77,7 @@ export default function SignIn() {
         </div>
         <Button
           type="button"
-          className="w-full"
+          className="mt-2 w-full"
           disabled={isLoading}
           onClick={signIn}
         >

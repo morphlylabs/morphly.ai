@@ -28,7 +28,7 @@ const navigationItems = [
     items: [
       {
         title: "Text to Parametric",
-        href: "/services/text-to-parametric",
+        href: "/prompt",
         description: "Generate parametric models from text",
       },
       {
@@ -126,7 +126,7 @@ function MobileNavigation() {
   );
 }
 
-export function Navbar() {
+export function AuthenticatedNavbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="m-0 flex h-16 items-center justify-between px-2">
