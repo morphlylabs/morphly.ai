@@ -82,7 +82,8 @@ export const models = createTable(
   "models",
   (d) => ({
     id: d.integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
-    name: d.text({ length: 256 }),
+    userId: d.text({ length: 256 }).references(() => user.id),
+    name: d.text({ length: 256 }).notNull(),
     createdAt: d
       .integer({ mode: "timestamp" })
       .default(sql`(unixepoch())`)

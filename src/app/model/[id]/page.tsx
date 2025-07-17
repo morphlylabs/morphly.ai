@@ -1,6 +1,8 @@
 import Model from "~/components/model";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getModel } from "../../../actions/model.action";
+import { auth } from "../../../lib/auth";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +18,18 @@ export default async function ModelPage({ params }: Props) {
 
   const model = await getModel(Number(id));
   if (!model) {
+    return notFound();
+  }
+
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
+
+  if (session.user.id !== model.userId) {
     return notFound();
   }
 

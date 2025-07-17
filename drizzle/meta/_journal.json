@@ -15,6 +15,13 @@
       "when": 1752717260730,
       "tag": "0001_familiar_natasha_romanoff",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1752773578869,
+      "tag": "0002_fast_snowbird",
+      "breakpoints": true
     }
   ]
 }
