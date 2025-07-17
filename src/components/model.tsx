@@ -33,18 +33,18 @@ export default function Model({ src }: Props) {
   return (
     <div className="h-screen w-screen">
       <Canvas>
-        <Suspense fallback={<Loader />}>
-          <Stage
-            preset="rembrandt"
-            intensity={1}
-            environment="studio"
-            adjustCamera={1.5}
-          >
+        <Stage
+          preset="rembrandt"
+          intensity={1}
+          environment="studio"
+          adjustCamera={1.5}
+        >
+          <Suspense fallback={<Loader />}>
             <ModelMesh src={src} />
-          </Stage>
-          <Grid infiniteGrid />
-          <OrbitControls />
-        </Suspense>
+          </Suspense>
+        </Stage>
+        <Grid infiniteGrid />
+        <OrbitControls />
       </Canvas>
     </div>
   );
