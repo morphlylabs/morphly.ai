@@ -155,7 +155,7 @@ export function GuestNavbar() {
         <div className="flex items-center space-x-2">
           <MobileNavigation />
           <Button asChild>
-            <Link href="/sign-in" className="btn btn-primary">
+            <Link href="/login" className="btn btn-primary">
               Sign in
             </Link>
           </Button>

@@ -11,9 +11,10 @@ import {
 } from "~/components/ui/card";
 import { Textarea } from "~/components/ui/textarea";
 import { Wand2 } from "lucide-react";
+import { createChatWithMessage } from "~/app/(chat)/actions";
 
-export default function Prompt() {
-  const [prompt, setPrompt] = useState("");
+export default function Chat() {
+  const [message, setMessage] = useState("");
 
   return (
     <Card className="w-full max-w-2xl backdrop-blur-md">
@@ -27,15 +28,16 @@ export default function Prompt() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4">
+        <form className="space-y-4" action={createChatWithMessage}>
           <Textarea
             placeholder="A sleek modern lamp with a curved base and warm LED lighting..."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            value={message}
+            name="message"
+            onChange={(e) => setMessage(e.target.value)}
           />
           <div className="flex justify-between">
             <span className="text-muted-foreground text-sm">
-              {prompt.length} / 500 characters
+              {message.length} / 500 characters
             </span>
             <Button type="submit">
               <Wand2 className="mr-2 h-4 w-4" />

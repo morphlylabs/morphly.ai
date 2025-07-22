@@ -1,17 +1,4 @@
-// Example model schema from the Drizzle docs
-// https://orm.drizzle.team/docs/sql-schema-declaration
-
-import { sql } from "drizzle-orm";
-import { index, sqliteTableCreator } from "drizzle-orm/sqlite-core";
-
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
-export const createTable = sqliteTableCreator((name) => `client_${name}`);
-
+import { relations } from "drizzle-orm";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("user", {
@@ -78,18 +65,54 @@ export const verification = sqliteTable("verification", {
   ),
 });
 
-export const models = createTable(
-  "models",
-  (d) => ({
-    id: d.integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
-    userId: d.text({ length: 256 }).references(() => user.id),
-    name: d.text({ length: 256 }).notNull(),
-    createdAt: d
-      .integer({ mode: "timestamp" })
-      .default(sql`(unixepoch())`)
-      .notNull(),
-    updatedAt: d.integer({ mode: "timestamp" }).$onUpdate(() => new Date()),
-    url: d.text({ length: 256 }).notNull(),
+export const parametric_model = sqliteTable("parametric_model", {
+  id: text("id", { length: 36 }).primaryKey(),
+  messageId: text("message_id")
+    .notNull()
+    .references(() => message.id),
+  code: text("code").notNull(),
+  language: text("language", { enum: ["cadquery"] }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const stl_file = sqliteTable("stl_file", {
+  id: text("id", { length: 36 }).primaryKey(),
+  modelId: text("model_id").references(() => parametric_model.id),
+  url: text("url").notNull(),
+  size: integer("size", { mode: "number" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const chat = sqliteTable("chat", {
+  id: text("id", { length: 36 }).primaryKey(),
+  userId: text("user_id", { length: 36 }).references(() => user.id),
+  title: text("title", { length: 128 }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const message = sqliteTable("message", {
+  id: text("id", { length: 36 }).primaryKey(),
+  chatId: text("chat_id", { length: 36 }).references(() => chat.id),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  role: text("role", { enum: ["user", "assistant"] }).notNull(),
+  content: text("content").notNull(),
+});
+
+export const chatRelations = relations(chat, ({ many }) => ({
+  messages: many(message),
+}));
+
+export const messageRelations = relations(message, ({ one }) => ({
+  chat: one(chat, {
+    fields: [message.chatId],
+    references: [chat.id],
   }),
-  (t) => [index("name_idx").on(t.name)],
-);
+}));
