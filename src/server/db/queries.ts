@@ -9,6 +9,13 @@ export const getChatById = async (id: string) => {
     with: {
       messages: {
         orderBy: (message, { asc }) => asc(message.createdAt),
+        with: {
+          model: {
+            with: {
+              stl_file: true,
+            },
+          },
+        },
       },
     },
   });

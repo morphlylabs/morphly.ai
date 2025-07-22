@@ -77,6 +77,17 @@ export const parametric_model = sqliteTable("parametric_model", {
     .notNull(),
 });
 
+export const parametricModelRelations = relations(
+  parametric_model,
+  ({ one, many }) => ({
+    message: one(message, {
+      fields: [parametric_model.messageId],
+      references: [message.id],
+    }),
+    stl_file: many(stl_file),
+  }),
+);
+
 export const stl_file = sqliteTable("stl_file", {
   id: text("id", { length: 36 }).primaryKey(),
   modelId: text("model_id").references(() => parametric_model.id),
@@ -87,6 +98,13 @@ export const stl_file = sqliteTable("stl_file", {
     .notNull(),
 });
 
+export const stlFileRelations = relations(stl_file, ({ one }) => ({
+  model: one(parametric_model, {
+    fields: [stl_file.modelId],
+    references: [parametric_model.id],
+  }),
+}));
+
 export const chat = sqliteTable("chat", {
   id: text("id", { length: 36 }).primaryKey(),
   userId: text("user_id", { length: 36 }).references(() => user.id),
@@ -95,6 +113,10 @@ export const chat = sqliteTable("chat", {
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export const chatRelations = relations(chat, ({ many }) => ({
+  messages: many(message),
+}));
 
 export const message = sqliteTable("message", {
   id: text("id", { length: 36 }).primaryKey(),
@@ -106,13 +128,10 @@ export const message = sqliteTable("message", {
   content: text("content").notNull(),
 });
 
-export const chatRelations = relations(chat, ({ many }) => ({
-  messages: many(message),
-}));
-
-export const messageRelations = relations(message, ({ one }) => ({
+export const messageRelations = relations(message, ({ one, many }) => ({
   chat: one(chat, {
     fields: [message.chatId],
     references: [chat.id],
   }),
+  model: many(parametric_model),
 }));

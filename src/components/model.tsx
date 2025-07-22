@@ -31,7 +31,7 @@ interface Props {
 
 export default function Model({ src }: Props) {
   return (
-    <div className="h-screen w-screen">
+    <div className="h-full w-full">
       <Canvas camera={{ position: [45, 45, 45] }}>
         <Stage
           preset="rembrandt"
