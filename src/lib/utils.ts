@@ -1,4 +1,4 @@
-import type { UIMessagePart } from "ai";
+import type { UIMessage, UIMessagePart } from "ai";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { ChatMessage, CustomUIDataTypes } from "./types";
@@ -18,4 +18,18 @@ export function convertToUIMessages(messages: Message[]): ChatMessage[] {
       createdAt: formatISO(message.createdAt),
     },
   }));
+}
+
+export function getTextFromMessage(message: ChatMessage): string {
+  return message.parts
+    .filter((part) => part.type === "text")
+    .map((part) => part.text)
+    .join("");
+}
+
+export function getTextFromUIMessage(message: UIMessage): string {
+  return message.parts
+    .filter((part) => part.type === "text")
+    .map((part) => part.text)
+    .join("");
 }

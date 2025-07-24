@@ -1,7 +1,14 @@
 import "server-only";
 
 import { db } from "./index";
-import { chat, message, stream, type Message } from "./schema";
+import {
+  chat,
+  message,
+  parametricModel,
+  stream,
+  type Message,
+  type ParametricModel,
+} from "./schema";
 
 export const getChatById = async (id: string) => {
   return await db.query.chat.findFirst({
@@ -43,11 +50,11 @@ export const getMessagesByChatId = async (chatId: string) => {
   });
 };
 
-export const addMessages = async ({ messages }: { messages: Message[] }) => {
+export const createMessages = async ({ messages }: { messages: Message[] }) => {
   return await db.insert(message).values(messages);
 };
 
-export const addStream = async ({
+export const createStream = async ({
   streamId,
   chatId,
 }: {
@@ -55,4 +62,12 @@ export const addStream = async ({
   chatId: string;
 }) => {
   return await db.insert(stream).values({ id: streamId, chatId });
+};
+
+export const createParametricModel = async ({
+  model,
+}: {
+  model: ParametricModel;
+}) => {
+  return await db.insert(parametricModel).values(model);
 };

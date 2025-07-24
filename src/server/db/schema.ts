@@ -77,6 +77,8 @@ export const parametricModel = sqliteTable("parametric_model", {
     .notNull(),
 });
 
+export type ParametricModel = InferSelectModel<typeof parametricModel>;
+
 export const parametricModelRelations = relations(
   parametricModel,
   ({ one, many }) => ({

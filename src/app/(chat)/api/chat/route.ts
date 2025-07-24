@@ -15,13 +15,18 @@ import { ChatSDKError } from "~/lib/errors";
 import type { ChatMessage } from "~/lib/types";
 import { auth } from "~/lib/auth";
 import {
-  addMessages,
-  addStream,
+  createMessages,
+  createStream,
   createChat,
   getChatById,
+  createParametricModel,
 } from "~/server/db/queries";
 import { v4 } from "uuid";
-import { convertToUIMessages } from "../../../../lib/utils";
+import {
+  convertToUIMessages,
+  getTextFromUIMessage,
+} from "../../../../lib/utils";
+import { parametricModelPrompt } from "../../../../lib/ai/prompts";
 
 export const maxDuration = 60;
 
@@ -59,7 +64,7 @@ export async function POST(request: Request) {
   try {
     const {
       id,
-      message,
+      message: userMessage,
     }: {
       id: string;
       message: ChatMessage;
@@ -89,27 +94,28 @@ export async function POST(request: Request) {
       }
     }
 
-    await addMessages({
+    await createMessages({
       messages: [
         {
-          id: message.id,
+          id: userMessage.id,
           chatId: id,
-          parts: message.parts,
+          parts: userMessage.parts,
           role: "user",
           createdAt: new Date(),
         },
       ],
     });
 
-    const uiMessages = [...convertToUIMessages(chat!.messages), message];
+    const uiMessages = [...convertToUIMessages(chat!.messages), userMessage];
 
     const streamId = v4();
-    await addStream({ streamId, chatId: id });
+    await createStream({ streamId, chatId: id });
 
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
           model: groq("llama-3.1-8b-instant"),
+          system: parametricModelPrompt,
           messages: convertToModelMessages(uiMessages),
         });
 
@@ -123,7 +129,7 @@ export async function POST(request: Request) {
       },
       generateId: v4,
       onFinish: async ({ messages }) => {
-        await addMessages({
+        await createMessages({
           messages: messages.map((message) => ({
             id: message.id,
             role: message.role,
@@ -132,6 +138,18 @@ export async function POST(request: Request) {
             chatId: id,
           })),
         });
+
+        await createParametricModel({
+          model: {
+            id: v4(),
+            code: messages.map(getTextFromUIMessage).join(""),
+            createdAt: new Date(),
+            messageId: userMessage.id,
+            language: "cadquery",
+          },
+        });
+
+        // TODO: call conversion service
       },
       onError: () => {
         return "Oops, an error occurred!";
