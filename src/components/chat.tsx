@@ -1,51 +1,113 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Textarea } from "~/components/ui/textarea";
-import { Wand2 } from "lucide-react";
-import { createChatWithMessage } from "~/app/(chat)/actions";
+import { DefaultChatTransport } from "ai";
+import { useChat } from "@ai-sdk/react";
+import { useEffect, useState } from "react";
+import { Messages } from "~/components/messages";
+import { useSearchParams } from "next/navigation";
+import { ChatSDKError } from "~/lib/errors";
+import type { ChatMessage } from "~/lib/types";
+import { useDataStream } from "~/components/data-stream-provider";
+import { v4 } from "uuid";
+import { useAutoResume } from "~/hooks/use-auto-resume";
+import { toast } from "sonner";
+import { ChatInput } from "./chat-input";
 
-export default function Chat() {
-  const [message, setMessage] = useState("");
+export function Chat({
+  id,
+  initialMessages,
+  autoResume,
+}: {
+  id: string;
+  initialMessages: ChatMessage[];
+  autoResume: boolean;
+}) {
+  const { setDataStream } = useDataStream();
+
+  const [input, setInput] = useState<string>("");
+
+  const {
+    messages,
+    setMessages,
+    sendMessage,
+    status,
+    stop,
+    regenerate,
+    resumeStream,
+  } = useChat<ChatMessage>({
+    id,
+    messages: initialMessages,
+    experimental_throttle: 100,
+    generateId: v4,
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+      prepareSendMessagesRequest({ messages, id, body }) {
+        return {
+          body: {
+            id,
+            message: messages.at(-1),
+            ...body,
+          },
+        };
+      },
+    }),
+    onData: (dataPart) => {
+      setDataStream((ds) => (ds ? [...ds, dataPart] : []));
+    },
+    onError: (error) => {
+      if (error instanceof ChatSDKError) {
+        toast.error(error.message);
+      }
+    },
+  });
+
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+
+  const [hasAppendedQuery, setHasAppendedQuery] = useState(false);
+
+  useEffect(() => {
+    if (query && !hasAppendedQuery) {
+      void sendMessage({
+        role: "user" as const,
+        parts: [{ type: "text", text: query }],
+      });
+
+      setHasAppendedQuery(true);
+      window.history.replaceState({}, "", `/chat/${id}`);
+    }
+  }, [query, sendMessage, hasAppendedQuery, id]);
+
+  useAutoResume({
+    autoResume,
+    initialMessages,
+    resumeStream,
+    setMessages,
+  });
 
   return (
-    <Card className="w-full max-w-2xl backdrop-blur-md">
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <Wand2 className="mr-2 h-6 w-6" />
-          Describe Your 3D Model
-        </CardTitle>
-        <CardDescription>
-          Be as detailed as possible for better results
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form className="space-y-4" action={createChatWithMessage}>
-          <Textarea
-            placeholder="A sleek modern lamp with a curved base and warm LED lighting..."
-            value={message}
-            name="message"
-            onChange={(e) => setMessage(e.target.value)}
+    <>
+      <div className="bg-background flex h-[calc(100vh-4rem)] min-w-0 flex-col">
+        <Messages
+          chatId={id}
+          status={status}
+          messages={messages}
+          setMessages={setMessages}
+          regenerate={regenerate}
+        />
+
+        <form className="bg-background mx-auto flex w-full gap-2 px-4 pb-4 md:max-w-3xl md:pb-6">
+          <ChatInput
+            chatId={id}
+            input={input}
+            setInput={setInput}
+            status={status}
+            stop={stop}
+            setMessages={setMessages}
+            sendMessage={sendMessage}
           />
-          <div className="flex justify-between">
-            <span className="text-muted-foreground text-sm">
-              {message.length} / 500 characters
-            </span>
-            <Button type="submit">
-              <Wand2 className="mr-2 h-4 w-4" />
-              Generate
-            </Button>
-          </div>
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./index";
-import { chat, message } from "./schema";
+import { chat, message, stream, type Message } from "./schema";
 
 export const getChatById = async (id: string) => {
   return await db.query.chat.findFirst({
@@ -10,74 +10,49 @@ export const getChatById = async (id: string) => {
       messages: {
         orderBy: (message, { asc }) => asc(message.createdAt),
         with: {
-          model: {
+          models: {
             with: {
               stl_file: true,
             },
           },
         },
       },
+      stream: true,
     },
   });
 };
 
-export const addChatWithMessage = async ({
-  chatId,
-  messageId,
-  content,
-  title,
+export const createChat = async ({
+  id,
+  createdAt = new Date(),
   userId,
-  role,
+  title,
 }: {
-  chatId: string;
-  messageId: string;
-  content: string;
-  title: string;
+  id: string;
+  createdAt?: Date;
   userId: string;
-  role: "user" | "assistant";
+  title: string;
 }) => {
-  return await db.transaction(async (tx) => {
-    const newChat = await tx
-      .insert(chat)
-      .values({
-        id: chatId,
-        userId,
-        title,
-      })
-      .returning();
+  return await db.insert(chat).values({ id, createdAt, userId, title });
+};
 
-    const newMessage = await tx
-      .insert(message)
-      .values({
-        id: messageId,
-        chatId,
-        role,
-        content,
-      })
-      .returning();
-
-    return {
-      chat: newChat[0],
-      message: newMessage[0],
-    };
+export const getMessagesByChatId = async (chatId: string) => {
+  return await db.query.message.findMany({
+    where: (message, { eq }) => eq(message.chatId, chatId),
+    orderBy: (message, { asc }) => asc(message.createdAt),
   });
 };
 
-export const addMessage = async ({
-  messageId,
+export const addMessages = async ({ messages }: { messages: Message[] }) => {
+  return await db.insert(message).values(messages);
+};
+
+export const addStream = async ({
+  streamId,
   chatId,
-  content,
-  role,
 }: {
-  messageId: string;
+  streamId: string;
   chatId: string;
-  content: string;
-  role: "user" | "assistant";
 }) => {
-  return await db.insert(message).values({
-    id: messageId,
-    chatId,
-    role,
-    content,
-  });
+  return await db.insert(stream).values({ id: streamId, chatId });
 };
