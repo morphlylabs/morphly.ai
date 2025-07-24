@@ -21,7 +21,11 @@ function PureMessages({
   setMessages,
   regenerate,
 }: MessagesProps) {
-  const { containerRef: messagesContainerRef, hasSentMessage } = useMessages({
+  const {
+    containerRef: messagesContainerRef,
+    endRef,
+    hasSentMessage,
+  } = useMessages({
     chatId,
     status,
   });
@@ -46,6 +50,7 @@ function PureMessages({
           }
         />
       ))}
+      <div ref={endRef} />
     </div>
   );
 }

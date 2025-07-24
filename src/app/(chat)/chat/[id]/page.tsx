@@ -34,8 +34,6 @@ export default async function ChatPage({ params }: ChatPageProps) {
     }
   }
 
-  console.log(chat.messages);
-
   const uiMessages = convertToUIMessages(chat.messages);
 
   return (
