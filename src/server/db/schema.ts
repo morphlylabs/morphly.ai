@@ -69,7 +69,9 @@ export const verification = sqliteTable("verification", {
 
 export const chat = sqliteTable("chat", {
   id: text("id", { length: 36 }).primaryKey(),
-  userId: text("user_id", { length: 36 }).references(() => user.id),
+  userId: text("user_id", { length: 36 })
+    .notNull()
+    .references(() => user.id),
   title: text("title", { length: 128 }).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .$defaultFn(() => /* @__PURE__ */ new Date())

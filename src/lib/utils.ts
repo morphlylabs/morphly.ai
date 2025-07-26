@@ -11,6 +11,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function convertToUIMessages(messages: Message[]): ChatMessage[] {
+  console.log("converting to ui messages", messages);
   return messages.map((message) => ({
     id: message.id,
     role: message.role,

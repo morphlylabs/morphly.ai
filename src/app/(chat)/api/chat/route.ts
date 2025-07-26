@@ -19,11 +19,14 @@ import {
   createStream,
   createChat,
   getChatById,
+  getMessagesByChatId,
 } from "~/server/db/queries";
 import { v4 } from "uuid";
 import { convertToUIMessages } from "../../../../lib/utils";
 import { createDocument } from "../../../../lib/ai/tools/create-document";
 import { updateDocument } from "../../../../lib/ai/tools/update-document";
+import { generateTitleFromUserMessage } from "../../actions";
+import { redirect } from "next/navigation";
 
 export const maxDuration = 60;
 
@@ -78,7 +81,9 @@ export async function POST(request: Request) {
     const chat = await getChatById(id);
 
     if (!chat) {
-      const title = "New Chat";
+      const title = await generateTitleFromUserMessage({
+        message: userMessage,
+      });
 
       await createChat({
         id,
@@ -103,16 +108,17 @@ export async function POST(request: Request) {
       ],
     });
 
-    // TODO: fix this
-    const uiMessages = [...convertToUIMessages(chat!.messages), userMessage];
+    const messagesFromDb = await getMessagesByChatId(id);
+    const uiMessages = [...convertToUIMessages(messagesFromDb), userMessage];
 
     const streamId = v4();
+
     await createStream({ streamId, chatId: id });
 
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
-          model: xai("grok-3-fast-latest"),
+          model: xai("grok-3-mini"),
           messages: convertToModelMessages(uiMessages),
           experimental_activeTools: ["createDocument"],
           tools: {
@@ -161,5 +167,7 @@ export async function POST(request: Request) {
     if (error instanceof ChatSDKError) {
       return error.toResponse();
     }
+
+    console.error(error);
   }
 }

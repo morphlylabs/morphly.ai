@@ -1,7 +1,9 @@
-import Prompt from "~/components/prompt";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { DataStreamHandler } from "../../../components/data-stream-handler";
+import { Chat } from "../../../components/chat";
+import { v4 } from "uuid";
 
 export default async function ChatPage() {
   const session = await auth.api.getSession({
@@ -12,9 +14,12 @@ export default async function ChatPage() {
     redirect("/login");
   }
 
+  const id = v4();
+
   return (
-    <div className="flex flex-1 items-center justify-center p-8">
-      <Prompt />
+    <div>
+      <Chat key={id} id={id} initialMessages={[]} autoResume={false} />
+      <DataStreamHandler />
     </div>
   );
 }
