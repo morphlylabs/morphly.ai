@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 import type { ChatMessage, CustomUIDataTypes } from "./types";
 import type { Message } from "~/server/db/schema";
 import { formatISO } from "date-fns";
+import { ChatSDKError, type ErrorCode } from "./errors";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,3 +34,17 @@ export function getTextFromUIMessage(message: UIMessage): string {
     .map((part) => part.text)
     .join("");
 }
+
+export const fetcher = async (url: string) => {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { code, cause } = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    throw new ChatSDKError(code, cause);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return response.json();
+};

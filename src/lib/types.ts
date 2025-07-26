@@ -12,9 +12,11 @@ export type MessageMetadata = z.infer<typeof messageMetadataSchema>;
 
 export type CustomUIDataTypes = {
   textDelta: string;
+  codeDelta: string;
   appendMessage: string;
   id: string;
   title: string;
+  kind: "text" | "code";
   clear: null;
   finish: null;
 };

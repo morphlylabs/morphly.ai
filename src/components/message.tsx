@@ -98,6 +98,87 @@ const PureMessage = ({
               );
             }
           }
+
+          if (type === "tool-createDocument") {
+            const { toolCallId, state } = part;
+
+            if (state === "input-available") {
+              const { input } = part;
+              return (
+                <div key={toolCallId}>
+                  {JSON.stringify(input)}
+                  {/* <DocumentPreview isReadonly={isReadonly} args={input} /> */}
+                </div>
+              );
+            }
+
+            if (state === "output-available") {
+              const { output } = part;
+
+              if (output && typeof output === "object" && "error" in output) {
+                return (
+                  <div
+                    key={toolCallId}
+                    className="rounded border p-2 text-red-500"
+                  >
+                    Error: {String(output.error)}
+                  </div>
+                );
+              }
+
+              return (
+                <div key={toolCallId}>
+                  {JSON.stringify(output)}
+                  {/* <DocumentPreview isReadonly={isReadonly} result={output} /> */}
+                </div>
+              );
+            }
+          }
+
+          if (type === "tool-updateDocument") {
+            const { toolCallId, state } = part;
+
+            if (state === "input-available") {
+              const { input } = part;
+
+              return (
+                <div key={toolCallId}>
+                  {JSON.stringify(input)}
+                  {/* <DocumentToolCall
+                    type="update"
+                    args={input}
+                    isReadonly={isReadonly}
+                  /> */}
+                </div>
+              );
+            }
+
+            if (state === "output-available") {
+              const { output } = part;
+
+              if (output && typeof output === "object" && "error" in output) {
+                return (
+                  <div
+                    key={toolCallId}
+                    className="rounded border p-2 text-red-500"
+                  >
+                    Error: {String(output.error)}
+                  </div>
+                );
+              }
+
+              return (
+                <div key={toolCallId}>
+                  {JSON.stringify(output)}
+                  {/* <DocumentToolResult
+                    type="update"
+                    result={output}
+                    isReadonly={isReadonly}
+                  /> */}
+                </div>
+              );
+            }
+          }
         })}
       </div>
     </div>

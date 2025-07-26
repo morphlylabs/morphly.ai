@@ -30,6 +30,8 @@ export const session = sqliteTable("session", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
+export type Session = InferSelectModel<typeof session>;
+
 export const account = sqliteTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
@@ -65,48 +67,6 @@ export const verification = sqliteTable("verification", {
   ),
 });
 
-export const parametricModel = sqliteTable("parametric_model", {
-  id: text("id", { length: 36 }).primaryKey(),
-  messageId: text("message_id")
-    .notNull()
-    .references(() => message.id),
-  code: text("code").notNull(),
-  language: text("language", { enum: ["cadquery"] }).notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
-});
-
-export type ParametricModel = InferSelectModel<typeof parametricModel>;
-
-export const parametricModelRelations = relations(
-  parametricModel,
-  ({ one, many }) => ({
-    message: one(message, {
-      fields: [parametricModel.messageId],
-      references: [message.id],
-    }),
-    stl_file: many(stlFile),
-  }),
-);
-
-export const stlFile = sqliteTable("stl_file", {
-  id: text("id", { length: 36 }).primaryKey(),
-  modelId: text("model_id").references(() => parametricModel.id),
-  url: text("url").notNull(),
-  size: integer("size", { mode: "number" }).notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
-});
-
-export const stlFileRelations = relations(stlFile, ({ one }) => ({
-  model: one(parametricModel, {
-    fields: [stlFile.modelId],
-    references: [parametricModel.id],
-  }),
-}));
-
 export const chat = sqliteTable("chat", {
   id: text("id", { length: 36 }).primaryKey(),
   userId: text("user_id", { length: 36 }).references(() => user.id),
@@ -137,13 +97,29 @@ export const message = sqliteTable("message", {
 
 export type Message = InferSelectModel<typeof message>;
 
-export const messageRelations = relations(message, ({ one, many }) => ({
+export const messageRelations = relations(message, ({ one }) => ({
   chat: one(chat, {
     fields: [message.chatId],
     references: [chat.id],
   }),
-  models: many(parametricModel),
 }));
+
+export const document = sqliteTable("document", {
+  id: text("id", { length: 36 }).primaryKey(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  title: text("title").notNull(),
+  content: text("content"),
+  kind: text("kind", { enum: ["code"] })
+    .notNull()
+    .default("code"),
+  userId: text("user_id", { length: 36 })
+    .notNull()
+    .references(() => user.id),
+});
+
+export type Document = InferSelectModel<typeof document>;
 
 export const stream = sqliteTable("stream", {
   id: text("id", { length: 36 }).primaryKey(),

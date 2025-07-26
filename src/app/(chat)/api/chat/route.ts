@@ -1,4 +1,4 @@
-import { groq } from "@ai-sdk/groq";
+import { xai } from "@ai-sdk/xai";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -19,14 +19,11 @@ import {
   createStream,
   createChat,
   getChatById,
-  createParametricModel,
 } from "~/server/db/queries";
 import { v4 } from "uuid";
-import {
-  convertToUIMessages,
-  getTextFromUIMessage,
-} from "../../../../lib/utils";
-import { parametricModelPrompt } from "../../../../lib/ai/prompts";
+import { convertToUIMessages } from "../../../../lib/utils";
+import { createDocument } from "../../../../lib/ai/tools/create-document";
+import { updateDocument } from "../../../../lib/ai/tools/update-document";
 
 export const maxDuration = 60;
 
@@ -106,6 +103,7 @@ export async function POST(request: Request) {
       ],
     });
 
+    // TODO: fix this
     const uiMessages = [...convertToUIMessages(chat!.messages), userMessage];
 
     const streamId = v4();
@@ -114,9 +112,13 @@ export async function POST(request: Request) {
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
-          model: groq("llama-3.1-8b-instant"),
-          system: parametricModelPrompt,
+          model: xai("grok-3-fast-latest"),
           messages: convertToModelMessages(uiMessages),
+          experimental_activeTools: ["createDocument"],
+          tools: {
+            createDocument: createDocument({ session, dataStream }),
+            updateDocument: updateDocument({ session, dataStream }),
+          },
         });
 
         void result.consumeStream();
@@ -138,18 +140,6 @@ export async function POST(request: Request) {
             chatId: id,
           })),
         });
-
-        await createParametricModel({
-          model: {
-            id: v4(),
-            code: messages.map(getTextFromUIMessage).join(""),
-            createdAt: new Date(),
-            messageId: userMessage.id,
-            language: "cadquery",
-          },
-        });
-
-        // TODO: call conversion service
       },
       onError: () => {
         return "Oops, an error occurred!";

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { initialArtifactData, useArtifact } from "~/hooks/use-artifact";
 import { useDataStream } from "./data-stream-provider";
+import type { UIArtifact } from "./artifact";
 
 export function DataStreamHandler() {
   const { dataStream } = useDataStream();
@@ -17,7 +18,7 @@ export function DataStreamHandler() {
     lastProcessedIndex.current = dataStream.length - 1;
 
     newDeltas.forEach((delta) => {
-      setArtifact((draftArtifact) => {
+      setArtifact((draftArtifact): UIArtifact => {
         if (!draftArtifact) {
           return { ...initialArtifactData, status: "streaming" };
         }
@@ -31,6 +32,13 @@ export function DataStreamHandler() {
             };
 
           case "data-title":
+            return {
+              ...draftArtifact,
+              title: delta.data,
+              status: "streaming",
+            };
+
+          case "data-kind":
             return {
               ...draftArtifact,
               title: delta.data,

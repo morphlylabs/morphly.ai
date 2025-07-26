@@ -14,6 +14,9 @@ importers:
       '@ai-sdk/react':
         specifier: 2.0.0-beta.25
         version: 2.0.0-beta.25(react@19.1.0)(zod@3.25.76)
+      '@ai-sdk/xai':
+        specifier: 2.0.0-beta.11
+        version: 2.0.0-beta.11(zod@3.25.76)
       '@libsql/client':
         specifier: ^0.15.9
         version: 0.15.9
@@ -183,8 +186,20 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4
 
+  '@ai-sdk/openai-compatible@1.0.0-beta.9':
+    resolution: {integrity: sha512-Bv5Q9zutHtMPZkxl42UlBhjHU/Lu8I/mE0DFyRf6z37Zok9I/yXif60U5eAQu0MwDzkeEujo1E9x8BBkNRX3eQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+
   '@ai-sdk/provider-utils@3.0.0-beta.5':
     resolution: {integrity: sha512-4Dv/wiGZrvO6fI7P0yMLa4XZru0XW8LPibTObbkHBdweLUVGIze7aCfxxQeY44Uqcbl/h6/yBTkx2XmPtwf/Ow==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+
+  '@ai-sdk/provider-utils@3.0.0-beta.6':
+    resolution: {integrity: sha512-r8Nswwko+7nuLnLxprPgAxjGcpjq5fnFmfFwtkz4k9KfF1Z6Nkwvl8+Ee9BULBWXOqbtJGh9iCiJaTPBnhZrqw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -202,6 +217,12 @@ packages:
     peerDependenciesMeta:
       zod:
         optional: true
+
+  '@ai-sdk/xai@2.0.0-beta.11':
+    resolution: {integrity: sha512-Xwh8/YPhrL4ugWRlXO4ESeW5g5aMeZ0DC6mR0/80vyX3fZnxKqt1vgmMd3+aODE7qdla6vb+/iXTNBiN7JamHQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -3588,7 +3609,21 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.0-beta.5(zod@3.25.76)
       zod: 3.25.76
 
+  '@ai-sdk/openai-compatible@1.0.0-beta.9(zod@3.25.76)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0-beta.1
+      '@ai-sdk/provider-utils': 3.0.0-beta.6(zod@3.25.76)
+      zod: 3.25.76
+
   '@ai-sdk/provider-utils@3.0.0-beta.5(zod@3.25.76)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0-beta.1
+      '@standard-schema/spec': 1.0.0
+      eventsource-parser: 3.0.3
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.6(zod@3.25.76)
+
+  '@ai-sdk/provider-utils@3.0.0-beta.6(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 2.0.0-beta.1
       '@standard-schema/spec': 1.0.0
@@ -3608,6 +3643,13 @@ snapshots:
       swr: 2.3.4(react@19.1.0)
       throttleit: 2.1.0
     optionalDependencies:
+      zod: 3.25.76
+
+  '@ai-sdk/xai@2.0.0-beta.11(zod@3.25.76)':
+    dependencies:
+      '@ai-sdk/openai-compatible': 1.0.0-beta.9(zod@3.25.76)
+      '@ai-sdk/provider': 2.0.0-beta.1
+      '@ai-sdk/provider-utils': 3.0.0-beta.6(zod@3.25.76)
       zod: 3.25.76
 
   '@alloc/quick-lru@5.2.0': {}

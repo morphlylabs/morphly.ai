@@ -1,14 +1,9 @@
 import "server-only";
 
 import { db } from "./index";
-import {
-  chat,
-  message,
-  parametricModel,
-  stream,
-  type Message,
-  type ParametricModel,
-} from "./schema";
+import { chat, document, message, stream, type Message } from "./schema";
+import type { ArtifactKind } from "../../components/artifact";
+import { ChatSDKError } from "../../lib/errors";
 
 export const getChatById = async (id: string) => {
   return await db.query.chat.findFirst({
@@ -16,13 +11,6 @@ export const getChatById = async (id: string) => {
     with: {
       messages: {
         orderBy: (message, { asc }) => asc(message.createdAt),
-        with: {
-          models: {
-            with: {
-              stl_file: true,
-            },
-          },
-        },
       },
       stream: true,
     },
@@ -64,10 +52,44 @@ export const createStream = async ({
   return await db.insert(stream).values({ id: streamId, chatId });
 };
 
-export const createParametricModel = async ({
-  model,
+export const createDocument = async ({
+  id,
+  title,
+  kind,
+  content,
+  userId,
 }: {
-  model: ParametricModel;
+  id: string;
+  title: string;
+  kind: ArtifactKind;
+  content: string;
+  userId: string;
 }) => {
-  return await db.insert(parametricModel).values(model);
+  try {
+    return await db
+      .insert(document)
+      .values({
+        id,
+        title,
+        kind,
+        content,
+        userId,
+        createdAt: new Date(),
+      })
+      .returning();
+  } catch {
+    throw new ChatSDKError("bad_request:database", "Failed to save document");
+  }
+};
+
+export const getDocumentsById = async (id: string) => {
+  return await db.query.document.findMany({
+    where: (document, { eq }) => eq(document.id, id),
+  });
+};
+
+export const getDocumentById = async (id: string) => {
+  return await db.query.document.findFirst({
+    where: (document, { eq }) => eq(document.id, id),
+  });
 };

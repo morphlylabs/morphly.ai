@@ -2,11 +2,12 @@
 
 import useSWR from "swr";
 import { useCallback, useMemo } from "react";
+import type { UIArtifact } from "~/components/artifact";
 
-export const initialArtifactData = {
+export const initialArtifactData: UIArtifact = {
   documentId: "init",
   content: "",
-  kind: "text",
+  kind: "code",
   title: "",
   status: "idle",
   isVisible: false,
@@ -18,16 +19,12 @@ export const initialArtifactData = {
   },
 };
 
-type Selector<T> = (state: typeof initialArtifactData) => T;
+type Selector<T> = (state: UIArtifact) => T;
 
 export function useArtifactSelector<Selected>(selector: Selector<Selected>) {
-  const { data: localArtifact } = useSWR<typeof initialArtifactData>(
-    "artifact",
-    null,
-    {
-      fallbackData: initialArtifactData,
-    },
-  );
+  const { data: localArtifact } = useSWR<UIArtifact>("artifact", null, {
+    fallbackData: initialArtifactData,
+  });
 
   const selectedValue = useMemo(() => {
     if (!localArtifact) return selector(initialArtifactData);
@@ -38,11 +35,13 @@ export function useArtifactSelector<Selected>(selector: Selector<Selected>) {
 }
 
 export function useArtifact() {
-  const { data: localArtifact, mutate: setLocalArtifact } = useSWR<
-    typeof initialArtifactData
-  >("artifact", null, {
-    fallbackData: initialArtifactData,
-  });
+  const { data: localArtifact, mutate: setLocalArtifact } = useSWR<UIArtifact>(
+    "artifact",
+    null,
+    {
+      fallbackData: initialArtifactData,
+    },
+  );
 
   const artifact = useMemo(() => {
     if (!localArtifact) return initialArtifactData;
@@ -50,13 +49,7 @@ export function useArtifact() {
   }, [localArtifact]);
 
   const setArtifact = useCallback(
-    (
-      updaterFn:
-        | typeof initialArtifactData
-        | ((
-            currentArtifact: typeof initialArtifactData,
-          ) => typeof initialArtifactData),
-    ) => {
+    (updaterFn: UIArtifact | ((currentArtifact: UIArtifact) => UIArtifact)) => {
       void setLocalArtifact((currentArtifact) => {
         const artifactToUpdate = currentArtifact ?? initialArtifactData;
 

@@ -12,6 +12,7 @@ import { v4 } from "uuid";
 import { useAutoResume } from "~/hooks/use-auto-resume";
 import { toast } from "sonner";
 import { ChatInput } from "./chat-input";
+import { Artifact } from "./artifact";
 
 export function Chat({
   id,
@@ -108,6 +109,18 @@ export function Chat({
           />
         </form>
       </div>
+
+      <Artifact
+        chatId={id}
+        input={input}
+        setInput={setInput}
+        status={status}
+        stop={stop}
+        sendMessage={sendMessage}
+        messages={messages}
+        setMessages={setMessages}
+        regenerate={regenerate}
+      />
     </>
   );
 }
