@@ -2,7 +2,7 @@
 
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 import { Messages } from "~/components/messages";
 import { useSearchParams } from "next/navigation";
 import { ChatSDKError } from "~/lib/errors";
@@ -15,6 +15,22 @@ import { ChatInput } from "./chat-input";
 import { Artifact } from "./artifact";
 import type { Asset } from "~/server/db/schema";
 import Model from "./model";
+
+// Create context for asset selection
+const AssetSelectionContext = createContext<{
+  setSelectedAsset: (asset: Asset | undefined) => void;
+} | null>(null);
+
+// Hook to use the asset selection context
+export const useAssetSelection = () => {
+  const context = useContext(AssetSelectionContext);
+  if (!context) {
+    throw new Error(
+      "useAssetSelection must be used within AssetSelectionProvider",
+    );
+  }
+  return context;
+};
 
 export function Chat({
   id,
@@ -30,6 +46,9 @@ export function Chat({
   const { setDataStream } = useDataStream();
 
   const [input, setInput] = useState<string>("");
+  const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
+    initialAsset,
+  );
 
   const {
     messages,
@@ -91,43 +110,45 @@ export function Chat({
   });
 
   return (
-    <div className="grid h-[calc(100vh-4rem)] grid-cols-4">
-      <div className="col-span-3 h-full">
-        {initialAsset && <Model src={initialAsset.fileUrl} />}
-      </div>
-      <div className="bg-background col-span-1 flex h-[calc(100vh-4rem)] min-w-0 flex-col">
-        <Messages
+    <AssetSelectionContext.Provider value={{ setSelectedAsset }}>
+      <div className="grid h-[calc(100vh-4rem)] grid-cols-4">
+        <div className="col-span-3 h-full">
+          {selectedAsset && <Model src={selectedAsset.fileUrl} />}
+        </div>
+        <div className="bg-background col-span-1 flex h-[calc(100vh-4rem)] min-w-0 flex-col">
+          <Messages
+            chatId={id}
+            status={status}
+            messages={messages}
+            setMessages={setMessages}
+            regenerate={regenerate}
+          />
+
+          <form className="bg-background mx-auto flex w-full gap-2 px-4 pb-4 md:max-w-3xl md:pb-6">
+            <ChatInput
+              chatId={id}
+              input={input}
+              setInput={setInput}
+              status={status}
+              stop={stop}
+              setMessages={setMessages}
+              sendMessage={sendMessage}
+            />
+          </form>
+        </div>
+
+        <Artifact
           chatId={id}
+          input={input}
+          setInput={setInput}
           status={status}
+          stop={stop}
+          sendMessage={sendMessage}
           messages={messages}
           setMessages={setMessages}
           regenerate={regenerate}
         />
-
-        <form className="bg-background mx-auto flex w-full gap-2 px-4 pb-4 md:max-w-3xl md:pb-6">
-          <ChatInput
-            chatId={id}
-            input={input}
-            setInput={setInput}
-            status={status}
-            stop={stop}
-            setMessages={setMessages}
-            sendMessage={sendMessage}
-          />
-        </form>
       </div>
-
-      <Artifact
-        chatId={id}
-        input={input}
-        setInput={setInput}
-        status={status}
-        stop={stop}
-        sendMessage={sendMessage}
-        messages={messages}
-        setMessages={setMessages}
-        regenerate={regenerate}
-      />
-    </div>
+    </AssetSelectionContext.Provider>
   );
 }

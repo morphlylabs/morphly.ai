@@ -96,3 +96,9 @@ export const getDocumentById = async (id: string) => {
     },
   });
 };
+
+export const getAssetsByDocumentId = async (id: string) => {
+  return await db.query.asset.findMany({
+    where: (asset, { eq }) => eq(asset.documentId, id),
+  });
+};
