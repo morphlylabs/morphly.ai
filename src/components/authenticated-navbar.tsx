@@ -23,8 +23,8 @@ import { UserAvatar } from "./user-avatar";
 
 const navigationItems = [
   {
-    title: "My Models",
-    href: "/models",
+    title: "My Creations",
+    href: "/chats",
   },
   {
     title: "Workspace",
