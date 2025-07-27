@@ -1,7 +1,7 @@
 import type { UIMessage, UIMessagePart } from "ai";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { ChatMessage, CustomUIDataTypes } from "./types";
+import type { ChatMessage, ChatTools, CustomUIDataTypes } from "./types";
 import type { Message } from "~/server/db/schema";
 import { formatISO } from "date-fns";
 import { ChatSDKError, type ErrorCode } from "./errors";
@@ -11,11 +11,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function convertToUIMessages(messages: Message[]): ChatMessage[] {
-  console.log("converting to ui messages", messages);
   return messages.map((message) => ({
     id: message.id,
     role: message.role,
-    parts: message.parts as UIMessagePart<CustomUIDataTypes, never>[],
+    parts: message.parts as UIMessagePart<CustomUIDataTypes, ChatTools>[],
     metadata: {
       createdAt: formatISO(message.createdAt),
     },

@@ -1,6 +1,7 @@
 import { relations, type InferSelectModel } from "drizzle-orm";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
+// USERS
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -17,6 +18,7 @@ export const user = sqliteTable("user", {
     .notNull(),
 });
 
+// SESSIONS
 export const session = sqliteTable("session", {
   id: text("id").primaryKey(),
   expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
@@ -30,8 +32,7 @@ export const session = sqliteTable("session", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-export type Session = InferSelectModel<typeof session>;
-
+// ACCOUNTS
 export const account = sqliteTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
@@ -54,6 +55,7 @@ export const account = sqliteTable("account", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
+// VERIFICATIONS
 export const verification = sqliteTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
@@ -67,6 +69,7 @@ export const verification = sqliteTable("verification", {
   ),
 });
 
+// CHATS
 export const chat = sqliteTable("chat", {
   id: text("id", { length: 36 }).primaryKey(),
   userId: text("user_id", { length: 36 })
@@ -77,14 +80,13 @@ export const chat = sqliteTable("chat", {
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
-
 export type Chat = InferSelectModel<typeof chat>;
-
 export const chatRelations = relations(chat, ({ many }) => ({
   messages: many(message),
   stream: many(stream),
 }));
 
+// MESSAGES
 export const message = sqliteTable("message", {
   id: text("id", { length: 36 }).primaryKey(),
   chatId: text("chat_id", { length: 36 })
@@ -96,9 +98,7 @@ export const message = sqliteTable("message", {
   role: text("role", { enum: ["user", "assistant", "system"] }).notNull(),
   parts: text("parts", { mode: "json" }).notNull(),
 });
-
 export type Message = InferSelectModel<typeof message>;
-
 export const messageRelations = relations(message, ({ one }) => ({
   chat: one(chat, {
     fields: [message.chatId],
@@ -106,6 +106,7 @@ export const messageRelations = relations(message, ({ one }) => ({
   }),
 }));
 
+// DOCUMENTS
 export const document = sqliteTable("document", {
   id: text("id", { length: 36 }).primaryKey(),
   createdAt: integer("created_at", { mode: "timestamp" })
@@ -120,9 +121,39 @@ export const document = sqliteTable("document", {
     .notNull()
     .references(() => user.id),
 });
-
 export type Document = InferSelectModel<typeof document>;
+export const documentRelations = relations(document, ({ many }) => ({
+  assets: many(asset),
+}));
 
+// ASSETS
+export const asset = sqliteTable("asset", {
+  id: text("id", { length: 36 }).primaryKey(),
+  documentId: text("document_id", { length: 36 })
+    .notNull()
+    .references(() => document.id, { onDelete: "cascade" }),
+  format: text("format", {
+    enum: ["stl", "stp"],
+  }).notNull(),
+  fileUrl: text("file_url").notNull(),
+  status: text("status", {
+    enum: ["pending", "processing", "completed", "failed"],
+  })
+    .notNull()
+    .default("pending"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+export type Asset = InferSelectModel<typeof asset>;
+export const assetRelations = relations(asset, ({ one }) => ({
+  document: one(document, {
+    fields: [asset.documentId],
+    references: [document.id],
+  }),
+}));
+
+// STREAMS
 export const stream = sqliteTable("stream", {
   id: text("id", { length: 36 }).primaryKey(),
   chatId: text("chat_id", { length: 36 })
@@ -132,7 +163,6 @@ export const stream = sqliteTable("stream", {
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
-
 export const streamRelations = relations(stream, ({ one }) => ({
   chat: one(chat, {
     fields: [stream.chatId],

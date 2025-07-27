@@ -91,5 +91,8 @@ export const getDocumentsById = async (id: string) => {
 export const getDocumentById = async (id: string) => {
   return await db.query.document.findFirst({
     where: (document, { eq }) => eq(document.id, id),
+    with: {
+      assets: true,
+    },
   });
 };
