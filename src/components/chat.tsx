@@ -13,14 +13,18 @@ import { useAutoResume } from "~/hooks/use-auto-resume";
 import { toast } from "sonner";
 import { ChatInput } from "./chat-input";
 import { Artifact } from "./artifact";
+import type { Asset } from "~/server/db/schema";
+import Model from "./model";
 
 export function Chat({
   id,
   initialMessages,
+  initialAsset,
   autoResume,
 }: {
   id: string;
   initialMessages: ChatMessage[];
+  initialAsset: Asset | undefined;
   autoResume: boolean;
 }) {
   const { setDataStream } = useDataStream();
@@ -87,8 +91,11 @@ export function Chat({
   });
 
   return (
-    <>
-      <div className="bg-background flex h-[calc(100vh-4rem)] min-w-0 flex-col">
+    <div className="grid h-[calc(100vh-4rem)] grid-cols-4">
+      <div className="col-span-3 h-full">
+        {initialAsset && <Model src={initialAsset.fileUrl} />}
+      </div>
+      <div className="bg-background col-span-1 flex h-[calc(100vh-4rem)] min-w-0 flex-col">
         <Messages
           chatId={id}
           status={status}
@@ -121,6 +128,6 @@ export function Chat({
         setMessages={setMessages}
         regenerate={regenerate}
       />
-    </>
+    </div>
   );
 }
