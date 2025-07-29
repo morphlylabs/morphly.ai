@@ -8,9 +8,8 @@ import {
   useProgress,
 } from "@react-three/drei";
 import { Canvas, useLoader } from "@react-three/fiber";
-import { Suspense, useMemo } from "react";
+import { Suspense } from "react";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
-import { Box3, Vector3 } from "three";
 
 function Loader() {
   const { progress } = useProgress();

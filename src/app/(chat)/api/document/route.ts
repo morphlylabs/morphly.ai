@@ -1,4 +1,3 @@
-import type { ArtifactKind } from "~/components/artifact";
 import { getDocumentsById, createDocument } from "~/server/db/queries";
 import { ChatSDKError } from "~/lib/errors";
 import { auth } from "../../../../lib/auth";

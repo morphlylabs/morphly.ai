@@ -40,7 +40,7 @@ export function Chat({
 }: {
   id: string;
   initialMessages: ChatMessage[];
-  initialAsset: Asset | undefined;
+  initialAsset?: Asset;
   autoResume: boolean;
 }) {
   const { setDataStream } = useDataStream();

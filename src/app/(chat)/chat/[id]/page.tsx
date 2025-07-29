@@ -1,6 +1,5 @@
 import { Chat } from "../../../../components/chat";
 import { DataStreamHandler } from "../../../../components/data-stream-handler";
-import Model from "../../../../components/model";
 import { convertToUIMessages } from "../../../../lib/utils";
 import { getChat } from "../../actions";
 import { auth } from "../../../../lib/auth";

@@ -1,6 +1,5 @@
 "use client";
 
-import type { UIMessage } from "ai";
 import cx from "classnames";
 import type React from "react";
 import {

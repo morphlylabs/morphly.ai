@@ -26,7 +26,6 @@ import { convertToUIMessages } from "../../../../lib/utils";
 import { createDocument } from "../../../../lib/ai/tools/create-document";
 import { updateDocument } from "../../../../lib/ai/tools/update-document";
 import { generateTitleFromUserMessage } from "../../actions";
-import { redirect } from "next/navigation";
 
 export const maxDuration = 60;
 
