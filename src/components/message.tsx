@@ -12,7 +12,7 @@ import {
 import type { UseChatHelpers } from "@ai-sdk/react";
 import type { ChatMessage } from "~/lib/types";
 import { useDataStream } from "~/components/data-stream-provider";
-import { PencilIcon, SparklesIcon } from "lucide-react";
+import { PencilIcon, SparklesIcon, Loader2 } from "lucide-react";
 import { DocumentToolResult } from "./document";
 
 // Type narrowing is handled by TypeScript's control flow analysis
@@ -104,11 +104,10 @@ const PureMessage = ({
             const { toolCallId, state } = part;
 
             if (state === "input-available") {
-              const { input } = part;
               return (
-                <div key={toolCallId}>
-                  {JSON.stringify(input)}
-                  {/* <DocumentPreview isReadonly={isReadonly} args={input} /> */}
+                <div key={toolCallId} className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Generating asset...</span>
                 </div>
               );
             }
