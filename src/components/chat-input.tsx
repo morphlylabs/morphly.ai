@@ -12,13 +12,13 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { useLocalStorage, useWindowSize } from "usehooks-ts";
-
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import type { UseChatHelpers } from "@ai-sdk/react";
+import type { UIMessage, UseChatHelpers } from "@ai-sdk/react";
 import { ArrowDown, ArrowUpIcon, CrossIcon } from "lucide-react";
 import { useScrollToBottom } from "~/hooks/use-scroll-to-bottom";
 import type { ChatMessage } from "~/lib/types";
+import { SuggestedActions } from "~/components/suggested-actions";
 
 function PureChatInput({
   chatId,
@@ -26,6 +26,7 @@ function PureChatInput({
   setInput,
   status,
   stop,
+  messages,
   setMessages,
   sendMessage,
   className,
@@ -35,6 +36,7 @@ function PureChatInput({
   setInput: Dispatch<SetStateAction<string>>;
   status: UseChatHelpers<ChatMessage>["status"];
   stop: () => void;
+  messages: Array<UIMessage>;
   setMessages: UseChatHelpers<ChatMessage>["setMessages"];
   sendMessage: UseChatHelpers<ChatMessage>["sendMessage"];
   className?: string;
@@ -133,6 +135,10 @@ function PureChatInput({
         >
           <ArrowDown />
         </Button>
+      )}
+
+      {messages.length === 0 && (
+        <SuggestedActions chatId={chatId} sendMessage={sendMessage} />
       )}
 
       <Textarea

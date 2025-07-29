@@ -131,6 +131,7 @@ export function Chat({
               setInput={setInput}
               status={status}
               stop={stop}
+              messages={messages}
               setMessages={setMessages}
               sendMessage={sendMessage}
             />
