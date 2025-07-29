@@ -4,7 +4,7 @@ import { generateText, type UIMessage } from "ai";
 import { auth } from "../../lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getChatById } from "~/server/db/queries";
+import { getChatById, getAssetsByDocumentId } from "~/server/db/queries";
 import { xai } from "@ai-sdk/xai";
 
 export async function getChat(id: string) {
@@ -41,4 +41,9 @@ export async function generateTitleFromUserMessage({
   });
 
   return title;
+}
+
+export async function findStlAssetByDocumentId(documentId: string) {
+  const assets = await getAssetsByDocumentId(documentId);
+  return assets.find((asset) => asset.format === "stl");
 }

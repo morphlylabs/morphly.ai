@@ -13,6 +13,7 @@ import type { UseChatHelpers } from "@ai-sdk/react";
 import type { ChatMessage } from "~/lib/types";
 import { useDataStream } from "~/components/data-stream-provider";
 import { PencilIcon, SparklesIcon } from "lucide-react";
+import { DocumentToolResult } from "./document";
 
 // Type narrowing is handled by TypeScript's control flow analysis
 // The AI SDK provides proper discriminated unions for tool calls
@@ -128,8 +129,7 @@ const PureMessage = ({
 
               return (
                 <div key={toolCallId}>
-                  {JSON.stringify(output)}
-                  {/* <DocumentPreview isReadonly={isReadonly} result={output} /> */}
+                  <DocumentToolResult result={output} />
                 </div>
               );
             }
@@ -169,12 +169,7 @@ const PureMessage = ({
 
               return (
                 <div key={toolCallId}>
-                  {JSON.stringify(output)}
-                  {/* <DocumentToolResult
-                    type="update"
-                    result={output}
-                    isReadonly={isReadonly}
-                  /> */}
+                  <DocumentToolResult result={output} />
                 </div>
               );
             }

@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import type { ChatMessage, ChatTools, CustomUIDataTypes } from "./types";
 import type { Message } from "~/server/db/schema";
 import { formatISO } from "date-fns";
-import { ChatSDKError, type ErrorCode } from "./errors";
+import { ChatSDKError } from "./errors";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

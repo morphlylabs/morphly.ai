@@ -17,6 +17,13 @@ export const getChatById = async (id: string) => {
   });
 };
 
+export const getChatsByUserId = async (userId: string) => {
+  return await db.query.chat.findMany({
+    where: (chat, { eq }) => eq(chat.userId, userId),
+    orderBy: (chat, { desc }) => desc(chat.createdAt),
+  });
+};
+
 export const createChat = async ({
   id,
   createdAt = new Date(),
@@ -94,5 +101,11 @@ export const getDocumentById = async (id: string) => {
     with: {
       assets: true,
     },
+  });
+};
+
+export const getAssetsByDocumentId = async (id: string) => {
+  return await db.query.asset.findMany({
+    where: (asset, { eq }) => eq(asset.documentId, id),
   });
 };

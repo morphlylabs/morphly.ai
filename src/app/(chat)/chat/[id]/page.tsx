@@ -1,6 +1,5 @@
 import { Chat } from "../../../../components/chat";
 import { DataStreamHandler } from "../../../../components/data-stream-handler";
-import Model from "../../../../components/model";
 import { convertToUIMessages } from "../../../../lib/utils";
 import { getChat } from "../../actions";
 import { auth } from "../../../../lib/auth";
@@ -48,14 +47,14 @@ export default async function ChatPage({ params }: ChatPageProps) {
   );
 
   return (
-    <div className="grid h-[calc(100vh-4rem)] grid-cols-4">
-      <div className="col-span-3 h-full">
-        {stlAsset && <Model src={stlAsset.fileUrl} />}
-      </div>
-      <div className="col-span-1 h-full">
-        <Chat id={chat.id} initialMessages={uiMessages} autoResume={true} />
-        <DataStreamHandler />
-      </div>
-    </div>
+    <>
+      <Chat
+        id={chat.id}
+        initialMessages={uiMessages}
+        initialAsset={stlAsset}
+        autoResume={true}
+      />
+      <DataStreamHandler />
+    </>
   );
 }

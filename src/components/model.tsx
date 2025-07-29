@@ -17,7 +17,8 @@ function Loader() {
 }
 
 function ModelMesh({ src }: { src: string }) {
-  const geometry = useLoader(STLLoader, src);
+  const geometry = useLoader(STLLoader, src).center();
+
   return (
     <mesh geometry={geometry}>
       <meshStandardMaterial color="silver" />
