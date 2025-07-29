@@ -6,8 +6,8 @@ export default {
   schema: "./src/server/db/schema.ts",
   dialect: "turso",
   dbCredentials: {
-    url: env.DATABASE_URL,
-    authToken: env.DATABASE_AUTH_TOKEN,
+    url: env.TURSO_DATABASE_URL,
+    authToken: env.TURSO_AUTH_TOKEN,
   },
   tablesFilter: ["client_*"],
 } satisfies Config;
