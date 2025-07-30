@@ -39,141 +39,147 @@ const PureMessage = ({
 
   return (
     <div
-      className={cn(
-        "flex w-full gap-4 group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl",
-        {
-          "w-full": mode === "edit",
-          "group-data-[role=user]/message:w-fit": mode !== "edit",
-        },
-      )}
+      key={`wrapper-${message.id}`}
+      className="group/message"
+      data-role={message.role}
     >
-      {message.role === "assistant" && (
-        <div className="ring-border bg-background flex size-8 shrink-0 items-center justify-center rounded-full ring-1">
-          <div className="translate-y-px">
-            <SparklesIcon size={14} />
-          </div>
-        </div>
-      )}
-
       <div
-        className={cn("flex w-full flex-col gap-4", {
-          "min-h-96": message.role === "assistant" && requiresScrollPadding,
-        })}
+        className={cn(
+          "flex w-full gap-4 group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl",
+          {
+            "w-full": mode === "edit",
+            "group-data-[role=user]/message:w-fit": mode !== "edit",
+          },
+        )}
       >
-        {message.parts?.map((part, index) => {
-          const { type } = part;
-          const key = `message-${message.id}-part-${index}`;
+        {message.role === "assistant" && (
+          <div className="ring-border bg-background flex size-8 shrink-0 items-center justify-center rounded-full ring-1">
+            <div className="translate-y-px">
+              <SparklesIcon size={14} />
+            </div>
+          </div>
+        )}
 
-          if (type === "text") {
-            if (mode === "view") {
-              return (
-                <div key={key} className="flex flex-row items-start gap-2">
-                  {message.role === "user" && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          data-testid="message-edit-button"
-                          variant="ghost"
-                          className="text-muted-foreground h-fit rounded-full px-2 opacity-0 group-hover/message:opacity-100"
-                          onClick={() => {
-                            setMode("edit");
-                          }}
-                        >
-                          <PencilIcon />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Edit message</TooltipContent>
-                    </Tooltip>
-                  )}
+        <div
+          className={cn("flex w-full flex-col gap-4", {
+            "min-h-96": message.role === "assistant" && requiresScrollPadding,
+          })}
+        >
+          {message.parts?.map((part, index) => {
+            const { type } = part;
+            const key = `message-${message.id}-part-${index}`;
 
-                  <div
-                    data-testid="message-content"
-                    className={cn("flex flex-col gap-4", {
-                      "bg-primary text-primary-foreground rounded-xl px-3 py-2":
-                        message.role === "user",
-                    })}
-                  >
-                    {part.text}
-                  </div>
-                </div>
-              );
-            }
-          }
-
-          if (type === "tool-createDocument") {
-            const { toolCallId, state } = part;
-
-            if (state === "input-available") {
-              return (
-                <div key={toolCallId} className="flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Generating asset...</span>
-                </div>
-              );
-            }
-
-            if (state === "output-available") {
-              const { output } = part;
-
-              if (output && typeof output === "object" && "error" in output) {
+            if (type === "text") {
+              if (mode === "view") {
                 return (
-                  <div
-                    key={toolCallId}
-                    className="rounded border p-2 text-red-500"
-                  >
-                    Error: {String(output.error)}
+                  <div key={key} className="flex flex-row items-start gap-2">
+                    {message.role === "user" && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            data-testid="message-edit-button"
+                            variant="ghost"
+                            className="text-muted-foreground h-fit rounded-full px-2 opacity-0 group-hover/message:opacity-100"
+                            onClick={() => {
+                              setMode("edit");
+                            }}
+                          >
+                            <PencilIcon />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit message</TooltipContent>
+                      </Tooltip>
+                    )}
+
+                    <div
+                      data-testid="message-content"
+                      className={cn("flex flex-col gap-4", {
+                        "bg-primary text-primary-foreground rounded-xl px-3 py-2":
+                          message.role === "user",
+                      })}
+                    >
+                      {part.text}
+                    </div>
+                  </div>
+                );
+              }
+            }
+
+            if (type === "tool-createDocument") {
+              const { toolCallId, state } = part;
+
+              if (state === "input-available") {
+                return (
+                  <div key={toolCallId} className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Generating asset...</span>
                   </div>
                 );
               }
 
-              return (
-                <div key={toolCallId}>
-                  <DocumentToolResult result={output} />
-                </div>
-              );
+              if (state === "output-available") {
+                const { output } = part;
+
+                if (output && typeof output === "object" && "error" in output) {
+                  return (
+                    <div
+                      key={toolCallId}
+                      className="rounded border p-2 text-red-500"
+                    >
+                      Error: {String(output.error)}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={toolCallId}>
+                    <DocumentToolResult result={output} />
+                  </div>
+                );
+              }
             }
-          }
 
-          if (type === "tool-updateDocument") {
-            const { toolCallId, state } = part;
+            if (type === "tool-updateDocument") {
+              const { toolCallId, state } = part;
 
-            if (state === "input-available") {
-              const { input } = part;
+              if (state === "input-available") {
+                const { input } = part;
 
-              return (
-                <div key={toolCallId}>
-                  {JSON.stringify(input)}
-                  {/* <DocumentToolCall
+                return (
+                  <div key={toolCallId}>
+                    {JSON.stringify(input)}
+                    {/* <DocumentToolCall
                     type="update"
                     args={input}
                     isReadonly={isReadonly}
                   /> */}
-                </div>
-              );
-            }
-
-            if (state === "output-available") {
-              const { output } = part;
-
-              if (output && typeof output === "object" && "error" in output) {
-                return (
-                  <div
-                    key={toolCallId}
-                    className="rounded border p-2 text-red-500"
-                  >
-                    Error: {String(output.error)}
                   </div>
                 );
               }
 
-              return (
-                <div key={toolCallId}>
-                  <DocumentToolResult result={output} />
-                </div>
-              );
+              if (state === "output-available") {
+                const { output } = part;
+
+                if (output && typeof output === "object" && "error" in output) {
+                  return (
+                    <div
+                      key={toolCallId}
+                      className="rounded border p-2 text-red-500"
+                    >
+                      Error: {String(output.error)}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={toolCallId}>
+                    <DocumentToolResult result={output} />
+                  </div>
+                );
+              }
             }
-          }
-        })}
+          })}
+        </div>
       </div>
     </div>
   );

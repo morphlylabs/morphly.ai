@@ -111,10 +111,14 @@ export function Chat({
 
   return (
     <AssetSelectionContext.Provider value={{ setSelectedAsset }}>
-      <div className="grid h-[calc(100vh-4rem)] grid-cols-4">
-        <div className="col-span-3 h-full">
-          {selectedAsset && <Model src={selectedAsset.fileUrl} />}
-        </div>
+      <div
+        className={`grid h-[calc(100vh-4rem)] ${selectedAsset ? "grid-cols-4" : "grid-cols-1"}`}
+      >
+        {selectedAsset && (
+          <div className="col-span-3 h-full">
+            <Model src={selectedAsset.fileUrl} />
+          </div>
+        )}
         <div className="bg-background col-span-1 flex h-[calc(100vh-4rem)] min-w-0 flex-col">
           <Messages
             chatId={id}
