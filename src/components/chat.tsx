@@ -19,6 +19,7 @@ import Model from "./model";
 // Create context for asset selection
 const AssetSelectionContext = createContext<{
   setSelectedAsset: (asset: Asset | undefined) => void;
+  selectedAsset: Asset | undefined;
 } | null>(null);
 
 // Hook to use the asset selection context
@@ -110,16 +111,16 @@ export function Chat({
   });
 
   return (
-    <AssetSelectionContext.Provider value={{ setSelectedAsset }}>
+    <AssetSelectionContext.Provider value={{ setSelectedAsset, selectedAsset }}>
       <div
         className={`grid h-[calc(100vh-4rem)] ${selectedAsset ? "grid-cols-4" : "grid-cols-1"}`}
       >
         {selectedAsset && (
-          <div className="col-span-3 h-full">
+          <div className="bg-accent col-span-3 h-full">
             <Model src={selectedAsset.fileUrl} />
           </div>
         )}
-        <div className="bg-background col-span-1 flex h-[calc(100vh-4rem)] min-w-0 flex-col">
+        <div className="bg-background col-span-1 flex h-[calc(100vh-4rem)] min-w-0 flex-col border-l">
           <Messages
             chatId={id}
             status={status}

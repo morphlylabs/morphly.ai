@@ -242,6 +242,7 @@ function PureArtifact({
                     setInput={setInput}
                     status={status}
                     stop={stop}
+                    messages={messages}
                     sendMessage={sendMessage}
                     className="bg-background dark:bg-muted"
                     setMessages={setMessages}

@@ -4,6 +4,7 @@ import { findStlAssetByDocumentId } from "~/app/(chat)/actions";
 import { Button } from "./ui/button";
 import type { Asset } from "../server/db/schema";
 import { useAssetSelection } from "./chat";
+import { CheckIcon } from "lucide-react";
 
 interface DocumentToolResultProps {
   result: { id: string; title: string; kind: ArtifactKind };
@@ -12,7 +13,7 @@ interface DocumentToolResultProps {
 function PureDocumentToolResult({ result }: DocumentToolResultProps) {
   const [stlAsset, setStlAsset] = useState<Asset | undefined>(undefined);
   const [loading, setLoading] = useState(false);
-  const { setSelectedAsset } = useAssetSelection();
+  const { selectedAsset, setSelectedAsset } = useAssetSelection();
 
   useEffect(() => {
     if (result.kind === "code") {
@@ -32,8 +33,12 @@ function PureDocumentToolResult({ result }: DocumentToolResultProps) {
           variant="outline"
           size="sm"
           onClick={() => setSelectedAsset(stlAsset)}
+          disabled={selectedAsset?.id === stlAsset.id}
         >
           Select Version
+          {selectedAsset?.id === stlAsset.id && (
+            <CheckIcon className="ml-2 h-4 w-4" />
+          )}
         </Button>
       )}
     </div>
