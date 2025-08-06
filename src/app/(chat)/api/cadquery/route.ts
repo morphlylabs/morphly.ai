@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     const result = await executeCadQuery(code);
 
-    return new Response(JSON.stringify(result), {
+    return new Response(result, {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

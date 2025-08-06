@@ -28,7 +28,6 @@ export async function executeCadQuery(code: string): Promise<string> {
     }
 
     const payloadString = new TextDecoder().decode(response.Payload);
-    console.log(payloadString);
 
     const responseBody = cadQueryResponseSchema.parse(
       JSON.parse(payloadString),
