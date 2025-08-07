@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { streamObject } from "ai";
 import { codePrompt, updateDocumentPrompt } from "~/lib/ai/prompts";
-import { xai } from "@ai-sdk/xai";
+import { groq } from "@ai-sdk/groq";
 import { createDocumentHandler } from "~/lib/artifacts/server";
 
 export const codeDocumentHandler = createDocumentHandler<"code">({
@@ -10,7 +10,7 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
     let draftContent = "";
 
     const { fullStream } = streamObject({
-      model: xai("grok-3-mini"),
+      model: groq("openai/gpt-oss-120b"),
       system: codePrompt,
       prompt: title,
       schema: z.object({
@@ -43,7 +43,7 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
     let draftContent = "";
 
     const { fullStream } = streamObject({
-      model: xai("grok-3-mini"),
+      model: groq("openai/gpt-oss-120b"),
       system: updateDocumentPrompt(document.content, "code"),
       prompt: description,
       schema: z.object({

@@ -1,4 +1,4 @@
-import { xai } from "@ai-sdk/xai";
+import { groq } from "@ai-sdk/groq";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
-          model: xai("grok-3-mini"),
+          model: groq("openai/gpt-oss-120b"),
           messages: convertToModelMessages(uiMessages),
           experimental_activeTools: ["createDocument"],
           tools: {

@@ -5,7 +5,7 @@ import { auth } from "../../lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getChatById, getAssetsByDocumentId } from "~/server/db/queries";
-import { xai } from "@ai-sdk/xai";
+import { groq } from "@ai-sdk/groq";
 
 export async function getChat(id: string) {
   const session = await auth.api.getSession({
@@ -31,7 +31,7 @@ export async function generateTitleFromUserMessage({
   message: UIMessage;
 }) {
   const { text: title } = await generateText({
-    model: xai("grok-3-mini"),
+    model: groq("openai/gpt-oss-20b"),
     system: `\n
     - you will generate a short title based on the first message a user begins a conversation with
     - ensure it is not more than 80 characters long

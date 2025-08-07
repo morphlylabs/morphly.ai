@@ -5,6 +5,7 @@ import { createDocument } from "~/server/db/queries";
 import type { UIMessageStreamWriter } from "ai";
 import type { ChatMessage } from "~/lib/types";
 import type { Session } from "~/lib/auth";
+import { executeCadQuery } from "../../server/aws/lambda";
 
 export interface SaveDocumentProps {
   id: string;
@@ -57,6 +58,10 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
           kind: config.kind,
           userId: args.session.user.id,
         });
+      }
+
+      if (config.kind === "code") {
+        console.log(draftContent);
       }
 
       return;
