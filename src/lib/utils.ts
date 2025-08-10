@@ -48,3 +48,36 @@ export const fetcher = async (url: string) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return response.json();
 };
+
+/**
+ * Downloads a file from a given URL with a specified filename
+ * @param fileUrl - The URL of the file to download
+ * @param filename - The name to save the file as
+ * @throws Error if the download fails
+ */
+export const downloadFileFromUrl = async (
+  fileUrl: string,
+  filename: string,
+): Promise<void> => {
+  const response = await fetch(fileUrl);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch file: ${response.statusText}`);
+  }
+
+  const blob = await response.blob();
+
+  // Create a temporary URL for the blob
+  const url = window.URL.createObjectURL(blob);
+
+  // Create a temporary anchor element and trigger download
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+
+  // Clean up
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+};

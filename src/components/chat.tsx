@@ -23,6 +23,7 @@ import {
   TooltipContent,
 } from "~/components/ui/tooltip";
 import { useCopyToClipboard } from "usehooks-ts";
+import { downloadFileFromUrl } from "~/lib/utils";
 
 // Create context for asset selection
 const AssetSelectionContext = createContext<{
@@ -128,6 +129,27 @@ export function Chat({
     }
   };
 
+  const downloadSTL = async () => {
+    if (selectedAsset?.fileUrl) {
+      try {
+        await downloadFileFromUrl(selectedAsset.fileUrl, "model.stl");
+        toast.success("STL file downloaded successfully");
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to download STL file";
+        console.error("Failed to download STL:", errorMessage);
+        toast.error(errorMessage);
+      }
+    }
+  };
+
+  const downloadSTP = async () => {
+    // TODO: Implement STP download when STP files are available
+    toast.info("STP download not yet implemented");
+  };
+
   return (
     <AssetSelectionContext.Provider value={{ setSelectedAsset, selectedAsset }}>
       <div
@@ -154,7 +176,12 @@ export function Chat({
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="bg-background">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="bg-background"
+                    onClick={downloadSTL}
+                  >
                     <Box className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
@@ -164,7 +191,12 @@ export function Chat({
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="bg-background">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="bg-background"
+                    onClick={downloadSTP}
+                  >
                     <Footprints className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
