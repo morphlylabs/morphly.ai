@@ -124,22 +124,35 @@ export function Chat({
 
   const copyCode = async () => {
     if (code) {
-      await copy(code);
-      toast.success("Code copied to clipboard");
+      try {
+        await copy(code);
+        toast.success("Code copied to clipboard");
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to copy code";
+        console.error("Failed to copy code:", errorMessage);
+        toast.error("Failed to copy code to clipboard");
+      }
     }
   };
 
   const downloadSTL = async () => {
     if (selectedAsset?.fileUrl) {
       try {
-        await downloadFileFromUrl(selectedAsset.fileUrl, "model.stl");
-        toast.success("STL file downloaded successfully");
+        const filename = `model.${selectedAsset.format}`;
+        await downloadFileFromUrl(selectedAsset.fileUrl, filename);
+        toast.success(
+          `${selectedAsset.format.toUpperCase()} file downloaded successfully`,
+        );
       } catch (error) {
         const errorMessage =
           error instanceof Error
             ? error.message
-            : "Failed to download STL file";
-        console.error("Failed to download STL:", errorMessage);
+            : `Failed to download ${selectedAsset.format.toUpperCase()} file`;
+        console.error(
+          `Failed to download ${selectedAsset.format.toUpperCase()}:`,
+          errorMessage,
+        );
         toast.error(errorMessage);
       }
     }
