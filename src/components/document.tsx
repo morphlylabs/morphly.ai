@@ -25,6 +25,13 @@ function PureDocumentToolResult({ result }: DocumentToolResultProps) {
     }
   }, [result.id, result.kind]);
 
+  // Automatically select the latest asset when it becomes available
+  useEffect(() => {
+    if (stlAsset && !loading) {
+      setSelectedAsset(stlAsset);
+    }
+  }, [stlAsset, loading, setSelectedAsset]);
+
   return (
     <div>
       <p className="mb-2">New version available: {result.title}</p>

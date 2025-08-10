@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./index";
-import { chat, document, message, stream, type Message } from "./schema";
+import { chat, document, message, stream, asset, type Message } from "./schema";
 import type { ArtifactKind } from "../../components/artifact";
 import { ChatSDKError } from "../../lib/errors";
 
@@ -108,4 +108,34 @@ export const getAssetsByDocumentId = async (id: string) => {
   return await db.query.asset.findMany({
     where: (asset, { eq }) => eq(asset.documentId, id),
   });
+};
+
+export const createAsset = async ({
+  id,
+  documentId,
+  format,
+  fileUrl,
+  status = "completed",
+}: {
+  id: string;
+  documentId: string;
+  format: "stl" | "stp";
+  fileUrl: string;
+  status?: "pending" | "processing" | "completed" | "failed";
+}) => {
+  try {
+    return await db
+      .insert(asset)
+      .values({
+        id,
+        documentId,
+        format,
+        fileUrl,
+        status,
+        createdAt: new Date(),
+      })
+      .returning();
+  } catch {
+    throw new ChatSDKError("bad_request:database", "Failed to save asset");
+  }
 };

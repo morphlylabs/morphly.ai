@@ -12,7 +12,7 @@ const cadQueryResponseSchema = z.object({
 
 export type CadQueryResponse = z.infer<typeof cadQueryResponseSchema>;
 
-export async function executeCadQuery(code: string): Promise<string> {
+export async function executeCadQuery(code: string): Promise<CadQueryResponse> {
   const client = getLambdaClient();
 
   const command = new InvokeCommand({
@@ -33,7 +33,13 @@ export async function executeCadQuery(code: string): Promise<string> {
       JSON.parse(payloadString),
     );
 
-    return responseBody.body;
+    if (responseBody.statusCode !== 200) {
+      throw new Error(
+        `Lambda function failed with status ${responseBody.statusCode}: ${responseBody.body}`,
+      );
+    }
+
+    return responseBody;
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new Error(`Invalid Lambda response format: ${error.message}`);
