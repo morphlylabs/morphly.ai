@@ -117,7 +117,7 @@ export async function POST(request: Request) {
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
-          model: groq("openai/gpt-oss-120b"),
+          model: groq("meta-llama/llama-4-maverick-17b-128e-instruct"),
           messages: convertToModelMessages(uiMessages),
           experimental_activeTools: ["createDocument"],
           tools: {

@@ -1,11 +1,13 @@
 import { codeDocumentHandler } from "~/artifacts/code/server";
 import type { ArtifactKind } from "~/components/artifact";
 import type { Document } from "~/server/db/schema";
-import { createDocument } from "~/server/db/queries";
+import { createDocument, createAsset } from "~/server/db/queries";
 import type { UIMessageStreamWriter } from "ai";
 import type { ChatMessage } from "~/lib/types";
 import type { Session } from "~/lib/auth";
 import { executeCadQuery } from "../../server/aws/lambda";
+import { put } from "@vercel/blob";
+import { v4 } from "uuid";
 
 export interface SaveDocumentProps {
   id: string;
@@ -61,7 +63,20 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
       }
 
       if (config.kind === "code") {
-        console.log(draftContent);
+        const cadQueryResponse = await executeCadQuery(draftContent);
+        const stlBuffer = Buffer.from(cadQueryResponse.body, "base64");
+        const stlBlob = await put(`${args.id}.stl`, stlBuffer, {
+          access: "public",
+          contentType: "application/sla",
+        });
+
+        await createAsset({
+          id: v4(),
+          documentId: args.id,
+          format: "stl",
+          fileUrl: stlBlob.url,
+          status: "completed",
+        });
       }
 
       return;

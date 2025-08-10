@@ -33,7 +33,8 @@ PARAMETER HANDLING:
 - Ensure parameters drive the model geometry predictably
 
 CODE STRUCTURE:
-- Begin with: import cadquery as cq
+- Assume cadquery is already imported as cq
+- Only refer to cadquery as cq, not CQ!
 - Define parameters clearly
 - Build geometry step by step
 - End with: result = [final_object]

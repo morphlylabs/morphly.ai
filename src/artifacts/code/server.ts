@@ -10,7 +10,7 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
     let draftContent = "";
 
     const { fullStream } = streamObject({
-      model: groq("openai/gpt-oss-120b"),
+      model: groq("meta-llama/llama-4-maverick-17b-128e-instruct"),
       system: codePrompt,
       prompt: title,
       schema: z.object({
@@ -43,7 +43,7 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
     let draftContent = "";
 
     const { fullStream } = streamObject({
-      model: groq("openai/gpt-oss-120b"),
+      model: groq("meta-llama/llama-4-maverick-17b-128e-instruct"),
       system: updateDocumentPrompt(document.content, "code"),
       prompt: description,
       schema: z.object({
