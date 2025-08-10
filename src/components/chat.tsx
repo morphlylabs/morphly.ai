@@ -15,6 +15,15 @@ import { ChatInput } from "./chat-input";
 import { Artifact } from "./artifact";
 import type { Asset } from "~/server/db/schema";
 import Model from "./model";
+import { Button } from "~/components/ui/button";
+import { Box, Code, Footprints } from "lucide-react";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "~/components/ui/tooltip";
+import { useCopyToClipboard } from "usehooks-ts";
+import { downloadFileFromUrl } from "~/lib/utils";
 
 // Create context for asset selection
 const AssetSelectionContext = createContext<{
@@ -37,11 +46,13 @@ export function Chat({
   id,
   initialMessages,
   initialAsset,
+  code,
   autoResume,
 }: {
   id: string;
   initialMessages: ChatMessage[];
   initialAsset?: Asset;
+  code?: string;
   autoResume: boolean;
 }) {
   const { setDataStream } = useDataStream();
@@ -50,6 +61,7 @@ export function Chat({
   const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
     initialAsset,
   );
+  const [, copy] = useCopyToClipboard();
 
   const {
     messages,
@@ -110,14 +122,102 @@ export function Chat({
     setMessages,
   });
 
+  const copyCode = async () => {
+    if (code) {
+      try {
+        await copy(code);
+        toast.success("Code copied to clipboard");
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to copy code";
+        console.error("Failed to copy code:", errorMessage);
+        toast.error("Failed to copy code to clipboard");
+      }
+    }
+  };
+
+  const downloadSTL = async () => {
+    if (selectedAsset?.fileUrl) {
+      try {
+        const filename = `model.${selectedAsset.format}`;
+        await downloadFileFromUrl(selectedAsset.fileUrl, filename);
+        toast.success(
+          `${selectedAsset.format.toUpperCase()} file downloaded successfully`,
+        );
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : `Failed to download ${selectedAsset.format.toUpperCase()} file`;
+        console.error(
+          `Failed to download ${selectedAsset.format.toUpperCase()}:`,
+          errorMessage,
+        );
+        toast.error(errorMessage);
+      }
+    }
+  };
+
+  const downloadSTP = async () => {
+    // TODO: Implement STP download when STP files are available
+    toast.info("STP download not yet implemented");
+  };
+
   return (
     <AssetSelectionContext.Provider value={{ setSelectedAsset, selectedAsset }}>
       <div
         className={`grid h-[calc(100vh-4rem)] ${selectedAsset ? "grid-cols-4" : "grid-cols-1"}`}
       >
         {selectedAsset && (
-          <div className="bg-accent col-span-3 h-full">
+          <div className="bg-accent relative col-span-3 h-full">
             <Model src={selectedAsset.fileUrl} />
+            <div className="absolute top-2 right-2 z-10 flex gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="bg-background"
+                    onClick={copyCode}
+                  >
+                    <Code className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Copy code</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="bg-background"
+                    onClick={downloadSTL}
+                  >
+                    <Box className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Download STL</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="bg-background"
+                    onClick={downloadSTP}
+                  >
+                    <Footprints className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Download STP</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </div>
         )}
         <div className="bg-background col-span-1 flex h-[calc(100vh-4rem)] min-w-0 flex-col border-l">
