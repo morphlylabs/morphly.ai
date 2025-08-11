@@ -2,21 +2,17 @@
 
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
-import { createContext, useEffect, useState, useContext } from "react";
-import { Messages } from "~/components/messages";
-import { useSearchParams } from "next/navigation";
+import { createContext, useState, useContext } from "react";
 import { ChatSDKError } from "~/lib/errors";
 import type { ChatMessage } from "~/lib/types";
 import { useDataStream } from "~/components/data-stream-provider";
 import { v4 } from "uuid";
 import { useAutoResume } from "~/hooks/use-auto-resume";
 import { toast } from "sonner";
-import { ChatInput } from "./chat-input";
-import { Artifact } from "./artifact";
 import type { Asset } from "~/server/db/schema";
 import Model from "./model";
 import { Button } from "~/components/ui/button";
-import { Box, Code, Footprints } from "lucide-react";
+import { Box, Code, Footprints, MicIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipTrigger,
@@ -24,6 +20,28 @@ import {
 } from "~/components/ui/tooltip";
 import { useCopyToClipboard } from "usehooks-ts";
 import { downloadFileFromUrl } from "~/lib/utils";
+import {
+  PromptInput,
+  PromptInputTextarea,
+  PromptInputToolbar,
+  PromptInputTools,
+  PromptInputButton,
+  PromptInputModelSelect,
+  PromptInputModelSelectTrigger,
+  PromptInputModelSelectValue,
+  PromptInputModelSelectContent,
+  PromptInputModelSelectItem,
+  PromptInputSubmit,
+} from "./ai-elements/prompt-input";
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "./ai-elements/conversation";
+import { MessageContent, Message, MessageAvatar } from "./ai-elements/message";
+import { DocumentToolResult } from "./document";
+import { Suggestion, Suggestions } from "./ai-elements/suggestion";
+import { Separator } from "./ui/separator";
 
 // Create context for asset selection
 const AssetSelectionContext = createContext<{
@@ -42,6 +60,18 @@ export const useAssetSelection = () => {
   return context;
 };
 
+const models = [
+  { id: "gpt-4o", name: "GPT-4o" },
+  { id: "claude-opus-4-20250514", name: "Claude 4 Opus" },
+];
+
+const suggestions = [
+  "Create a lamp that has a base and a shade",
+  "Design a comfortable chair with armrests and cushions",
+  "Create a decorative vase with intricate patterns and textures",
+  "Build a simple house with walls, roof, windows, and a door",
+];
+
 export function Chat({
   id,
   initialMessages,
@@ -57,7 +87,8 @@ export function Chat({
 }) {
   const { setDataStream } = useDataStream();
 
-  const [input, setInput] = useState<string>("");
+  const [text, setText] = useState<string>("");
+  const [model, setModel] = useState<string>(models[0]!.id);
   const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
     initialAsset,
   );
@@ -98,22 +129,16 @@ export function Chat({
     },
   });
 
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query");
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    void sendMessage({ text: text });
+    setText("");
+    window.history.replaceState({}, "", `/chat/${id}`);
+  };
 
-  const [hasAppendedQuery, setHasAppendedQuery] = useState(false);
-
-  useEffect(() => {
-    if (query && !hasAppendedQuery) {
-      void sendMessage({
-        role: "user" as const,
-        parts: [{ type: "text", text: query }],
-      });
-
-      setHasAppendedQuery(true);
-      window.history.replaceState({}, "", `/chat/${id}`);
-    }
-  }, [query, sendMessage, hasAppendedQuery, id]);
+  const handleSuggestionClick = (suggestion: string) => {
+    void sendMessage({ text: suggestion });
+  };
 
   useAutoResume({
     autoResume,
@@ -166,10 +191,14 @@ export function Chat({
   return (
     <AssetSelectionContext.Provider value={{ setSelectedAsset, selectedAsset }}>
       <div
-        className={`grid h-[calc(100vh-4rem)] ${selectedAsset ? "grid-cols-4" : "grid-cols-1"}`}
+        className={
+          selectedAsset
+            ? "grid h-[calc(100vh-4rem)] grid-cols-4"
+            : "flex h-[calc(100vh-4rem)] justify-center"
+        }
       >
         {selectedAsset && (
-          <div className="bg-accent relative col-span-3 h-full">
+          <div className="bg-accent relative col-span-3 h-full border-r">
             <Model src={selectedAsset.fileUrl} />
             <div className="absolute top-2 right-2 z-10 flex gap-2">
               <Tooltip>
@@ -220,40 +249,102 @@ export function Chat({
             </div>
           </div>
         )}
-        <div className="bg-background col-span-1 flex h-[calc(100vh-4rem)] min-w-0 flex-col border-l">
-          <Messages
-            chatId={id}
-            status={status}
-            messages={messages}
-            setMessages={setMessages}
-            regenerate={regenerate}
-          />
+        <div
+          className={`bg-background flex h-[calc(100vh-4rem)] max-w-3xl min-w-0 flex-col ${selectedAsset ? "col-span-1" : ""}`}
+        >
+          <Conversation>
+            <ConversationContent>
+              {messages.map((message) => (
+                <Message from={message.role} key={message.id}>
+                  <MessageContent>
+                    {message.parts.map((part) => {
+                      switch (part.type) {
+                        case "text":
+                          return <p key={part.text}>{part.text}</p>;
+                        case "tool-createDocument":
+                          if (part.state === "input-available") {
+                            return (
+                              <p key={part.toolCallId}>Generating asset...</p>
+                            );
+                          } else if (part.state === "output-available") {
+                            return (
+                              <DocumentToolResult
+                                key={part.toolCallId}
+                                result={part.output}
+                              />
+                            );
+                          }
+                          return null;
+                        default:
+                          return null;
+                      }
+                    })}
+                  </MessageContent>
+                  <MessageAvatar
+                    src={
+                      message.role === "user"
+                        ? "https://github.com/shadcn.png"
+                        : ""
+                    }
+                    name="AI"
+                  />
+                </Message>
+              ))}
+            </ConversationContent>
+            <ConversationScrollButton />
+          </Conversation>
 
-          <form className="bg-background mx-auto flex w-full gap-2 px-4 pb-4 md:max-w-3xl md:pb-6">
-            <ChatInput
-              chatId={id}
-              input={input}
-              setInput={setInput}
-              status={status}
-              stop={stop}
-              messages={messages}
-              setMessages={setMessages}
-              sendMessage={sendMessage}
-            />
-          </form>
+          <div className="p-2">
+            {!selectedAsset && (
+              <Suggestions className="mb-2">
+                {suggestions.map((suggestion) => (
+                  <Suggestion
+                    key={suggestion}
+                    onClick={handleSuggestionClick}
+                    suggestion={suggestion}
+                  />
+                ))}
+              </Suggestions>
+            )}
+
+            <PromptInput onSubmit={handleSubmit} className="max-w-3xl">
+              <PromptInputTextarea
+                onChange={(e) => setText(e.target.value)}
+                value={text}
+              />
+              <Separator />
+              <PromptInputToolbar>
+                <PromptInputTools>
+                  <PromptInputButton>
+                    <MicIcon size={16} />
+                  </PromptInputButton>
+
+                  <PromptInputModelSelect
+                    onValueChange={(value) => {
+                      setModel(value);
+                    }}
+                    value={model}
+                  >
+                    <PromptInputModelSelectTrigger>
+                      <PromptInputModelSelectValue />
+                    </PromptInputModelSelectTrigger>
+                    <PromptInputModelSelectContent>
+                      {models.map((model) => (
+                        <PromptInputModelSelectItem
+                          key={model.id}
+                          value={model.id}
+                        >
+                          {model.name}
+                        </PromptInputModelSelectItem>
+                      ))}
+                    </PromptInputModelSelectContent>
+                  </PromptInputModelSelect>
+                </PromptInputTools>
+                <PromptInputSubmit disabled={!text} status={status} />
+              </PromptInputToolbar>
+            </PromptInput>
+          </div>
         </div>
-
-        <Artifact
-          chatId={id}
-          input={input}
-          setInput={setInput}
-          status={status}
-          stop={stop}
-          sendMessage={sendMessage}
-          messages={messages}
-          setMessages={setMessages}
-          regenerate={regenerate}
-        />
       </div>
     </AssetSelectionContext.Provider>
   );

@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from "react";
-import type { ArtifactKind } from "./artifact";
+import type { ArtifactKind } from "~/lib/artifacts/server";
 import { findStlAssetByDocumentId } from "~/app/(chat)/actions";
 import { Button } from "./ui/button";
 import type { Asset } from "../server/db/schema";

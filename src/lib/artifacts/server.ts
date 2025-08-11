@@ -1,13 +1,14 @@
 import { codeDocumentHandler } from "~/artifacts/code/server";
-import type { ArtifactKind } from "~/components/artifact";
 import type { Document } from "~/server/db/schema";
 import { createDocument, createAsset } from "~/server/db/queries";
 import type { UIMessageStreamWriter } from "ai";
 import type { ChatMessage } from "~/lib/types";
 import type { Session } from "~/lib/auth";
-import { executeCadQuery } from "../../server/aws/lambda";
+import { executeCadQuery } from "~/server/aws/lambda";
 import { put } from "@vercel/blob";
 import { v4 } from "uuid";
+
+export type ArtifactKind = "code";
 
 export interface SaveDocumentProps {
   id: string;

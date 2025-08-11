@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { initialArtifactData, useArtifact } from "~/hooks/use-artifact";
 import { useDataStream } from "./data-stream-provider";
-import type { UIArtifact } from "./artifact";
+import type { UIArtifact } from "./create-artifact";
 
 export function DataStreamHandler() {
   const { dataStream } = useDataStream();

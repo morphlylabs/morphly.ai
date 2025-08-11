@@ -2,8 +2,8 @@ import "server-only";
 
 import { db } from "./index";
 import { chat, document, message, stream, asset, type Message } from "./schema";
-import type { ArtifactKind } from "../../components/artifact";
-import { ChatSDKError } from "../../lib/errors";
+import type { ArtifactKind } from "~/lib/artifacts/server";
+import { ChatSDKError } from "~/lib/errors";
 
 export const getChatById = async (id: string) => {
   return await db.query.chat.findFirst({

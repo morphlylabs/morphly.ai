@@ -1,8 +1,23 @@
 import type { UseChatHelpers } from "@ai-sdk/react";
 import type { ComponentType, Dispatch, ReactNode, SetStateAction } from "react";
-import type { UIArtifact } from "./artifact";
 import type { ChatMessage, CustomUIDataTypes } from "~/lib/types";
 import type { DataUIPart } from "ai";
+import type { ArtifactKind } from "~/lib/artifacts/server";
+
+export interface UIArtifact {
+  title: string;
+  documentId: string;
+  kind: ArtifactKind;
+  content: string;
+  isVisible: boolean;
+  status: "streaming" | "idle";
+  boundingBox: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
+}
 
 export type ArtifactActionContext<M = unknown> = {
   content: string;
