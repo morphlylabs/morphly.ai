@@ -1,10 +1,10 @@
-import { memo, useEffect, useState } from "react";
-import type { ArtifactKind } from "~/lib/artifacts/server";
-import { findStlAssetByDocumentId } from "~/app/(chat)/actions";
-import { Button } from "./ui/button";
-import type { Asset } from "../server/db/schema";
-import { useAssetSelection } from "./chat";
-import { CheckIcon } from "lucide-react";
+import { memo, useEffect, useState } from 'react';
+import type { ArtifactKind } from '~/lib/artifacts/server';
+import { findStlAssetByDocumentId } from '~/app/(chat)/actions';
+import { Button } from './ui/button';
+import type { Asset } from '../server/db/schema';
+import { useAssetSelection } from './chat';
+import { CheckIcon } from 'lucide-react';
 
 interface DocumentToolResultProps {
   result: { id: string; title: string; kind: ArtifactKind };
@@ -16,7 +16,7 @@ function PureDocumentToolResult({ result }: DocumentToolResultProps) {
   const { selectedAsset, setSelectedAsset } = useAssetSelection();
 
   useEffect(() => {
-    if (result.kind === "code") {
+    if (result.kind === 'code') {
       setLoading(true);
       findStlAssetByDocumentId(result.id)
         .then(setStlAsset)
@@ -35,7 +35,7 @@ function PureDocumentToolResult({ result }: DocumentToolResultProps) {
   return (
     <div>
       <p className="mb-2">New version available: {result.title}</p>
-      {result.kind === "code" && stlAsset && !loading && (
+      {result.kind === 'code' && stlAsset && !loading && (
         <Button
           variant="outline"
           size="sm"

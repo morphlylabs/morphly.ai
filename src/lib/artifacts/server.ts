@@ -1,14 +1,14 @@
-import { codeDocumentHandler } from "~/artifacts/code/server";
-import type { Document } from "~/server/db/schema";
-import { createDocument, createAsset } from "~/server/db/queries";
-import type { UIMessageStreamWriter } from "ai";
-import type { ChatMessage } from "~/lib/types";
-import type { Session } from "~/lib/auth";
-import { executeCadQuery } from "~/server/aws/lambda";
-import { put } from "@vercel/blob";
-import { v4 } from "uuid";
+import { codeDocumentHandler } from '~/artifacts/code/server';
+import type { Document } from '~/server/db/schema';
+import { createDocument, createAsset } from '~/server/db/queries';
+import type { UIMessageStreamWriter } from 'ai';
+import type { ChatMessage } from '~/lib/types';
+import type { Session } from '~/lib/auth';
+import { executeCadQuery } from '~/server/aws/lambda';
+import { put } from '@vercel/blob';
+import { v4 } from 'uuid';
 
-export type ArtifactKind = "code";
+export type ArtifactKind = 'code';
 
 export interface SaveDocumentProps {
   id: string;
@@ -63,20 +63,20 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
         });
       }
 
-      if (config.kind === "code") {
+      if (config.kind === 'code') {
         const cadQueryResponse = await executeCadQuery(draftContent);
-        const stlBuffer = Buffer.from(cadQueryResponse.body, "base64");
+        const stlBuffer = Buffer.from(cadQueryResponse.body, 'base64');
         const stlBlob = await put(`${args.id}.stl`, stlBuffer, {
-          access: "public",
-          contentType: "application/sla",
+          access: 'public',
+          contentType: 'application/sla',
         });
 
         await createAsset({
           id: v4(),
           documentId: args.id,
-          format: "stl",
+          format: 'stl',
           fileUrl: stlBlob.url,
-          status: "completed",
+          status: 'completed',
         });
       }
 
@@ -112,4 +112,4 @@ export const documentHandlersByArtifactKind: Array<DocumentHandler> = [
   codeDocumentHandler,
 ];
 
-export const artifactKinds = ["code"] as const;
+export const artifactKinds = ['code'] as const;

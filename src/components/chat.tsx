@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { DefaultChatTransport } from "ai";
-import { useChat } from "@ai-sdk/react";
-import { createContext, useState, useContext } from "react";
-import { ChatSDKError } from "~/lib/errors";
-import type { ChatMessage } from "~/lib/types";
-import { useDataStream } from "~/components/data-stream-provider";
-import { v4 } from "uuid";
-import { useAutoResume } from "~/hooks/use-auto-resume";
-import { toast } from "sonner";
-import type { Asset } from "~/server/db/schema";
-import Model from "./model";
-import { Button } from "~/components/ui/button";
-import { Box, Code, Footprints, MicIcon } from "lucide-react";
+import { DefaultChatTransport } from 'ai';
+import { useChat } from '@ai-sdk/react';
+import { createContext, useState, useContext } from 'react';
+import { ChatSDKError } from '~/lib/errors';
+import type { ChatMessage } from '~/lib/types';
+import { useDataStream } from '~/components/data-stream-provider';
+import { v4 } from 'uuid';
+import { useAutoResume } from '~/hooks/use-auto-resume';
+import { toast } from 'sonner';
+import type { Asset } from '~/server/db/schema';
+import Model from './model';
+import { Button } from '~/components/ui/button';
+import { Box, Code, Footprints, MicIcon } from 'lucide-react';
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "~/components/ui/tooltip";
-import { useCopyToClipboard } from "usehooks-ts";
-import { downloadFileFromUrl } from "~/lib/utils";
+} from '~/components/ui/tooltip';
+import { useCopyToClipboard } from 'usehooks-ts';
+import { downloadFileFromUrl } from '~/lib/utils';
 import {
   PromptInput,
   PromptInputTextarea,
@@ -32,16 +32,16 @@ import {
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
   PromptInputSubmit,
-} from "./ai-elements/prompt-input";
+} from './ai-elements/prompt-input';
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from "./ai-elements/conversation";
-import { MessageContent, Message, MessageAvatar } from "./ai-elements/message";
-import { DocumentToolResult } from "./document";
-import { Suggestion, Suggestions } from "./ai-elements/suggestion";
-import { Separator } from "./ui/separator";
+} from './ai-elements/conversation';
+import { MessageContent, Message, MessageAvatar } from './ai-elements/message';
+import { DocumentToolResult } from './document';
+import { Suggestion, Suggestions } from './ai-elements/suggestion';
+import { Separator } from './ui/separator';
 
 // Create context for asset selection
 const AssetSelectionContext = createContext<{
@@ -54,22 +54,22 @@ export const useAssetSelection = () => {
   const context = useContext(AssetSelectionContext);
   if (!context) {
     throw new Error(
-      "useAssetSelection must be used within AssetSelectionProvider",
+      'useAssetSelection must be used within AssetSelectionProvider',
     );
   }
   return context;
 };
 
 const models = [
-  { id: "gpt-4o", name: "GPT-4o" },
-  { id: "claude-opus-4-20250514", name: "Claude 4 Opus" },
+  { id: 'gpt-4o', name: 'GPT-4o' },
+  { id: 'claude-opus-4-20250514', name: 'Claude 4 Opus' },
 ];
 
 const suggestions = [
-  "Create a lamp that has a base and a shade",
-  "Design a comfortable chair with armrests and cushions",
-  "Create a decorative vase with intricate patterns and textures",
-  "Build a simple house with walls, roof, windows, and a door",
+  'Create a lamp that has a base and a shade',
+  'Design a comfortable chair with armrests and cushions',
+  'Create a decorative vase with intricate patterns and textures',
+  'Build a simple house with walls, roof, windows, and a door',
 ];
 
 export function Chat({
@@ -87,7 +87,7 @@ export function Chat({
 }) {
   const { setDataStream } = useDataStream();
 
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState<string>('');
   const [model, setModel] = useState<string>(models[0]!.id);
   const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
     initialAsset,
@@ -108,7 +108,7 @@ export function Chat({
     experimental_throttle: 100,
     generateId: v4,
     transport: new DefaultChatTransport({
-      api: "/api/chat",
+      api: '/api/chat',
       prepareSendMessagesRequest({ messages, id, body }) {
         return {
           body: {
@@ -119,10 +119,10 @@ export function Chat({
         };
       },
     }),
-    onData: (dataPart) => {
-      setDataStream((ds) => (ds ? [...ds, dataPart] : []));
+    onData: dataPart => {
+      setDataStream(ds => (ds ? [...ds, dataPart] : []));
     },
-    onError: (error) => {
+    onError: error => {
       if (error instanceof ChatSDKError) {
         toast.error(error.message);
       }
@@ -132,8 +132,8 @@ export function Chat({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     void sendMessage({ text: text });
-    setText("");
-    window.history.replaceState({}, "", `/chat/${id}`);
+    setText('');
+    window.history.replaceState({}, '', `/chat/${id}`);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -151,12 +151,12 @@ export function Chat({
     if (code) {
       try {
         await copy(code);
-        toast.success("Code copied to clipboard");
+        toast.success('Code copied to clipboard');
       } catch (error) {
         const errorMessage =
-          error instanceof Error ? error.message : "Failed to copy code";
-        console.error("Failed to copy code:", errorMessage);
-        toast.error("Failed to copy code to clipboard");
+          error instanceof Error ? error.message : 'Failed to copy code';
+        console.error('Failed to copy code:', errorMessage);
+        toast.error('Failed to copy code to clipboard');
       }
     }
   };
@@ -185,7 +185,7 @@ export function Chat({
 
   const downloadSTP = async () => {
     // TODO: Implement STP download when STP files are available
-    toast.info("STP download not yet implemented");
+    toast.info('STP download not yet implemented');
   };
 
   return (
@@ -193,8 +193,8 @@ export function Chat({
       <div
         className={
           selectedAsset
-            ? "grid h-[calc(100vh-4rem)] grid-cols-4"
-            : "flex h-[calc(100vh-4rem)] justify-center"
+            ? 'grid h-[calc(100vh-4rem)] grid-cols-4'
+            : 'flex h-[calc(100vh-4rem)] justify-center'
         }
       >
         {selectedAsset && (
@@ -250,23 +250,23 @@ export function Chat({
           </div>
         )}
         <div
-          className={`bg-background flex h-[calc(100vh-4rem)] max-w-3xl min-w-0 flex-col ${selectedAsset ? "col-span-1" : ""}`}
+          className={`bg-background flex h-[calc(100vh-4rem)] max-w-3xl min-w-0 flex-col ${selectedAsset ? 'col-span-1' : ''}`}
         >
           <Conversation>
             <ConversationContent>
-              {messages.map((message) => (
+              {messages.map(message => (
                 <Message from={message.role} key={message.id}>
                   <MessageContent>
-                    {message.parts.map((part) => {
+                    {message.parts.map(part => {
                       switch (part.type) {
-                        case "text":
+                        case 'text':
                           return <p key={part.text}>{part.text}</p>;
-                        case "tool-createDocument":
-                          if (part.state === "input-available") {
+                        case 'tool-createDocument':
+                          if (part.state === 'input-available') {
                             return (
                               <p key={part.toolCallId}>Generating asset...</p>
                             );
-                          } else if (part.state === "output-available") {
+                          } else if (part.state === 'output-available') {
                             return (
                               <DocumentToolResult
                                 key={part.toolCallId}
@@ -282,9 +282,9 @@ export function Chat({
                   </MessageContent>
                   <MessageAvatar
                     src={
-                      message.role === "user"
-                        ? "https://github.com/shadcn.png"
-                        : ""
+                      message.role === 'user'
+                        ? 'https://github.com/shadcn.png'
+                        : ''
                     }
                     name="AI"
                   />
@@ -297,7 +297,7 @@ export function Chat({
           <div className="p-2">
             {!selectedAsset && (
               <Suggestions className="mb-2">
-                {suggestions.map((suggestion) => (
+                {suggestions.map(suggestion => (
                   <Suggestion
                     key={suggestion}
                     onClick={handleSuggestionClick}
@@ -309,7 +309,7 @@ export function Chat({
 
             <PromptInput onSubmit={handleSubmit} className="max-w-3xl">
               <PromptInputTextarea
-                onChange={(e) => setText(e.target.value)}
+                onChange={e => setText(e.target.value)}
                 value={text}
               />
               <Separator />
@@ -320,7 +320,7 @@ export function Chat({
                   </PromptInputButton>
 
                   <PromptInputModelSelect
-                    onValueChange={(value) => {
+                    onValueChange={value => {
                       setModel(value);
                     }}
                     value={model}
@@ -329,7 +329,7 @@ export function Chat({
                       <PromptInputModelSelectValue />
                     </PromptInputModelSelectTrigger>
                     <PromptInputModelSelectContent>
-                      {models.map((model) => (
+                      {models.map(model => (
                         <PromptInputModelSelectItem
                           key={model.id}
                           value={model.id}

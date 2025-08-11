@@ -1,31 +1,31 @@
-import { groq } from "@ai-sdk/groq";
+import { groq } from '@ai-sdk/groq';
 import {
   convertToModelMessages,
   createUIMessageStream,
   JsonToSseTransformStream,
   streamText,
-} from "ai";
-import { after } from "next/server";
+} from 'ai';
+import { after } from 'next/server';
 import {
   createResumableStreamContext,
   type ResumableStreamContext,
-} from "resumable-stream";
-import { postRequestBodySchema, type PostRequestBody } from "./schema";
-import { ChatSDKError } from "~/lib/errors";
-import type { ChatMessage } from "~/lib/types";
-import { auth } from "~/lib/auth";
+} from 'resumable-stream';
+import { postRequestBodySchema, type PostRequestBody } from './schema';
+import { ChatSDKError } from '~/lib/errors';
+import type { ChatMessage } from '~/lib/types';
+import { auth } from '~/lib/auth';
 import {
   createMessages,
   createStream,
   createChat,
   getChatById,
   getMessagesByChatId,
-} from "~/server/db/queries";
-import { v4 } from "uuid";
-import { convertToUIMessages } from "../../../../lib/utils";
-import { createDocument } from "../../../../lib/ai/tools/create-document";
-import { updateDocument } from "../../../../lib/ai/tools/update-document";
-import { generateTitleFromUserMessage } from "../../actions";
+} from '~/server/db/queries';
+import { v4 } from 'uuid';
+import { convertToUIMessages } from '../../../../lib/utils';
+import { createDocument } from '../../../../lib/ai/tools/create-document';
+import { updateDocument } from '../../../../lib/ai/tools/update-document';
+import { generateTitleFromUserMessage } from '../../actions';
 
 export const maxDuration = 60;
 
@@ -38,9 +38,9 @@ export function getStreamContext() {
         waitUntil: after,
       });
     } catch (error: unknown) {
-      if (error instanceof Error && error.message.includes("REDIS_URL")) {
+      if (error instanceof Error && error.message.includes('REDIS_URL')) {
         console.log(
-          " > Resumable streams are disabled due to missing REDIS_URL",
+          ' > Resumable streams are disabled due to missing REDIS_URL',
         );
       } else {
         console.error(error);
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
   try {
     requestBody = postRequestBodySchema.parse(await request.json());
   } catch {
-    return new ChatSDKError("bad_request:api").toResponse();
+    return new ChatSDKError('bad_request:api').toResponse();
   }
 
   try {
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     });
 
     if (!session?.user) {
-      return new ChatSDKError("unauthorized:chat").toResponse();
+      return new ChatSDKError('unauthorized:chat').toResponse();
     }
 
     const chat = await getChatById(id);
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
       });
     } else {
       if (chat.userId !== session.user.id) {
-        return new ChatSDKError("forbidden:chat").toResponse();
+        return new ChatSDKError('forbidden:chat').toResponse();
       }
     }
 
@@ -101,7 +101,7 @@ export async function POST(request: Request) {
           id: userMessage.id,
           chatId: id,
           parts: userMessage.parts,
-          role: "user",
+          role: 'user',
           createdAt: new Date(),
         },
       ],
@@ -117,9 +117,9 @@ export async function POST(request: Request) {
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
-          model: groq("meta-llama/llama-4-maverick-17b-128e-instruct"),
+          model: groq('meta-llama/llama-4-maverick-17b-128e-instruct'),
           messages: convertToModelMessages(uiMessages),
-          experimental_activeTools: ["createDocument"],
+          experimental_activeTools: ['createDocument'],
           tools: {
             createDocument: createDocument({ session, dataStream }),
             updateDocument: updateDocument({ session, dataStream }),
@@ -137,7 +137,7 @@ export async function POST(request: Request) {
       generateId: v4,
       onFinish: async ({ messages }) => {
         await createMessages({
-          messages: messages.map((message) => ({
+          messages: messages.map(message => ({
             id: message.id,
             role: message.role,
             parts: message.parts,
@@ -147,7 +147,7 @@ export async function POST(request: Request) {
         });
       },
       onError: () => {
-        return "Oops, an error occurred!";
+        return 'Oops, an error occurred!';
       },
     });
 

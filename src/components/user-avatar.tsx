@@ -1,13 +1,13 @@
-import { authClient } from "~/lib/auth-client";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import React from "react";
+import { authClient } from '~/lib/auth-client';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import React from 'react';
 import {
   DropdownMenuContent,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuItem,
-} from "~/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+} from '~/components/ui/dropdown-menu';
+import { useRouter } from 'next/navigation';
 
 export function UserAvatar() {
   const { data: session } = authClient.useSession();
@@ -17,7 +17,7 @@ export function UserAvatar() {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/sign-in");
+          router.push('/sign-in');
         },
       },
     });
@@ -28,13 +28,13 @@ export function UserAvatar() {
       <DropdownMenuTrigger asChild>
         <Avatar className="hover:cursor-pointer hover:opacity-80">
           <AvatarImage
-            src={session?.user.image ?? "https://github.com/shadcn.png"}
-            alt={session?.user.name ?? "User avatar"}
+            src={session?.user.image ?? 'https://github.com/shadcn.png'}
+            alt={session?.user.name ?? 'User avatar'}
           />
           <AvatarFallback>
             {session?.user.name?.charAt(0).toUpperCase() ??
               session?.user.email?.charAt(0).toUpperCase() ??
-              "U"}
+              'U'}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

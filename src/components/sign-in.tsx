@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { toast } from "sonner";
-import { Button } from "~/components/ui/button";
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { authClient } from "~/lib/auth-client";
-import { useRouter } from "next/navigation";
+} from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { authClient } from '~/lib/auth-client';
+import { useRouter } from 'next/navigation';
 
 export default function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function SignIn() {
     await authClient.signIn.email({
       email,
       password,
-      callbackURL: "/",
+      callbackURL: '/',
       fetchOptions: {
         onResponse: () => {
           setIsLoading(false);
@@ -34,11 +34,11 @@ export default function SignIn() {
         onRequest: () => {
           setIsLoading(true);
         },
-        onError: (ctx) => {
+        onError: ctx => {
           toast.error(ctx.error.message);
         },
         onSuccess: async () => {
-          router.push("/");
+          router.push('/');
         },
       },
     });
@@ -60,7 +60,7 @@ export default function SignIn() {
             type="email"
             placeholder="Enter your email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             required
           />
         </div>
@@ -71,7 +71,7 @@ export default function SignIn() {
             type="password"
             placeholder="Enter your password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             required
           />
         </div>
@@ -81,7 +81,7 @@ export default function SignIn() {
           disabled={isLoading}
           onClick={signIn}
         >
-          {isLoading ? "Signing in..." : "Sign In"}
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </Button>
       </CardContent>
     </Card>

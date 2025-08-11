@@ -1,11 +1,11 @@
-import { Chat } from "../../../../components/chat";
-import { DataStreamHandler } from "../../../../components/data-stream-handler";
-import { convertToUIMessages } from "../../../../lib/utils";
-import { getChat } from "../../actions";
-import { auth } from "../../../../lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { getDocumentById } from "../../../../server/db/queries";
+import { Chat } from '../../../../components/chat';
+import { DataStreamHandler } from '../../../../components/data-stream-handler';
+import { convertToUIMessages } from '../../../../lib/utils';
+import { getChat } from '../../actions';
+import { auth } from '../../../../lib/auth';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { getDocumentById } from '../../../../server/db/queries';
 
 interface ChatPageProps {
   params: Promise<{ id: string }>;
@@ -19,7 +19,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
   });
 
   if (!session) {
-    redirect("/login");
+    redirect('/login');
   }
 
   const chat = await getChat(id);
@@ -30,8 +30,8 @@ export default async function ChatPage({ params }: ChatPageProps) {
 
   for (const message of uiMessages) {
     for (const part of message?.parts ?? []) {
-      if (part.type === "tool-createDocument") {
-        if (part.state === "output-available") {
+      if (part.type === 'tool-createDocument') {
+        if (part.state === 'output-available') {
           latestDocumentId = part.output.id;
         }
       }
@@ -42,9 +42,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
     ? await getDocumentById(latestDocumentId)
     : undefined;
 
-  const stlAsset = latestDocument?.assets.find(
-    (asset) => asset.format === "stl",
-  );
+  const stlAsset = latestDocument?.assets.find(asset => asset.format === 'stl');
 
   const code = latestDocument?.content ?? undefined;
 

@@ -1,9 +1,9 @@
-import { auth } from "~/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { DataStreamHandler } from "../../../components/data-stream-handler";
-import { Chat } from "../../../components/chat";
-import { v4 } from "uuid";
+import { auth } from '~/lib/auth';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { DataStreamHandler } from '../../../components/data-stream-handler';
+import { Chat } from '../../../components/chat';
+import { v4 } from 'uuid';
 
 export default async function ChatPage() {
   const session = await auth.api.getSession({
@@ -11,7 +11,7 @@ export default async function ChatPage() {
   });
 
   if (!session) {
-    redirect("/login");
+    redirect('/login');
   }
 
   const id = v4();

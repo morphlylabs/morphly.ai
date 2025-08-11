@@ -1,6 +1,6 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import SignIn from "../../../components/sign-in";
-import SignUp from "../../../components/sign-up";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import SignIn from '../../../components/sign-in';
+import SignUp from '../../../components/sign-up';
 
 export default function SignInPage() {
   return (

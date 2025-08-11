@@ -1,4 +1,4 @@
-import type { ArtifactKind } from "~/lib/artifacts/server";
+import type { ArtifactKind } from '~/lib/artifacts/server';
 
 export const codePrompt = `
 CORE IDENTITY AND ROLE:
@@ -47,9 +47,9 @@ export const updateDocumentPrompt = (
   type: ArtifactKind,
 ) => {
   switch (type) {
-    case "code":
+    case 'code':
       return `Improve the following code snippet based on the given prompt. \n\n ${currentContent}`;
     default:
-      return "";
+      return '';
   }
 };

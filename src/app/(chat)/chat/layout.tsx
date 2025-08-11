@@ -1,4 +1,4 @@
-import { DataStreamProvider } from "~/components/data-stream-provider";
+import { DataStreamProvider } from '~/components/data-stream-provider';
 
 export const experimental_ppr = true;
 

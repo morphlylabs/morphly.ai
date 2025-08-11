@@ -1,17 +1,17 @@
-import type { UIMessage, UIMessagePart } from "ai";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import type { ChatMessage, ChatTools, CustomUIDataTypes } from "./types";
-import type { Message } from "~/server/db/schema";
-import { formatISO } from "date-fns";
-import { ChatSDKError } from "./errors";
+import type { UIMessage, UIMessagePart } from 'ai';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import type { ChatMessage, ChatTools, CustomUIDataTypes } from './types';
+import type { Message } from '~/server/db/schema';
+import { formatISO } from 'date-fns';
+import { ChatSDKError } from './errors';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function convertToUIMessages(messages: Message[]): ChatMessage[] {
-  return messages.map((message) => ({
+  return messages.map(message => ({
     id: message.id,
     role: message.role,
     parts: message.parts as UIMessagePart<CustomUIDataTypes, ChatTools>[],
@@ -23,16 +23,16 @@ export function convertToUIMessages(messages: Message[]): ChatMessage[] {
 
 export function getTextFromMessage(message: ChatMessage): string {
   return message.parts
-    .filter((part) => part.type === "text")
-    .map((part) => part.text)
-    .join("");
+    .filter(part => part.type === 'text')
+    .map(part => part.text)
+    .join('');
 }
 
 export function getTextFromUIMessage(message: UIMessage): string {
   return message.parts
-    .filter((part) => part.type === "text")
-    .map((part) => part.text)
-    .join("");
+    .filter(part => part.type === 'text')
+    .map(part => part.text)
+    .join('');
 }
 
 export const fetcher = async (url: string) => {
@@ -71,7 +71,7 @@ export const downloadFileFromUrl = async (
   const url = window.URL.createObjectURL(blob);
 
   // Create a temporary anchor element and trigger download
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);

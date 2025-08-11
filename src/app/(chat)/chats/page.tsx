@@ -1,16 +1,16 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { auth } from "~/lib/auth";
-import { getChatsByUserId } from "~/server/db/queries";
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { auth } from '~/lib/auth';
+import { getChatsByUserId } from '~/server/db/queries';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
+} from '~/components/ui/card';
+import { formatDistanceToNow } from 'date-fns';
 
 export default async function ChatsPage() {
   const session = await auth.api.getSession({
@@ -18,7 +18,7 @@ export default async function ChatsPage() {
   });
 
   if (!session?.user) {
-    redirect("/login");
+    redirect('/login');
   }
 
   const chats = await getChatsByUserId(session.user.id);
@@ -49,7 +49,7 @@ export default async function ChatsPage() {
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {chats.map((chat) => (
+          {chats.map(chat => (
             <Link key={chat.id} href={`/chat/${chat.id}`}>
               <Card className="h-full cursor-pointer transition-shadow hover:shadow-md">
                 <CardHeader>
@@ -57,7 +57,7 @@ export default async function ChatsPage() {
                     {chat.title}
                   </CardTitle>
                   <CardDescription>
-                    Created{" "}
+                    Created{' '}
                     {formatDistanceToNow(new Date(chat.createdAt), {
                       addSuffix: true,
                     })}

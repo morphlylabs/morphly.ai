@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs';
+import { z } from 'zod';
 
 export const env = createEnv({
   /**
@@ -14,8 +14,8 @@ export const env = createEnv({
     GROQ_API_KEY: z.string(),
     BLOB_READ_WRITE_TOKEN: z.string(),
     NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+      .enum(['development', 'test', 'production'])
+      .default('development'),
     AWS_REGION: z.string(),
     AWS_ACCESS_KEY_ID: z.string(),
     AWS_SECRET_ACCESS_KEY: z.string(),

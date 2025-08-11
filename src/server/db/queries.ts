@@ -1,9 +1,9 @@
-import "server-only";
+import 'server-only';
 
-import { db } from "./index";
-import { chat, document, message, stream, asset, type Message } from "./schema";
-import type { ArtifactKind } from "~/lib/artifacts/server";
-import { ChatSDKError } from "~/lib/errors";
+import { db } from './index';
+import { chat, document, message, stream, asset, type Message } from './schema';
+import type { ArtifactKind } from '~/lib/artifacts/server';
+import { ChatSDKError } from '~/lib/errors';
 
 export const getChatById = async (id: string) => {
   return await db.query.chat.findFirst({
@@ -85,7 +85,7 @@ export const createDocument = async ({
       })
       .returning();
   } catch {
-    throw new ChatSDKError("bad_request:database", "Failed to save document");
+    throw new ChatSDKError('bad_request:database', 'Failed to save document');
   }
 };
 
@@ -115,13 +115,13 @@ export const createAsset = async ({
   documentId,
   format,
   fileUrl,
-  status = "completed",
+  status = 'completed',
 }: {
   id: string;
   documentId: string;
-  format: "stl" | "stp";
+  format: 'stl' | 'stp';
   fileUrl: string;
-  status?: "pending" | "processing" | "completed" | "failed";
+  status?: 'pending' | 'processing' | 'completed' | 'failed';
 }) => {
   try {
     return await db
@@ -136,6 +136,6 @@ export const createAsset = async ({
       })
       .returning();
   } catch {
-    throw new ChatSDKError("bad_request:database", "Failed to save asset");
+    throw new ChatSDKError('bad_request:database', 'Failed to save asset');
   }
 };

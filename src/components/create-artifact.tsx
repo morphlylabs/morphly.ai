@@ -1,8 +1,8 @@
-import type { UseChatHelpers } from "@ai-sdk/react";
-import type { ComponentType, Dispatch, ReactNode, SetStateAction } from "react";
-import type { ChatMessage, CustomUIDataTypes } from "~/lib/types";
-import type { DataUIPart } from "ai";
-import type { ArtifactKind } from "~/lib/artifacts/server";
+import type { UseChatHelpers } from '@ai-sdk/react';
+import type { ComponentType, Dispatch, ReactNode, SetStateAction } from 'react';
+import type { ChatMessage, CustomUIDataTypes } from '~/lib/types';
+import type { DataUIPart } from 'ai';
+import type { ArtifactKind } from '~/lib/artifacts/server';
 
 export interface UIArtifact {
   title: string;
@@ -10,7 +10,7 @@ export interface UIArtifact {
   kind: ArtifactKind;
   content: string;
   isVisible: boolean;
-  status: "streaming" | "idle";
+  status: 'streaming' | 'idle';
   boundingBox: {
     top: number;
     left: number;
@@ -21,10 +21,10 @@ export interface UIArtifact {
 
 export type ArtifactActionContext<M = unknown> = {
   content: string;
-  handleVersionChange: (type: "next" | "prev" | "toggle" | "latest") => void;
+  handleVersionChange: (type: 'next' | 'prev' | 'toggle' | 'latest') => void;
   currentVersionIndex: number;
   isCurrentVersion: boolean;
-  mode: "edit" | "diff";
+  mode: 'edit' | 'diff';
   metadata: M;
   setMetadata: Dispatch<SetStateAction<M>>;
 };
@@ -38,7 +38,7 @@ type ArtifactAction<M = unknown> = {
 };
 
 export type ArtifactToolbarContext = {
-  sendMessage: UseChatHelpers<ChatMessage>["sendMessage"];
+  sendMessage: UseChatHelpers<ChatMessage>['sendMessage'];
 };
 
 export type ArtifactToolbarItem = {
@@ -50,10 +50,10 @@ export type ArtifactToolbarItem = {
 interface ArtifactContent<M = unknown> {
   title: string;
   content: string;
-  mode: "edit" | "diff";
+  mode: 'edit' | 'diff';
   isCurrentVersion: boolean;
   currentVersionIndex: number;
-  status: "streaming" | "idle";
+  status: 'streaming' | 'idle';
   onSaveContent: (updatedContent: string, debounce: boolean) => void;
   isInline: boolean;
   getDocumentContentById: (index: number) => string;

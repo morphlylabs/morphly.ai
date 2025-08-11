@@ -1,12 +1,12 @@
-import { getLambdaClient } from "./lambda-client";
-import { InvokeCommand } from "@aws-sdk/client-lambda";
-import { z } from "zod";
-import { env } from "~/env";
+import { getLambdaClient } from './lambda-client';
+import { InvokeCommand } from '@aws-sdk/client-lambda';
+import { z } from 'zod';
+import { env } from '~/env';
 
 const cadQueryResponseSchema = z.object({
   statusCode: z.number(),
   headers: z.record(z.string(), z.string()),
-  body: z.string().min(1, "STL data cannot be empty"),
+  body: z.string().min(1, 'STL data cannot be empty'),
   isBase64Encoded: z.boolean(),
 });
 
@@ -24,7 +24,7 @@ export async function executeCadQuery(code: string): Promise<CadQueryResponse> {
     const response = await client.send(command);
 
     if (!response.Payload) {
-      throw new Error("Lambda function returned no payload");
+      throw new Error('Lambda function returned no payload');
     }
 
     const payloadString = new TextDecoder().decode(response.Payload);

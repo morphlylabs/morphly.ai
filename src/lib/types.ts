@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import type { InferUITool, UIMessage } from "ai";
-import type { createDocument } from "./ai/tools/create-document";
-import type { updateDocument } from "./ai/tools/update-document";
-import type { ArtifactKind } from "~/lib/artifacts/server";
+import type { InferUITool, UIMessage } from 'ai';
+import type { createDocument } from './ai/tools/create-document';
+import type { updateDocument } from './ai/tools/update-document';
+import type { ArtifactKind } from '~/lib/artifacts/server';
 
-export type DataPart = { type: "append-message"; message: string };
+export type DataPart = { type: 'append-message'; message: string };
 
 export const messageMetadataSchema = z.object({
   createdAt: z.string(),
