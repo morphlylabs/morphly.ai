@@ -2,7 +2,7 @@ import type { UseChatHelpers } from "@ai-sdk/react";
 import type { ComponentType, Dispatch, ReactNode, SetStateAction } from "react";
 import type { ChatMessage, CustomUIDataTypes } from "~/lib/types";
 import type { DataUIPart } from "ai";
-import type { ArtifactKind } from "../lib/artifacts/server";
+import type { ArtifactKind } from "~/lib/artifacts/server";
 
 export interface UIArtifact {
   title: string;
