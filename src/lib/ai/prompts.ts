@@ -1,4 +1,4 @@
-import type { ArtifactKind } from "../../components/artifact";
+import type { ArtifactKind } from "../artifacts/server";
 
 export const codePrompt = `
 CORE IDENTITY AND ROLE:

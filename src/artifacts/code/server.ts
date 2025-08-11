@@ -3,10 +3,14 @@ import { streamObject } from "ai";
 import { codePrompt, updateDocumentPrompt } from "~/lib/ai/prompts";
 import { groq } from "@ai-sdk/groq";
 import { createDocumentHandler } from "~/lib/artifacts/server";
+import { createAsset } from "../../server/db/queries";
+import { executeCadQuery } from "../../server/aws/lambda";
+import { v4 } from "uuid";
+import { put } from "@vercel/blob";
 
 export const codeDocumentHandler = createDocumentHandler<"code">({
   kind: "code",
-  onCreateDocument: async ({ title, dataStream }) => {
+  onCreateDocument: async ({ title, dataStream, id: documentId }) => {
     let draftContent = "";
 
     const { fullStream } = streamObject({
@@ -36,6 +40,22 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
         }
       }
     }
+
+    const cadQueryResponse = await executeCadQuery(draftContent);
+    const stlBuffer = Buffer.from(cadQueryResponse.body, "base64");
+    const stlBlob = await put(`${title}.stl`, stlBuffer, {
+      access: "public",
+      contentType: "application/sla",
+      addRandomSuffix: true,
+    });
+
+    await createAsset({
+      id: v4(),
+      documentId: documentId,
+      format: "stl",
+      fileUrl: stlBlob.url,
+      status: "completed",
+    });
 
     return draftContent;
   },

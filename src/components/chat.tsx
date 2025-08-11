@@ -131,14 +131,7 @@ export function Chat({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    void sendMessage(
-      { text: text },
-      {
-        body: {
-          model: model,
-        },
-      },
-    );
+    void sendMessage({ text: text });
     setText("");
     window.history.replaceState({}, "", `/chat/${id}`);
   };
