@@ -39,9 +39,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const { searchParams } = new URL(request.url);
-  const id = searchParams.get('id');
+  const chatId = searchParams.get('chatId');
 
-  if (!id) {
+  if (!chatId) {
     return new ChatSDKError(
       'bad_request:api',
       'Parameter id is required.',
@@ -60,15 +60,8 @@ export async function POST(request: Request) {
     await request.json(),
   );
 
-  const documents = await getDocumentsById(id);
-
-  if (documents[0] && documents[0].userId !== session.user.id) {
-    return new ChatSDKError('forbidden:document').toResponse();
-  }
-
   const document = await createDocument({
-    id,
-    chatId: id,
+    chatId,
     content,
     title,
     kind,

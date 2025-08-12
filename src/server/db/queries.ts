@@ -5,6 +5,7 @@ import { chat, document, message, stream, type Message } from './schema';
 import type { ArtifactKind } from '~/lib/artifacts/server';
 import { ChatSDKError } from '~/lib/errors';
 import { eq } from 'drizzle-orm';
+import { v4 } from 'uuid';
 
 export const getChatById = async (id: string) => {
   return await db.query.chat.findFirst({
@@ -29,12 +30,12 @@ export const getChatsByUserId = async (userId: string) => {
 };
 
 export const createChat = async ({
-  id,
+  id = v4(),
   createdAt = new Date(),
   userId,
   title,
 }: {
-  id: string;
+  id?: string;
   createdAt?: Date;
   userId: string;
   title: string;
@@ -64,14 +65,14 @@ export const createStream = async ({
 };
 
 export const createDocument = async ({
-  id,
+  id = v4(),
   chatId,
   title,
   kind,
   content,
   userId,
 }: {
-  id: string;
+  id?: string;
   chatId: string;
   title: string;
   kind: ArtifactKind;
