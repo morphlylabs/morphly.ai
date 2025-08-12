@@ -2,14 +2,13 @@
 
 import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
-import { createContext, useState, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { ChatSDKError } from '~/lib/errors';
 import type { ChatMessage } from '~/lib/types';
 import { useDataStream } from '~/components/data-stream-provider';
 import { v4 } from 'uuid';
 import { useAutoResume } from '~/hooks/use-auto-resume';
 import { toast } from 'sonner';
-import type { Asset } from '~/server/db/schema';
 import Model from './model';
 import { Button } from '~/components/ui/button';
 import { Box, Code, Footprints, MicIcon } from 'lucide-react';
@@ -41,24 +40,9 @@ import {
 import { MessageContent, Message, MessageAvatar } from './ai-elements/message';
 import { DocumentToolResult } from './document';
 import { Suggestion, Suggestions } from './ai-elements/suggestion';
-import { Separator } from './ui/separator';
-
-// Create context for asset selection
-const AssetSelectionContext = createContext<{
-  setSelectedAsset: (asset: Asset | undefined) => void;
-  selectedAsset: Asset | undefined;
-} | null>(null);
-
-// Hook to use the asset selection context
-export const useAssetSelection = () => {
-  const context = useContext(AssetSelectionContext);
-  if (!context) {
-    throw new Error(
-      'useAssetSelection must be used within AssetSelectionProvider',
-    );
-  }
-  return context;
-};
+import { Separator } from '~/components/ui/separator';
+import { useChatStore, useSelectedDocument } from '~/stores/chat.store';
+import type { Document } from '~/server/db/schema';
 
 const models = [
   { id: 'gpt-4o', name: 'GPT-4o' },
@@ -75,23 +59,26 @@ const suggestions = [
 export function Chat({
   id,
   initialMessages,
-  initialAsset,
-  code,
+  initialDocuments,
   autoResume,
 }: {
   id: string;
   initialMessages: ChatMessage[];
-  initialAsset?: Asset;
-  code?: string;
+  initialDocuments: Document[];
   autoResume: boolean;
 }) {
   const { setDataStream } = useDataStream();
+  const { setChatId, setDocuments } = useChatStore();
+
+  // Set initial documents when component loads
+  useEffect(() => {
+    setChatId(id);
+    setDocuments(initialDocuments ?? []);
+  }, [id, initialDocuments, setChatId, setDocuments]);
 
   const [text, setText] = useState<string>('');
   const [model, setModel] = useState<string>(models[0]!.id);
-  const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
-    initialAsset,
-  );
+  const selectedDocument = useSelectedDocument();
   const [, copy] = useCopyToClipboard();
 
   const {
@@ -138,6 +125,8 @@ export function Chat({
 
   const handleSuggestionClick = (suggestion: string) => {
     void sendMessage({ text: suggestion });
+    setText('');
+    window.history.replaceState({}, '', `/chat/${id}`);
   };
 
   useAutoResume({
@@ -148,9 +137,9 @@ export function Chat({
   });
 
   const copyCode = async () => {
-    if (code) {
+    if (selectedDocument?.content) {
       try {
-        await copy(code);
+        await copy(selectedDocument.content);
         toast.success('Code copied to clipboard');
       } catch (error) {
         const errorMessage =
@@ -162,22 +151,17 @@ export function Chat({
   };
 
   const downloadSTL = async () => {
-    if (selectedAsset?.fileUrl) {
+    if (selectedDocument?.fileUrl) {
       try {
-        const filename = `model.${selectedAsset.format}`;
-        await downloadFileFromUrl(selectedAsset.fileUrl, filename);
-        toast.success(
-          `${selectedAsset.format.toUpperCase()} file downloaded successfully`,
-        );
+        const filename = `model.stl`;
+        await downloadFileFromUrl(selectedDocument.fileUrl, filename);
+        toast.success(`STL file downloaded successfully`);
       } catch (error) {
         const errorMessage =
           error instanceof Error
             ? error.message
-            : `Failed to download ${selectedAsset.format.toUpperCase()} file`;
-        console.error(
-          `Failed to download ${selectedAsset.format.toUpperCase()}:`,
-          errorMessage,
-        );
+            : `Failed to download STL file`;
+        console.error(`Failed to download STL file:`, errorMessage);
         toast.error(errorMessage);
       }
     }
@@ -189,163 +173,161 @@ export function Chat({
   };
 
   return (
-    <AssetSelectionContext.Provider value={{ setSelectedAsset, selectedAsset }}>
-      <div
-        className={
-          selectedAsset
-            ? 'grid h-[calc(100vh-4rem)] grid-cols-4'
-            : 'flex h-[calc(100vh-4rem)] justify-center'
-        }
-      >
-        {selectedAsset && (
-          <div className="bg-accent relative col-span-3 h-full border-r">
-            <Model src={selectedAsset.fileUrl} />
-            <div className="absolute top-2 right-2 z-10 flex gap-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="bg-background"
-                    onClick={copyCode}
-                  >
-                    <Code className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <p>Copy code</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="bg-background"
-                    onClick={downloadSTL}
-                  >
-                    <Box className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <p>Download STL</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="bg-background"
-                    onClick={downloadSTP}
-                  >
-                    <Footprints className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <p>Download STP</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </div>
-        )}
-        <div
-          className={`bg-background flex h-[calc(100vh-4rem)] max-w-3xl min-w-0 flex-col ${selectedAsset ? 'col-span-1' : ''}`}
-        >
-          <Conversation>
-            <ConversationContent>
-              {messages.map(message => (
-                <Message from={message.role} key={message.id}>
-                  <MessageContent>
-                    {message.parts.map(part => {
-                      switch (part.type) {
-                        case 'text':
-                          return <p key={part.text}>{part.text}</p>;
-                        case 'tool-createDocument':
-                          if (part.state === 'input-available') {
-                            return (
-                              <p key={part.toolCallId}>Generating asset...</p>
-                            );
-                          } else if (part.state === 'output-available') {
-                            return (
-                              <DocumentToolResult
-                                key={part.toolCallId}
-                                result={part.output}
-                              />
-                            );
-                          }
-                          return null;
-                        default:
-                          return null;
-                      }
-                    })}
-                  </MessageContent>
-                  <MessageAvatar
-                    src={
-                      message.role === 'user'
-                        ? 'https://github.com/shadcn.png'
-                        : ''
-                    }
-                    name="AI"
-                  />
-                </Message>
-              ))}
-            </ConversationContent>
-            <ConversationScrollButton />
-          </Conversation>
-
-          <div className="p-2">
-            {!selectedAsset && (
-              <Suggestions className="mb-2">
-                {suggestions.map(suggestion => (
-                  <Suggestion
-                    key={suggestion}
-                    onClick={handleSuggestionClick}
-                    suggestion={suggestion}
-                  />
-                ))}
-              </Suggestions>
-            )}
-
-            <PromptInput onSubmit={handleSubmit} className="max-w-3xl">
-              <PromptInputTextarea
-                onChange={e => setText(e.target.value)}
-                value={text}
-              />
-              <Separator />
-              <PromptInputToolbar>
-                <PromptInputTools>
-                  <PromptInputButton>
-                    <MicIcon size={16} />
-                  </PromptInputButton>
-
-                  <PromptInputModelSelect
-                    onValueChange={value => {
-                      setModel(value);
-                    }}
-                    value={model}
-                  >
-                    <PromptInputModelSelectTrigger>
-                      <PromptInputModelSelectValue />
-                    </PromptInputModelSelectTrigger>
-                    <PromptInputModelSelectContent>
-                      {models.map(model => (
-                        <PromptInputModelSelectItem
-                          key={model.id}
-                          value={model.id}
-                        >
-                          {model.name}
-                        </PromptInputModelSelectItem>
-                      ))}
-                    </PromptInputModelSelectContent>
-                  </PromptInputModelSelect>
-                </PromptInputTools>
-                <PromptInputSubmit disabled={!text} status={status} />
-              </PromptInputToolbar>
-            </PromptInput>
+    <div
+      className={
+        selectedDocument
+          ? 'grid h-[calc(100vh-4rem)] grid-cols-4'
+          : 'flex h-[calc(100vh-4rem)] justify-center'
+      }
+    >
+      {selectedDocument?.fileUrl && (
+        <div className="bg-accent relative col-span-3 h-full border-r">
+          <Model src={selectedDocument.fileUrl} />
+          <div className="absolute top-2 right-2 z-10 flex gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="bg-background"
+                  onClick={copyCode}
+                >
+                  <Code className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Copy code</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="bg-background"
+                  onClick={downloadSTL}
+                >
+                  <Box className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Download STL</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="bg-background"
+                  onClick={downloadSTP}
+                >
+                  <Footprints className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Download STP</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
+      )}
+      <div
+        className={`bg-background flex h-[calc(100vh-4rem)] max-w-3xl min-w-0 flex-col ${selectedDocument ? 'col-span-1' : ''}`}
+      >
+        <Conversation>
+          <ConversationContent>
+            {messages.map(message => (
+              <Message from={message.role} key={message.id}>
+                <MessageContent>
+                  {message.parts.map(part => {
+                    switch (part.type) {
+                      case 'text':
+                        return <p key={part.text}>{part.text}</p>;
+                      case 'tool-createDocument':
+                        if (part.state === 'input-available') {
+                          return (
+                            <p key={part.toolCallId}>Generating asset...</p>
+                          );
+                        } else if (part.state === 'output-available') {
+                          return (
+                            <DocumentToolResult
+                              key={part.toolCallId}
+                              result={part.output}
+                            />
+                          );
+                        }
+                        return null;
+                      default:
+                        return null;
+                    }
+                  })}
+                </MessageContent>
+                <MessageAvatar
+                  src={
+                    message.role === 'user'
+                      ? 'https://github.com/shadcn.png'
+                      : ''
+                  }
+                  name="AI"
+                />
+              </Message>
+            ))}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
+
+        <div className="p-2">
+          {!selectedDocument && (
+            <Suggestions className="mb-2">
+              {suggestions.map(suggestion => (
+                <Suggestion
+                  key={suggestion}
+                  onClick={handleSuggestionClick}
+                  suggestion={suggestion}
+                />
+              ))}
+            </Suggestions>
+          )}
+
+          <PromptInput onSubmit={handleSubmit} className="max-w-3xl">
+            <PromptInputTextarea
+              onChange={e => setText(e.target.value)}
+              value={text}
+            />
+            <Separator />
+            <PromptInputToolbar>
+              <PromptInputTools>
+                <PromptInputButton>
+                  <MicIcon size={16} />
+                </PromptInputButton>
+
+                <PromptInputModelSelect
+                  onValueChange={value => {
+                    setModel(value);
+                  }}
+                  value={model}
+                >
+                  <PromptInputModelSelectTrigger>
+                    <PromptInputModelSelectValue />
+                  </PromptInputModelSelectTrigger>
+                  <PromptInputModelSelectContent>
+                    {models.map(model => (
+                      <PromptInputModelSelectItem
+                        key={model.id}
+                        value={model.id}
+                      >
+                        {model.name}
+                      </PromptInputModelSelectItem>
+                    ))}
+                  </PromptInputModelSelectContent>
+                </PromptInputModelSelect>
+              </PromptInputTools>
+              <PromptInputSubmit disabled={!text} status={status} />
+            </PromptInputToolbar>
+          </PromptInput>
+        </div>
       </div>
-    </AssetSelectionContext.Provider>
+    </div>
   );
 }

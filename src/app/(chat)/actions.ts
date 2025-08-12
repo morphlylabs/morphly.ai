@@ -4,8 +4,14 @@ import { generateText, type UIMessage } from 'ai';
 import { auth } from '../../lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getChatById, getAssetsByDocumentId } from '~/server/db/queries';
+import {
+  getChatById,
+  getDocumentById,
+  setDocumentUrl,
+} from '~/server/db/queries';
 import { groq } from '@ai-sdk/groq';
+import { executeCadQuery } from '../../server/aws/lambda';
+import { put } from '@vercel/blob';
 
 export async function getChat(id: string) {
   const session = await auth.api.getSession({
@@ -43,7 +49,22 @@ export async function generateTitleFromUserMessage({
   return title;
 }
 
-export async function findStlAssetByDocumentId(documentId: string) {
-  const assets = await getAssetsByDocumentId(documentId);
-  return assets.find(asset => asset.format === 'stl');
+export async function executeDocumentCodeAndPopulateUrl(documentId: string) {
+  const document = await getDocumentById(documentId);
+  if (!document?.content) throw new Error('Document not found');
+  if (document.fileUrl) return document.fileUrl;
+
+  const cadQueryResponse = await executeCadQuery(document.content);
+  const stlBuffer = Buffer.from(cadQueryResponse.body, 'base64');
+  const stlBlob = await put(`${documentId}.stl`, stlBuffer, {
+    access: 'public',
+    contentType: 'application/sla',
+  });
+
+  await setDocumentUrl({
+    id: documentId,
+    url: stlBlob.url,
+  });
+
+  return stlBlob.url;
 }

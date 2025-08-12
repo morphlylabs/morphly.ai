@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import { useCallback, useMemo } from 'react';
-import type { UIArtifact } from '~/components/create-artifact';
+import type { UIArtifact } from '~/components/data-stream-handler';
 
 export const initialArtifactData: UIArtifact = {
   documentId: 'init',

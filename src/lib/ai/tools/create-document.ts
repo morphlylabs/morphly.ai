@@ -11,12 +11,16 @@ import type { Session } from '~/lib/auth';
 interface CreateDocumentProps {
   session: Session;
   dataStream: UIMessageStreamWriter<ChatMessage>;
+  chatId: string;
 }
 
-export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
+export const createDocument = ({
+  session,
+  dataStream,
+  chatId,
+}: CreateDocumentProps) =>
   tool({
-    description:
-      'Create a document for a writing or content creation activities. This tool will call other functions that will generate the contents of the document based on the title and kind.',
+    description: 'Use this tool to create cadquery code.',
     inputSchema: z.object({
       title: z.string(),
       kind: z.enum(artifactKinds),
@@ -62,6 +66,7 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
         title,
         dataStream,
         session,
+        chatId,
       });
 
       dataStream.write({ type: 'data-finish', data: null, transient: true });

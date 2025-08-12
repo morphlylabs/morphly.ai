@@ -18,7 +18,13 @@ export default async function ChatPage() {
 
   return (
     <div>
-      <Chat key={id} id={id} initialMessages={[]} autoResume={false} />
+      <Chat
+        key={id}
+        id={id}
+        initialMessages={[]}
+        initialDocuments={[]}
+        autoResume={false}
+      />
       <DataStreamHandler />
     </div>
   );

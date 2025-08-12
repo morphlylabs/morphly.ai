@@ -121,7 +121,11 @@ export async function POST(request: Request) {
           messages: convertToModelMessages(uiMessages),
           experimental_activeTools: ['createDocument'],
           tools: {
-            createDocument: createDocument({ session, dataStream }),
+            createDocument: createDocument({
+              session,
+              dataStream,
+              chatId: id,
+            }),
             updateDocument: updateDocument({ session, dataStream }),
           },
         });

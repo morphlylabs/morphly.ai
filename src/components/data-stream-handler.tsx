@@ -3,7 +3,22 @@
 import { useEffect, useRef } from 'react';
 import { initialArtifactData, useArtifact } from '~/hooks/use-artifact';
 import { useDataStream } from './data-stream-provider';
-import type { UIArtifact } from './create-artifact';
+import type { ArtifactKind } from '~/lib/artifacts/server';
+
+export interface UIArtifact {
+  title: string;
+  documentId: string;
+  kind: ArtifactKind;
+  content: string;
+  isVisible: boolean;
+  status: 'streaming' | 'idle';
+  boundingBox: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
+}
 
 export function DataStreamHandler() {
   const { dataStream } = useDataStream();

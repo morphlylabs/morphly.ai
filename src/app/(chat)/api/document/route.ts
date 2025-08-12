@@ -68,6 +68,7 @@ export async function POST(request: Request) {
 
   const document = await createDocument({
     id,
+    chatId: id,
     content,
     title,
     kind,
