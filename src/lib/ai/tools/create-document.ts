@@ -61,7 +61,7 @@ export const createDocument = ({
         throw new Error(`No document handler found for kind: ${kind}`);
       }
 
-      await documentHandler.onCreateDocument({
+      const document = await documentHandler.onCreateDocument({
         id,
         title,
         dataStream,
@@ -69,7 +69,11 @@ export const createDocument = ({
         chatId,
       });
 
-      dataStream.write({ type: 'data-finish', data: null, transient: true });
+      dataStream.write({
+        type: 'data-finish',
+        data: document,
+        transient: true,
+      });
 
       return {
         id,

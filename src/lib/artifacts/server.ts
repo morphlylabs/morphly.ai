@@ -32,7 +32,9 @@ export interface UpdateDocumentCallbackProps {
 
 export interface DocumentHandler<T = ArtifactKind> {
   kind: T;
-  onCreateDocument: (args: CreateDocumentCallbackProps) => Promise<void>;
+  onCreateDocument: (
+    args: CreateDocumentCallbackProps,
+  ) => Promise<Document | undefined>;
   onUpdateDocument: (args: UpdateDocumentCallbackProps) => Promise<void>;
 }
 
@@ -53,7 +55,7 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
       });
 
       if (args.session?.user.id) {
-        await createDocument({
+        const result = await createDocument({
           id: args.id,
           chatId: args.chatId,
           title: args.title,
@@ -61,6 +63,7 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
           kind: config.kind,
           userId: args.session.user.id,
         });
+        return result.at(0);
       }
 
       return;

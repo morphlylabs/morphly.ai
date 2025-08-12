@@ -1,4 +1,8 @@
-import { getDocumentsById, createDocument } from '~/server/db/queries';
+import {
+  getDocumentsById,
+  createDocument,
+  getChatById,
+} from '~/server/db/queries';
 import { ChatSDKError } from '~/lib/errors';
 import { auth } from '../../../../lib/auth';
 import { postRequestBodySchema } from './schema';
@@ -44,7 +48,7 @@ export async function POST(request: Request) {
   if (!chatId) {
     return new ChatSDKError(
       'bad_request:api',
-      'Parameter id is required.',
+      'Parameter chatId is required.',
     ).toResponse();
   }
 
@@ -54,6 +58,16 @@ export async function POST(request: Request) {
 
   if (!session?.user) {
     return new ChatSDKError('not_found:document').toResponse();
+  }
+
+  const chat = await getChatById(chatId);
+
+  if (!chat) {
+    return new ChatSDKError('not_found:chat').toResponse();
+  }
+
+  if (chat.userId !== session.user.id) {
+    return new ChatSDKError('forbidden:chat').toResponse();
   }
 
   const { content, title, kind } = postRequestBodySchema.parse(

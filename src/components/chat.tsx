@@ -5,7 +5,7 @@ import { useChat } from '@ai-sdk/react';
 import { useState, useEffect } from 'react';
 import { ChatSDKError } from '~/lib/errors';
 import type { ChatMessage } from '~/lib/types';
-import { useDataStream } from '~/components/data-stream-provider';
+import { useDataStream } from '~/stores/chat.store';
 import { v4 } from 'uuid';
 import { useAutoResume } from '~/hooks/use-auto-resume';
 import { toast } from 'sonner';
@@ -67,7 +67,7 @@ export function Chat({
   initialDocuments: Document[];
   autoResume: boolean;
 }) {
-  const { setDataStream } = useDataStream();
+  const { processDataStreamUpdate } = useDataStream();
   const { setChatId, setDocuments } = useChatStore();
 
   // Set initial documents when component loads
@@ -81,40 +81,36 @@ export function Chat({
   const selectedDocument = useSelectedDocument();
   const [, copy] = useCopyToClipboard();
 
-  const {
-    messages,
-    setMessages,
-    sendMessage,
-    status,
-    stop,
-    regenerate,
-    resumeStream,
-  } = useChat<ChatMessage>({
-    id,
-    messages: initialMessages,
-    experimental_throttle: 100,
-    generateId: v4,
-    transport: new DefaultChatTransport({
-      api: '/api/chat',
-      prepareSendMessagesRequest({ messages, id, body }) {
-        return {
-          body: {
-            id,
-            message: messages.at(-1),
-            ...body,
-          },
-        };
+  const { messages, setMessages, sendMessage, status, resumeStream } =
+    useChat<ChatMessage>({
+      id,
+      messages: initialMessages,
+      experimental_throttle: 100,
+      generateId: v4,
+      transport: new DefaultChatTransport({
+        api: '/api/chat',
+        prepareSendMessagesRequest({ messages, id, body }) {
+          return {
+            body: {
+              id,
+              message: messages.at(-1),
+              ...body,
+            },
+          };
+        },
+      }),
+      onData: dataPart => {
+        processDataStreamUpdate(dataPart);
       },
-    }),
-    onData: dataPart => {
-      setDataStream(ds => (ds ? [...ds, dataPart] : []));
-    },
-    onError: error => {
-      if (error instanceof ChatSDKError) {
-        toast.error(error.message);
-      }
-    },
-  });
+      onError: error => {
+        if (error instanceof ChatSDKError) {
+          toast.error(error.message);
+        } else {
+          console.error('Chat error:', error);
+          toast.error('An error occurred during chat');
+        }
+      },
+    });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

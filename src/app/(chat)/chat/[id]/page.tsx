@@ -1,5 +1,4 @@
 import { Chat } from '../../../../components/chat';
-import { DataStreamHandler } from '../../../../components/data-stream-handler';
 import { convertToUIMessages } from '../../../../lib/utils';
 import { getChat } from '../../actions';
 import { auth } from '../../../../lib/auth';
@@ -26,14 +25,11 @@ export default async function ChatPage({ params }: ChatPageProps) {
   const uiMessages = convertToUIMessages(chat.messages);
 
   return (
-    <>
-      <Chat
-        id={chat.id}
-        initialMessages={uiMessages}
-        initialDocuments={chat.documents}
-        autoResume={true}
-      />
-      <DataStreamHandler />
-    </>
+    <Chat
+      id={chat.id}
+      initialMessages={uiMessages}
+      initialDocuments={chat.documents}
+      autoResume={true}
+    />
   );
 }
