@@ -52,7 +52,6 @@ interface ChatActions {
   setChatId: (chatId: string) => void;
   setDocuments: (documents: readonly Document[]) => void;
   setDocument: (document: Document) => void;
-  executeDocumentCodeAndPopulateUrl: (documentId: string) => Promise<void>;
   // Data stream actions
   setDataStream: (dataStream: DataUIPart<CustomUIDataTypes>[]) => void;
   addToDataStream: (dataPart: DataUIPart<CustomUIDataTypes>) => void;
@@ -87,21 +86,8 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
         ...get().documents,
         [document.id]: document,
       },
+      selectedDocumentId: document.id,
     });
-  },
-  executeDocumentCodeAndPopulateUrl: async (documentId: string) => {
-    console.log('executeDocumentCodeAndPopulateUrl', documentId);
-    const url = await executeDocumentCodeAndPopulateUrl(documentId);
-    const document = get().documents[documentId];
-    if (document) {
-      set({
-        documents: {
-          ...get().documents,
-          [documentId]: { ...document, fileUrl: url },
-        },
-        selectedDocumentId: documentId,
-      });
-    }
   },
 
   // Data stream actions
@@ -116,7 +102,6 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     if (dataPart.type === 'data-finish') {
       if (dataPart.data) {
         get().setDocument(dataPart.data);
-        void get().executeDocumentCodeAndPopulateUrl(dataPart.data.id);
       }
     }
   },

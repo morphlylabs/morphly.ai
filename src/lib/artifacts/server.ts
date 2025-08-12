@@ -4,6 +4,7 @@ import { createDocument } from '~/server/db/queries';
 import type { UIMessageStreamWriter } from 'ai';
 import type { ChatMessage } from '~/lib/types';
 import type { Session } from '~/lib/auth';
+import { executeDocumentCodeAndPopulateUrl } from '../../app/(chat)/actions';
 
 export type ArtifactKind = 'code';
 
@@ -32,9 +33,7 @@ export interface UpdateDocumentCallbackProps {
 
 export interface DocumentHandler<T = ArtifactKind> {
   kind: T;
-  onCreateDocument: (
-    args: CreateDocumentCallbackProps,
-  ) => Promise<Document | undefined>;
+  onCreateDocument: (args: CreateDocumentCallbackProps) => Promise<Document>;
   onUpdateDocument: (args: UpdateDocumentCallbackProps) => Promise<void>;
 }
 
@@ -55,7 +54,7 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
       });
 
       if (args.session?.user.id) {
-        const result = await createDocument({
+        await createDocument({
           id: args.id,
           chatId: args.chatId,
           title: args.title,
@@ -63,10 +62,9 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
           kind: config.kind,
           userId: args.session.user.id,
         });
-        return result.at(0);
       }
 
-      return;
+      return await executeDocumentCodeAndPopulateUrl(args.id);
     },
     onUpdateDocument: async (args: UpdateDocumentCallbackProps) => {
       const draftContent = await config.onUpdateDocument({

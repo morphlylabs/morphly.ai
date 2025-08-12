@@ -12,6 +12,7 @@ import {
 import { groq } from '@ai-sdk/groq';
 import { executeCadQuery } from '../../server/aws/lambda';
 import { put } from '@vercel/blob';
+import type { Document } from '~/server/db/schema';
 
 export async function getChat(id: string) {
   const session = await auth.api.getSession({
@@ -49,10 +50,12 @@ export async function generateTitleFromUserMessage({
   return title;
 }
 
-export async function executeDocumentCodeAndPopulateUrl(documentId: string) {
+export async function executeDocumentCodeAndPopulateUrl(
+  documentId: string,
+): Promise<Document> {
   const document = await getDocumentById(documentId);
   if (!document?.content) throw new Error('Document not found');
-  if (document.fileUrl) return document.fileUrl;
+  if (document.fileUrl) return document;
 
   const cadQueryResponse = await executeCadQuery(document.content);
   const stlBuffer = Buffer.from(cadQueryResponse.body, 'base64');
@@ -61,10 +64,12 @@ export async function executeDocumentCodeAndPopulateUrl(documentId: string) {
     contentType: 'application/sla',
   });
 
-  await setDocumentUrl({
+  const documents = await setDocumentUrl({
     id: documentId,
     url: stlBlob.url,
   });
 
-  return stlBlob.url;
+  if (!documents[0]) throw new Error('Document not found');
+
+  return documents[0];
 }

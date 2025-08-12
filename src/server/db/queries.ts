@@ -120,5 +120,6 @@ export const setDocumentUrl = async ({
   return await db
     .update(document)
     .set({ fileUrl: url })
-    .where(eq(document.id, id));
+    .where(eq(document.id, id))
+    .returning();
 };
