@@ -90,6 +90,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     });
   },
   executeDocumentCodeAndPopulateUrl: async (documentId: string) => {
+    console.log('executeDocumentCodeAndPopulateUrl', documentId);
     const url = await executeDocumentCodeAndPopulateUrl(documentId);
     const document = get().documents[documentId];
     if (document) {
@@ -115,6 +116,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     if (dataPart.type === 'data-finish') {
       if (dataPart.data) {
         get().setDocument(dataPart.data);
+        void get().executeDocumentCodeAndPopulateUrl(dataPart.data.id);
       }
     }
   },

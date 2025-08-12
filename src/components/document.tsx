@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import type { ArtifactKind } from '~/lib/artifacts/server';
 import { Button } from './ui/button';
 import { CheckIcon } from 'lucide-react';
@@ -9,26 +9,13 @@ interface DocumentToolResultProps {
 }
 
 function PureDocumentToolResult({ result }: DocumentToolResultProps) {
-  const [isGenerating, setIsGenerating] = useState(false);
   const document = useDocumentById(result.id);
-  const {
-    setSelectedDocumentId,
-    selectedDocumentId,
-    executeDocumentCodeAndPopulateUrl,
-  } = useChatStore();
-
-  useEffect(() => {
-    if (!isGenerating && document?.content && !document.fileUrl) {
-      void executeDocumentCodeAndPopulateUrl(document.id);
-    }
-    setIsGenerating(document?.fileUrl === undefined);
-  }, [document, executeDocumentCodeAndPopulateUrl, isGenerating]);
+  const { setSelectedDocumentId, selectedDocumentId } = useChatStore();
 
   return (
     <div>
       <p className="mb-2">New version available: {result.title}</p>
-      {isGenerating && <p>Generating...</p>}
-      {result.kind === 'code' && document?.fileUrl && !isGenerating && (
+      {result.kind === 'code' && document?.fileUrl && (
         <Button
           variant="outline"
           size="sm"
