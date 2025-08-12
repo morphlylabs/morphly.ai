@@ -1,49 +1,29 @@
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import type { ArtifactKind } from '~/lib/artifacts/server';
-import { findStlAssetByDocumentId } from '~/app/(chat)/actions';
 import { Button } from './ui/button';
-import type { Asset } from '../server/db/schema';
-import { useAssetSelection } from './chat';
 import { CheckIcon } from 'lucide-react';
+import { useChatStore, useDocumentById } from '../stores/chat.store';
 
 interface DocumentToolResultProps {
-  result: { id: string; title: string; kind: ArtifactKind };
+  result: { id: string; title: string; kind: ArtifactKind; content: string };
 }
 
 function PureDocumentToolResult({ result }: DocumentToolResultProps) {
-  const [stlAsset, setStlAsset] = useState<Asset | undefined>(undefined);
-  const [loading, setLoading] = useState(false);
-  const { selectedAsset, setSelectedAsset } = useAssetSelection();
-
-  useEffect(() => {
-    if (result.kind === 'code') {
-      setLoading(true);
-      findStlAssetByDocumentId(result.id)
-        .then(setStlAsset)
-        .catch(() => setStlAsset(undefined))
-        .finally(() => setLoading(false));
-    }
-  }, [result.id, result.kind]);
-
-  // Automatically select the latest asset when it becomes available
-  useEffect(() => {
-    if (stlAsset && !loading) {
-      setSelectedAsset(stlAsset);
-    }
-  }, [stlAsset, loading, setSelectedAsset]);
+  const document = useDocumentById(result.id);
+  const { setSelectedDocumentId, selectedDocumentId } = useChatStore();
 
   return (
     <div>
       <p className="mb-2">New version available: {result.title}</p>
-      {result.kind === 'code' && stlAsset && !loading && (
+      {result.kind === 'code' && document?.fileUrl && (
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setSelectedAsset(stlAsset)}
-          disabled={selectedAsset?.id === stlAsset.id}
+          onClick={() => setSelectedDocumentId(document.id)}
+          disabled={selectedDocumentId === document.id}
         >
           Select Version
-          {selectedAsset?.id === stlAsset.id && (
+          {selectedDocumentId === document.id && (
             <CheckIcon className="ml-2 h-4 w-4" />
           )}
         </Button>

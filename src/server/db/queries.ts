@@ -1,9 +1,11 @@
 import 'server-only';
 
 import { db } from './index';
-import { chat, document, message, stream, asset, type Message } from './schema';
+import { chat, document, message, stream, type Message } from './schema';
 import type { ArtifactKind } from '~/lib/artifacts/server';
 import { ChatSDKError } from '~/lib/errors';
+import { eq } from 'drizzle-orm';
+import { v4 } from 'uuid';
 
 export const getChatById = async (id: string) => {
   return await db.query.chat.findFirst({
@@ -13,6 +15,9 @@ export const getChatById = async (id: string) => {
         orderBy: (message, { asc }) => asc(message.createdAt),
       },
       stream: true,
+      documents: {
+        orderBy: (document, { asc }) => asc(document.createdAt),
+      },
     },
   });
 };
@@ -25,12 +30,12 @@ export const getChatsByUserId = async (userId: string) => {
 };
 
 export const createChat = async ({
-  id,
+  id = v4(),
   createdAt = new Date(),
   userId,
   title,
 }: {
-  id: string;
+  id?: string;
   createdAt?: Date;
   userId: string;
   title: string;
@@ -60,13 +65,15 @@ export const createStream = async ({
 };
 
 export const createDocument = async ({
-  id,
+  id = v4(),
+  chatId,
   title,
   kind,
   content,
   userId,
 }: {
-  id: string;
+  id?: string;
+  chatId: string;
   title: string;
   kind: ArtifactKind;
   content: string;
@@ -77,6 +84,7 @@ export const createDocument = async ({
       .insert(document)
       .values({
         id,
+        chatId,
         title,
         kind,
         content,
@@ -92,50 +100,26 @@ export const createDocument = async ({
 export const getDocumentsById = async (id: string) => {
   return await db.query.document.findMany({
     where: (document, { eq }) => eq(document.id, id),
+    orderBy: (document, { asc }) => asc(document.createdAt),
   });
 };
 
 export const getDocumentById = async (id: string) => {
   return await db.query.document.findFirst({
     where: (document, { eq }) => eq(document.id, id),
-    with: {
-      assets: true,
-    },
   });
 };
 
-export const getAssetsByDocumentId = async (id: string) => {
-  return await db.query.asset.findMany({
-    where: (asset, { eq }) => eq(asset.documentId, id),
-  });
-};
-
-export const createAsset = async ({
+export const setDocumentUrl = async ({
   id,
-  documentId,
-  format,
-  fileUrl,
-  status = 'completed',
+  url,
 }: {
   id: string;
-  documentId: string;
-  format: 'stl' | 'stp';
-  fileUrl: string;
-  status?: 'pending' | 'processing' | 'completed' | 'failed';
+  url: string;
 }) => {
-  try {
-    return await db
-      .insert(asset)
-      .values({
-        id,
-        documentId,
-        format,
-        fileUrl,
-        status,
-        createdAt: new Date(),
-      })
-      .returning();
-  } catch {
-    throw new ChatSDKError('bad_request:database', 'Failed to save asset');
-  }
+  return await db
+    .update(document)
+    .set({ fileUrl: url })
+    .where(eq(document.id, id))
+    .returning();
 };

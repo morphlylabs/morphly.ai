@@ -4,6 +4,7 @@ import type { InferUITool, UIMessage } from 'ai';
 import type { createDocument } from './ai/tools/create-document';
 import type { updateDocument } from './ai/tools/update-document';
 import type { ArtifactKind } from '~/lib/artifacts/server';
+import type { Document } from '~/server/db/schema';
 
 export type DataPart = { type: 'append-message'; message: string };
 
@@ -29,7 +30,7 @@ export type CustomUIDataTypes = {
   title: string;
   kind: ArtifactKind;
   clear: null;
-  finish: null;
+  finish: Document | undefined;
 };
 
 export type ChatMessage = UIMessage<

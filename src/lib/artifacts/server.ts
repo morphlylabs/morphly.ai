@@ -1,12 +1,10 @@
 import { codeDocumentHandler } from '~/artifacts/code/server';
 import type { Document } from '~/server/db/schema';
-import { createDocument, createAsset } from '~/server/db/queries';
+import { createDocument } from '~/server/db/queries';
 import type { UIMessageStreamWriter } from 'ai';
 import type { ChatMessage } from '~/lib/types';
 import type { Session } from '~/lib/auth';
-import { executeCadQuery } from '~/server/aws/lambda';
-import { put } from '@vercel/blob';
-import { v4 } from 'uuid';
+import { executeDocumentCodeAndPopulateUrl } from '../../app/(chat)/actions';
 
 export type ArtifactKind = 'code';
 
@@ -20,6 +18,7 @@ export interface SaveDocumentProps {
 
 export interface CreateDocumentCallbackProps {
   id: string;
+  chatId: string;
   title: string;
   dataStream: UIMessageStreamWriter<ChatMessage>;
   session: Session;
@@ -34,7 +33,7 @@ export interface UpdateDocumentCallbackProps {
 
 export interface DocumentHandler<T = ArtifactKind> {
   kind: T;
-  onCreateDocument: (args: CreateDocumentCallbackProps) => Promise<void>;
+  onCreateDocument: (args: CreateDocumentCallbackProps) => Promise<Document>;
   onUpdateDocument: (args: UpdateDocumentCallbackProps) => Promise<void>;
 }
 
@@ -48,6 +47,7 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
     onCreateDocument: async (args: CreateDocumentCallbackProps) => {
       const draftContent = await config.onCreateDocument({
         id: args.id,
+        chatId: args.chatId,
         title: args.title,
         dataStream: args.dataStream,
         session: args.session,
@@ -56,6 +56,7 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
       if (args.session?.user.id) {
         await createDocument({
           id: args.id,
+          chatId: args.chatId,
           title: args.title,
           content: draftContent,
           kind: config.kind,
@@ -63,24 +64,7 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
         });
       }
 
-      if (config.kind === 'code') {
-        const cadQueryResponse = await executeCadQuery(draftContent);
-        const stlBuffer = Buffer.from(cadQueryResponse.body, 'base64');
-        const stlBlob = await put(`${args.id}.stl`, stlBuffer, {
-          access: 'public',
-          contentType: 'application/sla',
-        });
-
-        await createAsset({
-          id: v4(),
-          documentId: args.id,
-          format: 'stl',
-          fileUrl: stlBlob.url,
-          status: 'completed',
-        });
-      }
-
-      return;
+      return await executeDocumentCodeAndPopulateUrl(args.id);
     },
     onUpdateDocument: async (args: UpdateDocumentCallbackProps) => {
       const draftContent = await config.onUpdateDocument({
@@ -93,6 +77,7 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
       if (args.session?.user.id) {
         await createDocument({
           id: args.document.id,
+          chatId: args.document.chatId,
           title: args.document.title,
           content: draftContent,
           kind: config.kind,

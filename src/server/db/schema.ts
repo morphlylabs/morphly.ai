@@ -83,6 +83,7 @@ export const chat = sqliteTable('chat', {
 export type Chat = InferSelectModel<typeof chat>;
 export const chatRelations = relations(chat, ({ many }) => ({
   messages: many(message),
+  documents: many(document),
   stream: many(stream),
 }));
 
@@ -109,6 +110,9 @@ export const messageRelations = relations(message, ({ one }) => ({
 // DOCUMENTS
 export const document = sqliteTable('document', {
   id: text('id', { length: 36 }).primaryKey(),
+  chatId: text('chat_id', { length: 36 })
+    .notNull()
+    .references(() => chat.id),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
@@ -120,36 +124,13 @@ export const document = sqliteTable('document', {
   userId: text('user_id', { length: 36 })
     .notNull()
     .references(() => user.id),
+  fileUrl: text('file_url'),
 });
 export type Document = InferSelectModel<typeof document>;
-export const documentRelations = relations(document, ({ many }) => ({
-  assets: many(asset),
-}));
-
-// ASSETS
-export const asset = sqliteTable('asset', {
-  id: text('id', { length: 36 }).primaryKey(),
-  documentId: text('document_id', { length: 36 })
-    .notNull()
-    .references(() => document.id, { onDelete: 'cascade' }),
-  format: text('format', {
-    enum: ['stl', 'stp'],
-  }).notNull(),
-  fileUrl: text('file_url').notNull(),
-  status: text('status', {
-    enum: ['pending', 'processing', 'completed', 'failed'],
-  })
-    .notNull()
-    .default('pending'),
-  createdAt: integer('created_at', { mode: 'timestamp' })
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
-});
-export type Asset = InferSelectModel<typeof asset>;
-export const assetRelations = relations(asset, ({ one }) => ({
-  document: one(document, {
-    fields: [asset.documentId],
-    references: [document.id],
+export const documentRelations = relations(document, ({ one }) => ({
+  chat: one(chat, {
+    fields: [document.chatId],
+    references: [chat.id],
   }),
 }));
 
