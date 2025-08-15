@@ -59,6 +59,7 @@ export default function SignIn() {
             id="email"
             type="email"
             placeholder="Enter your email"
+            data-testid="email-input"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -70,6 +71,7 @@ export default function SignIn() {
             id="password"
             type="password"
             placeholder="Enter your password"
+            data-testid="password-input"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
@@ -78,6 +80,7 @@ export default function SignIn() {
         <Button
           type="button"
           className="mt-2 w-full"
+          data-testid="sign-in-button"
           disabled={isLoading}
           onClick={signIn}
         >

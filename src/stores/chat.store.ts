@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 import type { Document } from '~/server/db/schema';
-import { executeDocumentCodeAndPopulateUrl } from '../app/(chat)/actions';
 import type { DataUIPart } from 'ai';
 import type { CustomUIDataTypes } from '~/lib/types';
 import type { ArtifactKind } from '~/lib/artifacts/server';

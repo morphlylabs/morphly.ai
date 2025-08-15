@@ -22,6 +22,7 @@ export function convertToUIMessages(messages: Message[]): ChatMessage[] {
 }
 
 export function getTextFromMessage(message: ChatMessage): string {
+  console.log(message.parts);
   return message.parts
     .filter(part => part.type === 'text')
     .map(part => part.text)
@@ -29,6 +30,7 @@ export function getTextFromMessage(message: ChatMessage): string {
 }
 
 export function getTextFromUIMessage(message: UIMessage): string {
+  console.log(message.parts);
   return message.parts
     .filter(part => part.type === 'text')
     .map(part => part.text)
