@@ -181,7 +181,7 @@ export function AuthenticatedNavbar() {
 
         {/* Right side - Conditional rendering based on auth status */}
         <div className="flex items-center space-x-2">
-          <UserAvatar data-testid="user-avatar" />
+          <UserAvatar />
           <MobileNavigation />
         </div>
       </div>

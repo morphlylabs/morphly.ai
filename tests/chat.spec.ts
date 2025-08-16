@@ -15,16 +15,17 @@ test.describe('Chat Functionality', () => {
     const submitButton = page.locator('button[type="submit"]');
     await expect(submitButton).toBeEnabled();
 
+    const repsponsePromise = page.waitForResponse(response =>
+      response.url().includes('/api/chat'),
+    );
+
     await submitButton.click();
 
     await expect(
       page.locator('.is-user').locator(`text=${testMessage}`),
     ).toBeVisible();
 
-    const response = await page.waitForResponse(response =>
-      response.url().includes('/api/chat'),
-    );
-
+    const response = await repsponsePromise;
     await response.finished();
 
     await expect(page.locator('.is-assistant').first()).toBeVisible();

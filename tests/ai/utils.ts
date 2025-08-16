@@ -30,6 +30,9 @@ export function compareMessages(
       if (item1.text !== item2.text) return false;
     } else if (item1.type === 'tool-result' && item2.type === 'tool-result') {
       if (item1.toolCallId !== item2.toolCallId) return false;
+    } else if (item1.type === 'file' && item2.type === 'file') {
+      // we don't support file yet
+      continue;
     } else {
       return false;
     }
