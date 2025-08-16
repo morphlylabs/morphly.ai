@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import {
   getChatById,
   getDocumentById,
-  setDocumentUrl,
+  updateDocumentUrl,
 } from '~/server/db/queries';
 import { myProvider } from '~/lib/ai/providers';
 import { executeCadQuery } from '../../server/aws/lambda';
@@ -64,7 +64,7 @@ export async function executeDocumentCodeAndPopulateUrl(
     contentType: 'application/sla',
   });
 
-  const documents = await setDocumentUrl({
+  const documents = await updateDocumentUrl({
     id: documentId,
     url: stlBlob.url,
   });
