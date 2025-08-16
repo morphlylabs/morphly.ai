@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { codeDocumentHandler } from '~/artifacts/code/server';
 import type { Document } from '~/server/db/schema';
 import { createDocument } from '~/server/db/queries';

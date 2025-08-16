@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { relations, type InferSelectModel } from 'drizzle-orm';
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 

@@ -43,7 +43,6 @@ import { Suggestion, Suggestions } from './ai-elements/suggestion';
 import { Separator } from '~/components/ui/separator';
 import { useChatStore, useSelectedDocument } from '~/stores/chat.store';
 import type { Document } from '~/server/db/schema';
-import { executeDocumentCodeAndPopulateUrl } from '../app/(chat)/actions';
 
 const models = [
   { id: 'gpt-4o', name: 'GPT-4o' },
@@ -257,7 +256,7 @@ export function Chat({
                           return (
                             <div key={part.toolCallId}>
                               <X className="mr-1 inline h-4 w-4 text-red-500" />
-                              {part.errorText}. Please try again.
+                              An error occurred. Please try again.
                             </div>
                           );
                         }
