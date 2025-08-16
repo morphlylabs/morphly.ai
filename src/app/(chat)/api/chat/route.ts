@@ -5,11 +5,7 @@ import {
   JsonToSseTransformStream,
   streamText,
 } from 'ai';
-import { after } from 'next/server';
-import {
-  createResumableStreamContext,
-  type ResumableStreamContext,
-} from 'resumable-stream';
+import { getStreamContext } from '~/lib/stream-context';
 import { postRequestBodySchema, type PostRequestBody } from './schema';
 import { ChatSDKError } from '~/lib/errors';
 import type { ChatMessage } from '~/lib/types';
@@ -28,28 +24,6 @@ import { updateDocument } from '~/lib/ai/tools/update-document';
 import { generateTitleFromUserMessage } from '../../actions';
 
 export const maxDuration = 60;
-
-let globalStreamContext: ResumableStreamContext | null = null;
-
-export function getStreamContext() {
-  if (!globalStreamContext) {
-    try {
-      globalStreamContext = createResumableStreamContext({
-        waitUntil: after,
-      });
-    } catch (error: unknown) {
-      if (error instanceof Error && error.message.includes('REDIS_URL')) {
-        console.log(
-          ' > Resumable streams are disabled due to missing REDIS_URL',
-        );
-      } else {
-        console.error(error);
-      }
-    }
-  }
-
-  return globalStreamContext;
-}
 
 export async function POST(request: Request) {
   let requestBody: PostRequestBody;

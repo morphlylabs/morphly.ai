@@ -3,8 +3,8 @@ import { ChatSDKError } from '~/lib/errors';
 import type { ChatMessage } from '~/lib/types';
 import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
 import { differenceInSeconds } from 'date-fns';
-import { getStreamContext } from '../route';
-import { auth } from '../../../../../lib/auth';
+import { getStreamContext } from '~/lib/stream-context';
+import { auth } from '~/lib/auth';
 
 export async function GET(
   request: Request,

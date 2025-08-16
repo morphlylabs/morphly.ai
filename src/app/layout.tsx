@@ -1,11 +1,9 @@
 import '~/styles/globals.css';
 
+import React from 'react';
 import { type Metadata } from 'next';
-import { AuthenticatedNavbar } from '~/components/authenticated-navbar';
-import { GuestNavbar } from '~/components/guest-navbar';
 import { Toaster } from '~/components/ui/sonner';
-import { auth } from '~/lib/auth';
-import { headers } from 'next/headers';
+import { Navbar } from '~/components/navbar';
 
 export const metadata: Metadata = {
   title: 'Create T3 App',
@@ -13,17 +11,13 @@ export const metadata: Metadata = {
   icons: [{ rel: 'icon', url: '/favicon.ico' }],
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
   return (
     <html lang="en">
       <body>
-        {session ? <AuthenticatedNavbar /> : <GuestNavbar />}
+        <Navbar />
         <main>{children}</main>
         <Toaster position="bottom-left" />
       </body>
