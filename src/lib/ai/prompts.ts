@@ -48,7 +48,11 @@ export const updateDocumentPrompt = (
 ) => {
   switch (type) {
     case 'code':
-      return `Improve the following code snippet based on the given prompt. \n\n ${currentContent}`;
+      return `
+${codePrompt}
+
+Improve the following code snippet based on the given prompt. \n\n ${currentContent} \n\n
+      `;
     default:
       return '';
   }
