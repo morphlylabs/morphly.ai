@@ -32,4 +32,30 @@ test.describe('Chat Functionality', () => {
 
     await expect(chatInput).toHaveValue('');
   });
+
+  test('should create an asset', async ({ page }) => {
+    await page.goto('http://localhost:3000/chat');
+
+    const chatInput = page.locator('textarea[name="message"]');
+    await expect(chatInput).toBeVisible();
+
+    const testMessage = 'Create a cube';
+    await chatInput.fill(testMessage);
+
+    const submitButton = page.locator('button[type="submit"]');
+    await expect(submitButton).toBeEnabled();
+
+    const repsponsePromise = page.waitForResponse(response =>
+      response.url().includes('/api/chat'),
+    );
+
+    await submitButton.click();
+
+    const response = await repsponsePromise;
+    await response.finished();
+
+    await expect(page.locator('.is-assistant').first()).toBeVisible();
+
+    await expect(chatInput).toHaveValue('');
+  });
 });

@@ -33,12 +33,12 @@ export const TEST_PROMPTS: Record<string, ModelMessage> = {
       },
     ],
   },
-  USER_TEXT_ARTIFACT: {
+  USER_TEXT_ASSET: {
     role: 'user',
     content: [
       {
         type: 'text',
-        text: 'Help me write an essay about Silicon Valley',
+        text: 'Create a cube',
       },
     ],
   },
@@ -47,7 +47,7 @@ export const TEST_PROMPTS: Record<string, ModelMessage> = {
     content: [
       {
         type: 'text',
-        text: 'Essay about Silicon Valley',
+        text: 'Cube',
       },
     ],
   },
@@ -62,8 +62,8 @@ export const TEST_PROMPTS: Record<string, ModelMessage> = {
           type: 'json',
           value: {
             id: '3ca386a4-40c6-4630-8ed1-84cbd46cc7eb',
-            title: 'Essay about Silicon Valley',
-            kind: 'text',
+            title: 'Cube',
+            kind: 'code',
             content: 'A document was created and is now visible to the user.',
           },
         },
