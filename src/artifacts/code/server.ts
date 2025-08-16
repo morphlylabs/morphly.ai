@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { streamObject } from 'ai';
 import { codePrompt, updateDocumentPrompt } from '~/lib/ai/prompts';
-import { groq } from '@ai-sdk/groq';
+import { myProvider } from '../../lib/ai/providers';
 import { createDocumentHandler } from '~/lib/artifacts/server';
 
 export const codeDocumentHandler = createDocumentHandler<'code'>({
@@ -10,7 +10,7 @@ export const codeDocumentHandler = createDocumentHandler<'code'>({
     let draftContent = '';
 
     const { fullStream } = streamObject({
-      model: groq('meta-llama/llama-4-maverick-17b-128e-instruct'),
+      model: myProvider.languageModel('artifact-model'),
       system: codePrompt,
       prompt: title,
       schema: z.object({
@@ -43,7 +43,7 @@ export const codeDocumentHandler = createDocumentHandler<'code'>({
     let draftContent = '';
 
     const { fullStream } = streamObject({
-      model: groq('meta-llama/llama-4-maverick-17b-128e-instruct'),
+      model: myProvider.languageModel('artifact-model'),
       system: updateDocumentPrompt(document.content, 'code'),
       prompt: description,
       schema: z.object({

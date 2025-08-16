@@ -1,4 +1,4 @@
-import { groq } from '@ai-sdk/groq';
+import { myProvider } from '~/lib/ai/providers';
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -22,9 +22,9 @@ import {
   getMessagesByChatId,
 } from '~/server/db/queries';
 import { v4 } from 'uuid';
-import { convertToUIMessages } from '../../../../lib/utils';
-import { createDocument } from '../../../../lib/ai/tools/create-document';
-import { updateDocument } from '../../../../lib/ai/tools/update-document';
+import { convertToUIMessages } from '~/lib/utils';
+import { createDocument } from '~/lib/ai/tools/create-document';
+import { updateDocument } from '~/lib/ai/tools/update-document';
 import { generateTitleFromUserMessage } from '../../actions';
 
 export const maxDuration = 60;
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
-          model: groq('meta-llama/llama-4-maverick-17b-128e-instruct'),
+          model: myProvider.languageModel('chat-model'),
           messages: convertToModelMessages(uiMessages),
           experimental_activeTools: ['createDocument'],
           tools: {

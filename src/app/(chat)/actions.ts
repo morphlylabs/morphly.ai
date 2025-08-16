@@ -9,7 +9,7 @@ import {
   getDocumentById,
   setDocumentUrl,
 } from '~/server/db/queries';
-import { groq } from '@ai-sdk/groq';
+import { myProvider } from '~/lib/ai/providers';
 import { executeCadQuery } from '../../server/aws/lambda';
 import { put } from '@vercel/blob';
 import type { Document } from '~/server/db/schema';
@@ -38,7 +38,7 @@ export async function generateTitleFromUserMessage({
   message: UIMessage;
 }) {
   const { text: title } = await generateText({
-    model: groq('openai/gpt-oss-20b'),
+    model: myProvider.languageModel('title-model'),
     system: `\n
     - you will generate a short title based on the first message a user begins a conversation with
     - ensure it is not more than 80 characters long
