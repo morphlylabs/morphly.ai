@@ -30,7 +30,7 @@ export const myProvider = customProvider({
         'chat-model-reasoning': groq(
           'meta-llama/llama-4-maverick-17b-128e-instruct',
         ),
-        'title-model': groq('meta-llama/llama-4-maverick-17b-128e-instruct'),
+        'title-model': groq('openai/gpt-oss-20b'),
         'artifact-model': groq('meta-llama/llama-4-maverick-17b-128e-instruct'),
       },
 });

@@ -11,7 +11,7 @@ import { useAutoResume } from '~/hooks/use-auto-resume';
 import { toast } from 'sonner';
 import Model from './model';
 import { Button } from '~/components/ui/button';
-import { Box, Code, Footprints, MicIcon } from 'lucide-react';
+import { Box, Code, Footprints, MicIcon, X } from 'lucide-react';
 import {
   Tooltip,
   TooltipTrigger,
@@ -43,6 +43,7 @@ import { Suggestion, Suggestions } from './ai-elements/suggestion';
 import { Separator } from '~/components/ui/separator';
 import { useChatStore, useSelectedDocument } from '~/stores/chat.store';
 import type { Document } from '~/server/db/schema';
+import { executeDocumentCodeAndPopulateUrl } from '../app/(chat)/actions';
 
 const models = [
   { id: 'gpt-4o', name: 'GPT-4o' },
@@ -171,7 +172,7 @@ export function Chat({
   return (
     <div
       className={
-        selectedDocument
+        selectedDocument?.fileUrl
           ? 'grid h-[calc(100vh-4rem)] grid-cols-4'
           : 'flex h-[calc(100vh-4rem)] justify-center'
       }
@@ -229,7 +230,7 @@ export function Chat({
         </div>
       )}
       <div
-        className={`bg-background flex h-[calc(100vh-4rem)] max-w-3xl min-w-0 flex-col ${selectedDocument ? 'col-span-1' : ''}`}
+        className={`bg-background flex h-[calc(100vh-4rem)] max-w-3xl min-w-0 flex-col ${selectedDocument?.fileUrl ? 'col-span-1' : ''}`}
       >
         <Conversation>
           <ConversationContent>
@@ -251,6 +252,13 @@ export function Chat({
                               key={part.toolCallId}
                               result={part.output}
                             />
+                          );
+                        } else if (part.state === 'output-error') {
+                          return (
+                            <div key={part.toolCallId}>
+                              <X className="mr-1 inline h-4 w-4 text-red-500" />
+                              {part.errorText}. Please try again.
+                            </div>
                           );
                         }
                         return null;
@@ -274,7 +282,7 @@ export function Chat({
         </Conversation>
 
         <div className="p-2">
-          {!selectedDocument && (
+          {!selectedDocument?.fileUrl && (
             <Suggestions className="mb-2">
               {suggestions.map(suggestion => (
                 <Suggestion

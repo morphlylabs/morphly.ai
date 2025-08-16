@@ -4,7 +4,16 @@
  */
 import './src/env.js';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const isPlaywright = process.env.PLAYWRIGHT;
+
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  compiler: {
+    // Remove data-testid in production builds, but keep them for Playwright tests
+    reactRemoveProperties: isProduction &&
+      !isPlaywright && { properties: ['^data-testid$'] },
+  },
+};
 
 export default config;
