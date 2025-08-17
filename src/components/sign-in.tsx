@@ -12,6 +12,7 @@ import {
 } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { GoogleIcon } from '~/components/ui/google-icon';
 import { authClient } from '~/lib/auth-client';
 import { useRouter } from 'next/navigation';
 
@@ -19,6 +20,7 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const router = useRouter();
 
@@ -44,45 +46,92 @@ export default function SignIn() {
     });
   };
 
+  const signInWithGoogle = async () => {
+    setIsGoogleLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: '/',
+        fetchOptions: {
+          onError: ctx => {
+            toast.error(ctx.error.message);
+            setIsGoogleLoading(false);
+          },
+          onSuccess: async () => {
+            router.push('/');
+          },
+        },
+      });
+    } catch (error) {
+      toast.error('Failed to sign in with Google');
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
         <CardDescription>
-          Enter your email and password to access your account
+          Enter your credentials to access your account
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="my-2 space-y-1">
+      <CardContent className="space-y-4">
+        {/* Google Sign In Button */}
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={signInWithGoogle}
+          disabled={isGoogleLoading}
+        >
+          {isGoogleLoading ? (
+            'Signing in...'
+          ) : (
+            <>
+              <GoogleIcon className="mr-2 h-4 w-4" />
+              Sign in with Google
+            </>
+          )}
+        </Button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        {/* Existing Email/Password Form */}
+        <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
             placeholder="Enter your email"
-            data-testid="email-input"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            required
           />
         </div>
-        <div className="my-2 space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input
             id="password"
             type="password"
             placeholder="Enter your password"
-            data-testid="password-input"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            required
           />
         </div>
         <Button
           type="button"
-          className="mt-2 w-full"
-          data-testid="sign-in-button"
-          disabled={isLoading}
+          className="w-full"
           onClick={signIn}
+          disabled={isLoading}
         >
           {isLoading ? 'Signing in...' : 'Sign In'}
         </Button>
