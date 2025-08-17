@@ -13,6 +13,16 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      // Optional: Always ask to select account
+      prompt: "select_account",
+      // Optional: Always get refresh token
+      accessType: "offline",
+    },
+  },
   plugins: [nextCookies()],
 });
 
