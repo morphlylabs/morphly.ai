@@ -52,7 +52,6 @@ import { Separator } from '~/components/ui/separator';
 import { useChatStore, useSelectedDocument } from '~/stores/chat.store';
 import type { Document, Vote } from '~/server/db/schema';
 import { Action, Actions } from './ai-elements/actions';
-import { voteMessage } from '../app/(chat)/actions';
 import useSWR, { mutate } from 'swr';
 
 const models = [
