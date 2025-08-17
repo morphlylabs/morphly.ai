@@ -5,6 +5,7 @@ import { auth } from '../../lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import {
+  createOrUpdateVote,
   getChatById,
   getDocumentById,
   updateDocumentUrl,
@@ -72,4 +73,16 @@ export async function executeDocumentCodeAndPopulateUrl(
   if (!documents[0]) throw new Error('Document not found');
 
   return documents[0];
+}
+
+export async function voteMessage({
+  chatId,
+  messageId,
+  type,
+}: {
+  chatId: string;
+  messageId: string;
+  type: 'up' | 'down';
+}) {
+  await createOrUpdateVote({ chatId, messageId, type });
 }

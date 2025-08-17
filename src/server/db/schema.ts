@@ -1,7 +1,10 @@
-import 'server-only';
-
 import { relations, type InferSelectModel } from 'drizzle-orm';
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import {
+  sqliteTable,
+  text,
+  integer,
+  primaryKey,
+} from 'drizzle-orm/sqlite-core';
 
 // USERS
 export const user = sqliteTable('user', {
@@ -106,6 +109,34 @@ export const messageRelations = relations(message, ({ one }) => ({
   chat: one(chat, {
     fields: [message.chatId],
     references: [chat.id],
+  }),
+  vote: one(vote, {
+    fields: [message.chatId, message.id],
+    references: [vote.chatId, vote.messageId],
+  }),
+}));
+
+// VOTES
+export const vote = sqliteTable(
+  'vote',
+  {
+    chatId: text('chat_id', { length: 36 })
+      .notNull()
+      .references(() => chat.id, { onDelete: 'cascade' }),
+    messageId: text('message_id', { length: 36 })
+      .notNull()
+      .references(() => message.id, { onDelete: 'cascade' }),
+    isUpvote: integer('is_upvote', { mode: 'boolean' }).notNull(),
+  },
+  table => ({
+    pk: primaryKey({ columns: [table.chatId, table.messageId] }),
+  }),
+);
+export type Vote = InferSelectModel<typeof vote>;
+export const voteRelations = relations(vote, ({ one }) => ({
+  message: one(message, {
+    fields: [vote.chatId, vote.messageId],
+    references: [message.chatId, message.id],
   }),
 }));
 
