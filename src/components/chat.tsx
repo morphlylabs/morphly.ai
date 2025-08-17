@@ -11,14 +11,22 @@ import { useAutoResume } from '~/hooks/use-auto-resume';
 import { toast } from 'sonner';
 import Model from './model';
 import { Button } from '~/components/ui/button';
-import { Box, Code, Footprints, MicIcon, X } from 'lucide-react';
+import {
+  Box,
+  Code,
+  Footprints,
+  MicIcon,
+  ThumbsDown,
+  ThumbsUp,
+  X,
+} from 'lucide-react';
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
 } from '~/components/ui/tooltip';
 import { useCopyToClipboard } from 'usehooks-ts';
-import { downloadFileFromUrl } from '~/lib/utils';
+import { downloadFileFromUrl, fetcher } from '~/lib/utils';
 import {
   PromptInput,
   PromptInputTextarea,
@@ -42,7 +50,10 @@ import { DocumentToolResult } from './document';
 import { Suggestion, Suggestions } from './ai-elements/suggestion';
 import { Separator } from '~/components/ui/separator';
 import { useChatStore, useSelectedDocument } from '~/stores/chat.store';
-import type { Document } from '~/server/db/schema';
+import type { Document, Vote } from '~/server/db/schema';
+import { Action, Actions } from './ai-elements/actions';
+import { voteMessage } from '../app/(chat)/actions';
+import useSWR, { mutate } from 'swr';
 
 const models = [
   { id: 'gpt-4o', name: 'GPT-4o' },
@@ -124,6 +135,11 @@ export function Chat({
     setText('');
     window.history.replaceState({}, '', `/chat/${id}`);
   };
+
+  const { data: votes } = useSWR<Array<Vote>>(
+    messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
+    fetcher,
+  );
 
   useAutoResume({
     autoResume,
@@ -234,69 +250,193 @@ export function Chat({
         <Conversation>
           <ConversationContent>
             {messages.map(message => (
-              <Message from={message.role} key={message.id}>
-                <MessageContent>
-                  {message.parts.map(part => {
-                    switch (part.type) {
-                      case 'text':
-                        return <p key={part.text}>{part.text}</p>;
-                      case 'tool-createDocument':
-                        if (part.state === 'input-available') {
-                          return (
-                            <p key={part.toolCallId}>Generating asset...</p>
-                          );
-                        } else if (part.state === 'output-available') {
-                          return (
-                            <DocumentToolResult
-                              key={part.toolCallId}
-                              result={part.output}
-                            />
-                          );
-                        } else if (part.state === 'output-error') {
-                          return (
-                            <div key={part.toolCallId}>
-                              <X className="mr-1 inline h-4 w-4 text-red-500" />
-                              An error occurred. Please try again.
-                            </div>
-                          );
-                        }
-                        return null;
-                      case 'tool-updateDocument':
-                        if (part.state === 'input-available') {
-                          return <p key={part.toolCallId}>Updating asset...</p>;
-                        } else if (
-                          part.state === 'output-available' &&
-                          part.output.id
-                        ) {
-                          return (
-                            <DocumentToolResult
-                              key={part.toolCallId}
-                              result={part.output}
-                            />
-                          );
-                        } else if (part.state === 'output-error') {
-                          return (
-                            <div key={part.toolCallId}>
-                              <X className="mr-1 inline h-4 w-4 text-red-500" />
-                              An error occurred. Please try again.
-                            </div>
-                          );
-                        }
-                        return null;
-                      default:
-                        return null;
+              <div className="group flex flex-col" key={message.id}>
+                <Message from={message.role}>
+                  <MessageContent>
+                    {message.parts.map(part => {
+                      switch (part.type) {
+                        case 'text':
+                          return <p key={part.text}>{part.text}</p>;
+                        case 'tool-createDocument':
+                          if (part.state === 'input-available') {
+                            return (
+                              <p key={part.toolCallId}>Generating asset...</p>
+                            );
+                          } else if (part.state === 'output-available') {
+                            return (
+                              <DocumentToolResult
+                                key={part.toolCallId}
+                                result={part.output}
+                              />
+                            );
+                          } else if (part.state === 'output-error') {
+                            return (
+                              <div key={part.toolCallId}>
+                                <X className="mr-1 inline h-4 w-4 text-red-500" />
+                                An error occurred. Please try again.
+                              </div>
+                            );
+                          }
+                          return null;
+                        case 'tool-updateDocument':
+                          if (part.state === 'input-available') {
+                            return (
+                              <p key={part.toolCallId}>Updating asset...</p>
+                            );
+                          } else if (
+                            part.state === 'output-available' &&
+                            part.output.id
+                          ) {
+                            return (
+                              <DocumentToolResult
+                                key={part.toolCallId}
+                                result={part.output}
+                              />
+                            );
+                          } else if (part.state === 'output-error') {
+                            return (
+                              <div key={part.toolCallId}>
+                                <X className="mr-1 inline h-4 w-4 text-red-500" />
+                                An error occurred. Please try again.
+                              </div>
+                            );
+                          }
+                          return null;
+                        default:
+                          return null;
+                      }
+                    })}
+                  </MessageContent>
+
+                  <MessageAvatar
+                    src={
+                      message.role === 'user'
+                        ? 'https://github.com/shadcn.png'
+                        : ''
                     }
-                  })}
-                </MessageContent>
-                <MessageAvatar
-                  src={
-                    message.role === 'user'
-                      ? 'https://github.com/shadcn.png'
-                      : ''
-                  }
-                  name="AI"
-                />
-              </Message>
+                    name="AI"
+                  />
+                </Message>
+                {message.role === 'assistant' && (
+                  <Actions className="ml-10 inline-flex">
+                    {(() => {
+                      const vote = votes?.find(
+                        vote => vote.messageId === message.id,
+                      );
+                      return (
+                        <>
+                          <Action
+                            label="Like"
+                            disabled={vote?.isUpvote === true}
+                            onClick={async () => {
+                              const upvote = fetch('/api/vote', {
+                                method: 'PATCH',
+                                body: JSON.stringify({
+                                  chatId: id,
+                                  messageId: message.id,
+                                  type: 'up',
+                                }),
+                              });
+
+                              toast.promise(upvote, {
+                                loading: 'Upvoting Response...',
+                                success: () => {
+                                  void mutate<Array<Vote>>(
+                                    `/api/vote?chatId=${id}`,
+                                    currentVotes => {
+                                      if (!currentVotes)
+                                        return [
+                                          {
+                                            chatId: id,
+                                            messageId: message.id,
+                                            isUpvote: true,
+                                          },
+                                        ];
+
+                                      const votesWithoutCurrent =
+                                        currentVotes.filter(
+                                          vote => vote.messageId !== message.id,
+                                        );
+
+                                      return [
+                                        ...votesWithoutCurrent,
+                                        {
+                                          chatId: id,
+                                          messageId: message.id,
+                                          isUpvote: true,
+                                        },
+                                      ];
+                                    },
+                                    { revalidate: false },
+                                  );
+
+                                  return 'Upvoted Response!';
+                                },
+                                error: 'Failed to upvote response.',
+                              });
+                            }}
+                          >
+                            <ThumbsUp size={16} />
+                          </Action>
+                          <Action
+                            label="Dislike"
+                            disabled={vote?.isUpvote === false}
+                            onClick={async () => {
+                              const downvote = fetch('/api/vote', {
+                                method: 'PATCH',
+                                body: JSON.stringify({
+                                  chatId: id,
+                                  messageId: message.id,
+                                  type: 'down',
+                                }),
+                              });
+
+                              toast.promise(downvote, {
+                                loading: 'Downvoting Response...',
+                                success: () => {
+                                  void mutate<Array<Vote>>(
+                                    `/api/vote?chatId=${id}`,
+                                    currentVotes => {
+                                      if (!currentVotes)
+                                        return [
+                                          {
+                                            chatId: id,
+                                            messageId: message.id,
+                                            isUpvote: false,
+                                          },
+                                        ];
+
+                                      const votesWithoutCurrent =
+                                        currentVotes.filter(
+                                          vote => vote.messageId !== message.id,
+                                        );
+
+                                      return [
+                                        ...votesWithoutCurrent,
+                                        {
+                                          chatId: id,
+                                          messageId: message.id,
+                                          isUpvote: false,
+                                        },
+                                      ];
+                                    },
+                                    { revalidate: false },
+                                  );
+
+                                  return 'Downvoted Response!';
+                                },
+                                error: 'Failed to downvote response.',
+                              });
+                            }}
+                          >
+                            <ThumbsDown size={16} />
+                          </Action>
+                        </>
+                      );
+                    })()}
+                  </Actions>
+                )}
+              </div>
             ))}
           </ConversationContent>
           <ConversationScrollButton />

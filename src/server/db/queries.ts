@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { db } from './index';
-import { chat, document, message, stream, type Message } from './schema';
+import { chat, document, message, stream, vote, type Message } from './schema';
 import type { ArtifactKind } from '~/lib/artifacts/server';
 import { ChatSDKError } from '~/lib/errors';
 import { and, eq } from 'drizzle-orm';
@@ -84,6 +84,35 @@ export const createStream = async ({
   await requireUser();
 
   return await db.insert(stream).values({ id: streamId, chatId });
+};
+
+export const getVotesByChatId = async (chatId: string) => {
+  await requireUser();
+  return await db.query.vote.findMany({
+    where: (vote, { eq }) => eq(vote.chatId, chatId),
+  });
+};
+
+export const createOrUpdateVote = async ({
+  chatId,
+  messageId,
+  type,
+}: {
+  chatId: string;
+  messageId: string;
+  type: 'up' | 'down';
+}) => {
+  await requireUser();
+
+  const isUpvote = type === 'up';
+
+  return await db
+    .insert(vote)
+    .values({ chatId, messageId, isUpvote })
+    .onConflictDoUpdate({
+      target: [vote.chatId, vote.messageId],
+      set: { isUpvote },
+    });
 };
 
 export const createDocument = async ({
