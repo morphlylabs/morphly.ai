@@ -1,8 +1,6 @@
 'use server';
 
 import { generateText, type UIMessage } from 'ai';
-import { auth } from '../../lib/auth';
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import {
   createOrUpdateVote,
@@ -16,14 +14,6 @@ import { put } from '@vercel/blob';
 import type { Document } from '~/server/db/schema';
 
 export async function getChat(id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    redirect('/login');
-  }
-
   const chat = await getChatById(id);
 
   if (!chat) {

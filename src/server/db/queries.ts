@@ -1,7 +1,17 @@
 import 'server-only';
 
 import { db } from './index';
-import { chat, document, message, stream, vote, type Message } from './schema';
+import {
+  chat,
+  document,
+  message,
+  stream,
+  vote,
+  type Chat,
+  type Document,
+  type Message,
+  type Vote,
+} from './schema';
 import type { ArtifactKind } from '~/lib/artifacts/server';
 import { ChatSDKError } from '~/lib/errors';
 import { and, eq } from 'drizzle-orm';
@@ -26,15 +36,15 @@ export const getChatById = async (id: string) => {
   });
 };
 
-export const getChatsByUserId = async (userId: string) => {
+/**
+ * Fetches all chats for the _authenticated_ user.
+ * @returns {Promise<Array>} Array of chats ordered by creation date (newest first)
+ */
+export const getChatsForUser = async (): Promise<Chat[]> => {
   const session = await requireUser();
 
-  if (session.user.id !== userId) {
-    throw new ChatSDKError('forbidden:auth', 'Forbidden');
-  }
-
   return await db.query.chat.findMany({
-    where: (chat, { eq }) => eq(chat.userId, userId),
+    where: (chat, { eq }) => eq(chat.userId, session.user.id),
     orderBy: (chat, { desc }) => desc(chat.createdAt),
   });
 };
@@ -59,7 +69,9 @@ export const createChat = async ({
   return await db.insert(chat).values({ id, createdAt, userId, title });
 };
 
-export const getMessagesByChatId = async (chatId: string) => {
+export const getMessagesByChatId = async (
+  chatId: string,
+): Promise<Message[]> => {
   await requireUser();
 
   return await db.query.message.findMany({
@@ -86,7 +98,7 @@ export const createStream = async ({
   return await db.insert(stream).values({ id: streamId, chatId });
 };
 
-export const getVotesByChatId = async (chatId: string) => {
+export const getVotesByChatId = async (chatId: string): Promise<Vote[]> => {
   await requireUser();
   return await db.query.vote.findMany({
     where: (vote, { eq }) => eq(vote.chatId, chatId),
@@ -150,7 +162,7 @@ export const createDocument = async ({
   }
 };
 
-export const getDocumentsById = async (id: string) => {
+export const getDocumentsById = async (id: string): Promise<Document[]> => {
   const session = await requireUser();
 
   return await db.query.document.findMany({
@@ -160,7 +172,9 @@ export const getDocumentsById = async (id: string) => {
   });
 };
 
-export const getDocumentById = async (id: string) => {
+export const getDocumentById = async (
+  id: string,
+): Promise<Document | undefined> => {
   const session = await requireUser();
 
   return await db.query.document.findFirst({

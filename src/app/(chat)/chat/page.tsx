@@ -1,18 +1,7 @@
-import { auth } from '~/lib/auth';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { Chat } from '../../../components/chat';
 import { v4 } from 'uuid';
 
-export default async function ChatPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    redirect('/login');
-  }
-
+export default function ChatPage() {
   const id = v4();
 
   return (
