@@ -1,8 +1,5 @@
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { auth } from '~/lib/auth';
-import { getChatsByUserId } from '~/server/db/queries';
+import { getChatsForUser } from '~/server/db/queries';
 import {
   Card,
   CardContent,
@@ -13,15 +10,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 
 export default async function ChatsPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user) {
-    redirect('/login');
-  }
-
-  const chats = await getChatsByUserId(session.user.id);
+  const chats = await getChatsForUser();
 
   return (
     <div className="container mx-auto px-4 py-8">
