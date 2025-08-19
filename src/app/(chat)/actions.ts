@@ -10,7 +10,6 @@ import {
 } from '~/server/db/queries';
 import { myProvider } from '~/lib/ai/providers';
 import { executeCadQuery } from '../../server/aws/lambda';
-import { put } from '@vercel/blob';
 import type { Document } from '~/server/db/schema';
 
 export async function getChat(id: string) {
@@ -49,15 +48,10 @@ export async function executeDocumentCodeAndPopulateUrl(
   if (document.fileUrl) return document;
 
   const cadQueryResponse = await executeCadQuery(document.content);
-  const stlBuffer = Buffer.from(cadQueryResponse.body, 'base64');
-  const stlBlob = await put(`${documentId}.stl`, stlBuffer, {
-    access: 'public',
-    contentType: 'application/sla',
-  });
 
   const documents = await updateDocumentUrl({
     id: documentId,
-    url: stlBlob.url,
+    url: cadQueryResponse.body.stl_url,
   });
 
   if (!documents[0]) throw new Error('Document not found');
