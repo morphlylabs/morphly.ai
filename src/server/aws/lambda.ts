@@ -1,16 +1,35 @@
+import 'server-only';
+
 import { getLambdaClient } from './lambda-client';
 import { InvokeCommand } from '@aws-sdk/client-lambda';
 import { z } from 'zod';
 import { env } from '~/env';
 
-const cadQueryResponseSchema = z.object({
-  statusCode: z.number(),
+const cadQuerySuccessResponseSchema = z.object({
+  statusCode: z.literal(200),
   headers: z.record(z.string(), z.string()),
-  body: z.string().min(1, 'STL data cannot be empty'),
-  isBase64Encoded: z.boolean(),
+  body: z.object({
+    stl_url: z.string().url(),
+    svg_url: z.string().url(),
+  }),
 });
 
-export type CadQueryResponse = z.infer<typeof cadQueryResponseSchema>;
+const cadQueryErrorResponseSchema = z.object({
+  statusCode: z.union([z.literal(400), z.literal(404), z.literal(500)]),
+  headers: z.record(z.string(), z.string()),
+  body: z.object({
+    error: z.string(),
+    detail: z.string().optional(),
+    trace: z.string().optional(),
+  }),
+});
+
+export const cadQueryResponseSchema = z.union([
+  cadQuerySuccessResponseSchema,
+  cadQueryErrorResponseSchema,
+]);
+
+export type CadQueryResponse = z.infer<typeof cadQuerySuccessResponseSchema>;
 
 export async function executeCadQuery(code: string): Promise<CadQueryResponse> {
   const client = getLambdaClient();
@@ -34,8 +53,13 @@ export async function executeCadQuery(code: string): Promise<CadQueryResponse> {
     );
 
     if (responseBody.statusCode !== 200) {
+      console.error(
+        responseBody.body.error,
+        responseBody.body.detail,
+        responseBody.body.trace,
+      );
       throw new Error(
-        `Lambda function failed with status ${responseBody.statusCode}: ${responseBody.body}`,
+        `Lambda function failed with status ${responseBody.statusCode}`,
       );
     }
 
