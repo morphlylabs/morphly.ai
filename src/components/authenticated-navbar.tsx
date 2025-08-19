@@ -1,6 +1,6 @@
 'use client';
 
-import { CuboidIcon, Menu } from 'lucide-react';
+import { CuboidIcon, Menu, MessageCirclePlus } from 'lucide-react';
 import {
   Sheet,
   SheetTrigger,
@@ -47,22 +47,6 @@ const navigationItems = [
       },
     ],
   },
-  {
-    title: 'Resources',
-    href: '#',
-    items: [
-      {
-        title: 'Documentation',
-        href: '/resources/documentation',
-        description: 'Documentation for the workspace',
-      },
-      {
-        title: 'Blog',
-        href: '/resources/blog',
-        description: 'Blog posts about the workspace',
-      },
-    ],
-  },
 ];
 
 function MobileNavigation() {
@@ -90,6 +74,16 @@ function MobileNavigation() {
           </SheetTitle>
         </SheetHeader>
         <nav className="mt-8 flex flex-col space-y-4">
+          <Button asChild className="mx-2">
+            <Link
+              href="/chat"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2"
+            >
+              <MessageCirclePlus className="h-3 w-3" />
+              New Chat
+            </Link>
+          </Button>
           {navigationItems.map(item => (
             <div key={item.title}>
               {item.items ? (
@@ -145,6 +139,16 @@ export function AuthenticatedNavbar() {
         {/* Desktop Navigation */}
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link
+                  href="/chat"
+                  className="flex flex-row items-center gap-1 border"
+                >
+                  <MessageCirclePlus className="h-3 w-3 text-black" /> New Chat
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
             {navigationItems.map(item => (
               <NavigationMenuItem key={item.title}>
                 {item.items ? (

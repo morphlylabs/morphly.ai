@@ -14,7 +14,7 @@ import {
 } from './schema';
 import type { ArtifactKind } from '~/lib/artifacts/server';
 import { ChatSDKError } from '~/lib/errors';
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq, gte } from 'drizzle-orm';
 import { v4 } from 'uuid';
 import { requireUser } from '~/lib/require-user';
 
@@ -47,6 +47,48 @@ export const getChatsForUser = async (): Promise<Chat[]> => {
     where: (chat, { eq }) => eq(chat.userId, session.user.id),
     orderBy: (chat, { desc }) => desc(chat.createdAt),
   });
+};
+
+export const getRecentChatsForUser = async (limit: number) => {
+  const session = await requireUser();
+
+  return await db.query.chat.findMany({
+    where: (chat, { eq }) => eq(chat.userId, session.user.id),
+    orderBy: (chat, { desc }) => desc(chat.createdAt),
+    limit,
+  });
+};
+
+export const getChatAmountForUser = async () => {
+  const session = await requireUser();
+
+  return await db
+    .select({ count: count() })
+    .from(chat)
+    .where(eq(chat.userId, session.user.id));
+};
+
+export const getChatAmountForUserThisMonth = async () => {
+  const session = await requireUser();
+
+  return await db
+    .select({ count: count() })
+    .from(chat)
+    .where(
+      and(
+        eq(chat.userId, session.user.id),
+        gte(chat.createdAt, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)),
+      ),
+    );
+};
+
+export const getDocumentAmountForUser = async () => {
+  const session = await requireUser();
+
+  return await db
+    .select({ count: count() })
+    .from(document)
+    .where(eq(document.userId, session.user.id));
 };
 
 export const createChat = async ({

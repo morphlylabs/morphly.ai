@@ -43,9 +43,6 @@ interface ChatState {
   selectedDocumentId: string | undefined;
   // Data stream state
   dataStream: DataUIPart<CustomUIDataTypes>[];
-  // Artifact state
-  artifact: UIArtifact;
-  artifactMetadata: Record<string, unknown>;
 }
 
 interface ChatActions {
@@ -64,11 +61,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
   chatId: undefined,
   documents: {},
   selectedDocumentId: undefined,
-  // Data stream initial state
   dataStream: [],
-  // Artifact initial state
-  artifact: initialArtifactData,
-  artifactMetadata: {},
 
   setSelectedDocumentId: (documentId: string) =>
     set({ selectedDocumentId: documentId }),
