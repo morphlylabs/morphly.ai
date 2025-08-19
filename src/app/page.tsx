@@ -14,7 +14,7 @@ import {
 import { Clock, Box, BarChart3, Zap, MessageCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
-import { LiveGeneratorForm } from '~/components/live-generator-form';
+import { HeroPrompt } from '~/components/hero-prompt';
 
 export default async function HomePage() {
   const [recentChats, [totalCreations], [thisMonth], [totalDocuments]] =
@@ -29,7 +29,7 @@ export default async function HomePage() {
     <div className="min-h-screen">
       <div className="container mx-auto space-y-8 px-4 py-8">
         {/* Live Generator Section */}
-        <LiveGeneratorForm />
+        <HeroPrompt />
 
         {/* Your Creative Journey */}
         <div className="mt-20 space-y-6">

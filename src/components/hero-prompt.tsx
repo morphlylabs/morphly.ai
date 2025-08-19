@@ -13,7 +13,7 @@ import type { ChatMessage } from '~/lib/types';
 import { DefaultChatTransport } from 'ai';
 import { Loader } from '~/components/ai-elements/loader';
 
-export function LiveGeneratorForm() {
+export function HeroPrompt() {
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
