@@ -84,6 +84,7 @@ export const chat = sqliteTable('chat', {
   createdAt: integer('created_at', { mode: 'timestamp' })
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
+  previewImageUrl: text('preview_image_url'),
 });
 export type Chat = InferSelectModel<typeof chat>;
 export const chatRelations = relations(chat, ({ many }) => ({
