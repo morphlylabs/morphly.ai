@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Suspense } from 'react';
 import Chats from './_components/chats';
-import { Loader } from '~/components/ai-elements/loader';
+import { ChatsLoading } from './_components/chats-loading';
 
 const paramsSchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),
@@ -26,7 +26,7 @@ export default async function ChatsPage({
 
       <Suspense
         key={params.offset + params.limit}
-        fallback={<Loader className="size-4" />}
+        fallback={<ChatsLoading count={params.limit} />}
       >
         <Chats offset={params.offset} limit={params.limit} />
       </Suspense>
