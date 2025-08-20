@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { Suspense } from 'react';
 import Chats from './_components/chats';
 import { Loader } from '~/components/ai-elements/loader';
-import Image from 'next/image';
 
 const paramsSchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),

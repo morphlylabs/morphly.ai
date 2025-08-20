@@ -16,7 +16,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning={true}>
+      <body>
         <Navbar />
         <main>{children}</main>
         <Toaster position="bottom-left" />
