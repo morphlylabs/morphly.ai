@@ -1,13 +1,6 @@
 import Link from 'next/link';
 import { getChats } from '~/server/db/queries';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
-import { formatDistanceToNow } from 'date-fns';
+
 import {
   Pagination,
   PaginationContent,
@@ -15,7 +8,7 @@ import {
   PaginationItem,
   PaginationLink,
 } from '~/components/ui/pagination';
-import Image from 'next/image';
+import { ChatPreview } from '~/app/_components/chat-preview';
 
 export default async function Chats({
   offset,
@@ -67,40 +60,7 @@ export default async function Chats({
         <div className="flex flex-col gap-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {items.map(chat => (
-              <Link key={chat.id} href={`/chat/${chat.id}`}>
-                <Card className="h-full cursor-pointer transition-shadow hover:shadow-md">
-                  <CardHeader>
-                    <CardTitle className="truncate text-base">
-                      {chat.title}
-                    </CardTitle>
-                    <CardDescription>
-                      Created{' '}
-                      {formatDistanceToNow(chat.createdAt, {
-                        addSuffix: true,
-                      })}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="bg-muted flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg">
-                      {chat.previewImageUrl ? (
-                        <Image
-                          src={chat.previewImageUrl}
-                          alt={chat.title || 'Chat preview'}
-                          width={100}
-                          height={100}
-                          className="h-full w-full object-contain"
-                          unoptimized
-                          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                        />
-                      ) : (
-                        <div className="text-muted-foreground text-sm">
-                          No preview available
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
+              <ChatPreview key={chat.id} chat={chat} />
             ))}
           </div>
           <Pagination>
