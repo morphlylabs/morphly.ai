@@ -1,6 +1,5 @@
 import {
-  getChatAmountForUser,
-  getRecentChatsForUser,
+  getChats,
   getDocumentAmountForUser,
   getChatAmountForUserThisMonth,
 } from '~/server/db/queries';
@@ -16,14 +15,14 @@ import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { HeroPrompt } from '~/components/hero-prompt';
 
+const RECENT_CHATS_LIMIT = 3;
+
 export default async function HomePage() {
-  const [recentChats, [totalCreations], [thisMonth], [totalDocuments]] =
-    await Promise.all([
-      getRecentChatsForUser(3),
-      getChatAmountForUser(),
-      getChatAmountForUserThisMonth(),
-      getDocumentAmountForUser(),
-    ]);
+  const [recentChats, [thisMonth], [totalDocuments]] = await Promise.all([
+    getChats(0, RECENT_CHATS_LIMIT),
+    getChatAmountForUserThisMonth(),
+    getDocumentAmountForUser(),
+  ]);
 
   return (
     <div className="min-h-screen">
@@ -46,7 +45,7 @@ export default async function HomePage() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {totalCreations?.count ?? 0}
+                    {recentChats.total}
                   </div>
                   <div className="text-muted-foreground text-sm">
                     Total Chats
@@ -90,14 +89,14 @@ export default async function HomePage() {
         </div>
 
         {/* Recent Activity */}
-        {recentChats.length > 0 && (
+        {recentChats.items.length > 0 && (
           <div className="space-y-4">
             <h2 className="flex items-center gap-2 text-xl font-semibold">
               <Clock className="h-5 w-5" />
               Continue Where You Left Off
             </h2>
             <div className="grid gap-4 md:grid-cols-3">
-              {recentChats.map(chat => (
+              {recentChats.items.map(chat => (
                 <Link key={chat.id} href={`/chat/${chat.id}`}>
                   <Card className="h-full cursor-pointer transition-all duration-200 ease-out hover:shadow-lg">
                     <CardHeader>
@@ -106,7 +105,7 @@ export default async function HomePage() {
                       </CardTitle>
                       <CardDescription>
                         Created{' '}
-                        {formatDistanceToNow(new Date(chat.createdAt), {
+                        {formatDistanceToNow(chat.createdAt, {
                           addSuffix: true,
                         })}
                       </CardDescription>

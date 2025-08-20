@@ -7,7 +7,6 @@ import {
   message,
   stream,
   vote,
-  type Chat,
   type Document,
   type Message,
   type Vote,
@@ -37,35 +36,36 @@ export const getChatById = async (id: string) => {
 };
 
 /**
- * Fetches all chats for the _authenticated_ user.
- * @returns {Promise<Array>} Array of chats ordered by creation date (newest first)
+ * Fetches the most recent chats for the _authenticated_ user with total count.
+ * @param offset - The number of chats to skip. Floored to an integer and clamped to >= 0.
+ * @param limit - The number of chats to fetch. Floored to an integer and clamped to >= 1.
+ * @returns Object containing `{ items, total, offset, limit }`
  */
-export const getChatsForUser = async (): Promise<Chat[]> => {
+export const getChats = async (offset: number, limit: number) => {
+  const safeOffset = Math.max(0, Math.floor(offset));
+  const safeLimit = Math.max(1, Math.floor(limit));
+
   const session = await requireUser();
 
-  return await db.query.chat.findMany({
-    where: (chat, { eq }) => eq(chat.userId, session.user.id),
-    orderBy: (chat, { desc }) => desc(chat.createdAt),
-  });
-};
+  const [items, [total]] = await Promise.all([
+    db.query.chat.findMany({
+      where: (chat, { eq }) => eq(chat.userId, session.user.id),
+      orderBy: (chat, { desc }) => desc(chat.createdAt),
+      offset: safeOffset,
+      limit: safeLimit,
+    }),
+    db
+      .select({ count: count() })
+      .from(chat)
+      .where(eq(chat.userId, session.user.id)),
+  ]);
 
-export const getRecentChatsForUser = async (limit: number) => {
-  const session = await requireUser();
-
-  return await db.query.chat.findMany({
-    where: (chat, { eq }) => eq(chat.userId, session.user.id),
-    orderBy: (chat, { desc }) => desc(chat.createdAt),
-    limit,
-  });
-};
-
-export const getChatAmountForUser = async () => {
-  const session = await requireUser();
-
-  return await db
-    .select({ count: count() })
-    .from(chat)
-    .where(eq(chat.userId, session.user.id));
+  return {
+    items,
+    total: total?.count ?? 0,
+    offset: safeOffset,
+    limit: safeLimit,
+  };
 };
 
 export const getChatAmountForUserThisMonth = async () => {
