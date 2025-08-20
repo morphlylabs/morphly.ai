@@ -1,16 +1,19 @@
-import Link from 'next/link';
-import { getChatsForUser } from '~/server/db/queries';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
-import { formatDistanceToNow } from 'date-fns';
+import { z } from 'zod';
+import { Suspense } from 'react';
+import Chats from './_components/chats';
+import { Loader } from '~/components/ai-elements/loader';
 
-export default async function ChatsPage() {
-  const chats = await getChatsForUser();
+const paramsSchema = z.object({
+  offset: z.coerce.number().int().min(0).default(0),
+  limit: z.coerce.number().int().min(1).max(50).default(9),
+});
+
+export default async function ChatsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = paramsSchema.parse(await searchParams);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -21,49 +24,12 @@ export default async function ChatsPage() {
         </p>
       </div>
 
-      {chats.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold">No chats yet</h3>
-            <p className="text-muted-foreground mt-2 mb-4">
-              Start a new conversation to see your chats here
-            </p>
-            <Link
-              href="/chat"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium"
-            >
-              Start New Chat
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {chats.map(chat => (
-            <Link key={chat.id} href={`/chat/${chat.id}`}>
-              <Card className="h-full cursor-pointer transition-shadow hover:shadow-md">
-                <CardHeader>
-                  <CardTitle className="truncate text-base">
-                    {chat.title}
-                  </CardTitle>
-                  <CardDescription>
-                    Created{' '}
-                    {formatDistanceToNow(new Date(chat.createdAt), {
-                      addSuffix: true,
-                    })}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-muted flex aspect-video w-full items-center justify-center rounded-lg">
-                    <div className="text-muted-foreground text-sm">
-                      Image placeholder
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      )}
+      <Suspense
+        key={params.offset + params.limit}
+        fallback={<Loader className="size-4" />}
+      >
+        <Chats offset={params.offset} limit={params.limit} />
+      </Suspense>
     </div>
   );
 }
