@@ -19,7 +19,8 @@
     "start": "next start",
     "test": "PLAYWRIGHT=True pnpm exec playwright test",
     "typecheck": "tsc --noEmit",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "prepare": "lefthook install"
   },
   "dependencies": {
     "@ai-sdk/groq": "2.0.2",
@@ -78,6 +79,7 @@
     "eslint": "^9.33.0",
     "eslint-config-next": "^15.4.6",
     "eslint-plugin-drizzle": "^0.2.3",
+    "lefthook": "^1.12.3",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
