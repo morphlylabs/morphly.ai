@@ -1,18 +1,11 @@
-import { formatDistanceToNow } from 'date-fns';
 import { BarChart3, MessageCircle, Box, Zap, Clock } from 'lucide-react';
 import {
   getChatAmountForUserThisMonth,
   getChats,
   getDocumentAmountForUser,
 } from '~/server/db/queries';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '~/components/ui/card';
-import Link from 'next/link';
+import { Card } from '~/components/ui/card';
+import { ChatPreview } from './chat-preview';
 
 export const RECENT_CHATS_LIMIT = 3;
 
@@ -90,28 +83,7 @@ export async function Stats() {
           </h2>
           <div className="grid gap-4 md:grid-cols-3">
             {recentChats.items.map(chat => (
-              <Link key={chat.id} href={`/chat/${chat.id}`}>
-                <Card className="h-full cursor-pointer transition-all duration-200 ease-out hover:shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="truncate text-base">
-                      {chat.title}
-                    </CardTitle>
-                    <CardDescription>
-                      Created{' '}
-                      {formatDistanceToNow(chat.createdAt, {
-                        addSuffix: true,
-                      })}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="bg-muted flex aspect-video w-full items-center justify-center rounded-lg">
-                      <div className="text-muted-foreground text-sm">
-                        Image placeholder
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
+              <ChatPreview key={chat.id} chat={chat} />
             ))}
           </div>
         </div>
