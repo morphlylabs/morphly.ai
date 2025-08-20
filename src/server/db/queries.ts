@@ -242,17 +242,17 @@ export const updateDocumentUrl = async ({
 };
 
 export const updateChatPreviewImageUrl = async ({
-  id,
-  svg_url,
+  chatId,
+  previewImageUrl,
 }: {
-  id: string;
-  svg_url: string;
+  chatId: string;
+  previewImageUrl: string;
 }) => {
   const session = await requireUser();
 
   return await db
     .update(chat)
-    .set({ previewImageUrl: svg_url })
-    .where(and(eq(chat.id, id), eq(chat.userId, session.user.id)))
+    .set({ previewImageUrl })
+    .where(and(eq(chat.id, chatId), eq(chat.userId, session.user.id)))
     .returning();
 };

@@ -85,11 +85,12 @@ export default async function Chats({
                     {chat.previewImageUrl ? (
                       <Image
                         src={chat.previewImageUrl}
-                        alt={chat.title}
+                        alt={chat.title || 'Chat preview'}
                         width={100}
                         height={100}
                         className="h-full w-full object-contain"
                         unoptimized
+                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                       />
                     ) : (
                       <div className="text-muted-foreground text-sm">

@@ -64,7 +64,7 @@ export async function executeCadQuery(code: string): Promise<CadQueryResponse> {
 
     return responseBody;
   } catch (error) {
-    console.error(error);
+    console.error('executeCadQuery failed', error);
     if (error instanceof z.ZodError) {
       throw new Error(`Invalid Lambda response format: ${error.message}`);
     }

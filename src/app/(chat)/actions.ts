@@ -56,8 +56,8 @@ export async function executeDocumentCodeAndPopulateUrl(
   });
 
   void updateChatPreviewImageUrl({
-    id: document.chatId,
-    svg_url: cadQueryResponse.body.svg_url,
+    chatId: document.chatId,
+    previewImageUrl: cadQueryResponse.body.svg_url,
   });
 
   if (!documents[0]) throw new Error('Document not found');
