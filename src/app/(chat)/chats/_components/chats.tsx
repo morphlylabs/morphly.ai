@@ -15,6 +15,7 @@ import {
   PaginationItem,
   PaginationLink,
 } from '~/components/ui/pagination';
+import Image from 'next/image';
 
 export default async function Chats({
   offset,
@@ -80,10 +81,21 @@ export default async function Chats({
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="bg-muted flex aspect-video w-full items-center justify-center rounded-lg">
+                  <div className="bg-muted flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg">
+                    {chat.previewImageUrl ? (
+                      <Image
+                        src={chat.previewImageUrl}
+                        alt={chat.title}
+                        width={100}
+                        height={100}
+                        className="h-full w-full object-contain"
+                        unoptimized
+                      />
+                    ) : (
                       <div className="text-muted-foreground text-sm">
-                        Image placeholder
+                        No preview available
                       </div>
+                    )}
                     </div>
                   </CardContent>
                 </Card>

@@ -227,16 +227,32 @@ export const getDocumentById = async (
 
 export const updateDocumentUrl = async ({
   id,
-  url,
+  stl_url,
 }: {
   id: string;
-  url: string;
+  stl_url: string;
 }) => {
   const session = await requireUser();
 
   return await db
     .update(document)
-    .set({ fileUrl: url })
+    .set({ fileUrl: stl_url })
     .where(and(eq(document.id, id), eq(document.userId, session.user.id)))
+    .returning();
+};
+
+export const updateChatPreviewImageUrl = async ({
+  id,
+  svg_url,
+}: {
+  id: string;
+  svg_url: string;
+}) => {
+  const session = await requireUser();
+
+  return await db
+    .update(chat)
+    .set({ previewImageUrl: svg_url })
+    .where(and(eq(chat.id, id), eq(chat.userId, session.user.id)))
     .returning();
 };

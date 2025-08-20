@@ -6,6 +6,7 @@ import {
   createOrUpdateVote,
   getChatById,
   getDocumentById,
+  updateChatPreviewImageUrl,
   updateDocumentUrl,
 } from '~/server/db/queries';
 import { myProvider } from '~/lib/ai/providers';
@@ -51,7 +52,12 @@ export async function executeDocumentCodeAndPopulateUrl(
 
   const documents = await updateDocumentUrl({
     id: documentId,
-    url: cadQueryResponse.body.stl_url,
+    stl_url: cadQueryResponse.body.stl_url,
+  });
+
+  void updateChatPreviewImageUrl({
+    id: document.chatId,
+    svg_url: cadQueryResponse.body.svg_url,
   });
 
   if (!documents[0]) throw new Error('Document not found');
