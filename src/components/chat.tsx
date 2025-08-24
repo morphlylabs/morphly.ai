@@ -162,10 +162,10 @@ export function Chat({
   };
 
   const downloadSTL = async () => {
-    if (selectedDocument?.fileUrl) {
+    if (selectedDocument?.stlUrl) {
       try {
         const filename = `model.stl`;
-        await downloadFileFromUrl(selectedDocument.fileUrl, filename);
+        await downloadFileFromUrl(selectedDocument.stlUrl, filename);
         toast.success(`STL file downloaded successfully`);
       } catch (error) {
         const errorMessage =
@@ -179,21 +179,33 @@ export function Chat({
   };
 
   const downloadSTP = async () => {
-    // TODO: Implement STP download when STP files are available
-    toast.info('STP download not yet implemented');
+    if (selectedDocument?.stpUrl) {
+      try {
+        const filename = `model.stp`;
+        await downloadFileFromUrl(selectedDocument.stpUrl, filename);
+        toast.success(`STP file downloaded successfully`);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : `Failed to download STP file`;
+        console.error(`Failed to download STP file:`, errorMessage);
+        toast.error(errorMessage);
+      }
+    }
   };
 
   return (
     <div
       className={
-        selectedDocument?.fileUrl
+        selectedDocument?.stlUrl
           ? 'grid h-[calc(100vh-4rem)] grid-cols-4'
           : 'flex h-[calc(100vh-4rem)] justify-center'
       }
     >
-      {selectedDocument?.fileUrl && (
+      {selectedDocument?.stlUrl && (
         <div className="bg-accent relative col-span-3 h-full border-r">
-          <Model src={selectedDocument.fileUrl} />
+          <Model src={selectedDocument.stlUrl} />
           <div className="absolute top-2 right-2 z-10 flex gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -244,7 +256,7 @@ export function Chat({
         </div>
       )}
       <div
-        className={`bg-background flex h-[calc(100vh-4rem)] max-w-3xl min-w-0 flex-col ${selectedDocument?.fileUrl ? 'col-span-1' : ''}`}
+        className={`bg-background flex h-[calc(100vh-4rem)] max-w-3xl min-w-0 flex-col ${selectedDocument?.stlUrl ? 'col-span-1' : ''}`}
       >
         <Conversation>
           <ConversationContent>
@@ -442,7 +454,7 @@ export function Chat({
         </Conversation>
 
         <div className="p-2">
-          {!selectedDocument?.fileUrl && (
+          {!selectedDocument?.stlUrl && (
             <Suggestions className="mb-2">
               {suggestions.map(suggestion => (
                 <Suggestion

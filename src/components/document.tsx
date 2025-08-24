@@ -15,7 +15,7 @@ function PureDocumentToolResult({ result }: DocumentToolResultProps) {
   return (
     <div>
       <p className="mb-2">New version available: {result.title}</p>
-      {result.kind === 'code' && document?.fileUrl && (
+      {result.kind === 'code' && document?.stlUrl && (
         <Button
           variant="outline"
           size="sm"

@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "6889465d-87d8-4283-bc44-9f125d48c00a",
-  "prevId": "c8bfa451-0968-4415-8bfc-0655571adc41",
+  "id": "d597b6b9-b6af-46ee-90ce-38a0a9f20c43",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
       "name": "account",
@@ -149,6 +149,13 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "preview_image_url": {
+          "name": "preview_image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
@@ -224,8 +231,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "file_url": {
-          "name": "file_url",
+        "stl_url": {
+          "name": "stl_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "stp_url": {
+          "name": "stp_url",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
