@@ -258,3 +258,38 @@ export const updateChatPreviewImageUrl = async ({
     .where(and(eq(chat.id, chatId), eq(chat.userId, session.user.id)))
     .returning();
 };
+
+export const deleteChat = async (chatId: string) => {
+  const session = await requireUser();
+
+  // First verify the user owns this chat
+  const existingChat = await db.query.chat.findFirst({
+    where: (chat, { eq, and }) =>
+      and(eq(chat.id, chatId), eq(chat.userId, session.user.id)),
+  });
+
+  if (!existingChat) {
+    throw new ChatSDKError('not_found:chat', 'Chat not found');
+  }
+
+  // Delete related records in proper order due to foreign key constraints
+  // Delete votes (references both chat and message)
+  await db.delete(vote).where(eq(vote.chatId, chatId));
+
+  // Delete documents (references chat)
+  await db.delete(document).where(eq(document.chatId, chatId));
+
+  // Delete streams (references chat)
+  await db.delete(stream).where(eq(stream.chatId, chatId));
+
+  // Delete messages (references chat)
+  await db.delete(message).where(eq(message.chatId, chatId));
+
+  // Finally delete the chat itself
+  const result = await db
+    .delete(chat)
+    .where(and(eq(chat.id, chatId), eq(chat.userId, session.user.id)))
+    .returning();
+
+  return result[0];
+};

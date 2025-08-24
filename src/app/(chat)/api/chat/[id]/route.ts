@@ -1,4 +1,8 @@
-import { getChatById, getMessagesByChatId } from '~/server/db/queries';
+import {
+  getChatById,
+  getMessagesByChatId,
+  deleteChat,
+} from '~/server/db/queries';
 import { ChatSDKError } from '~/lib/errors';
 import type { ChatMessage } from '~/lib/types';
 import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
@@ -98,4 +102,41 @@ export async function GET(
   }
 
   return new Response(stream, { status: 200 });
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id: chatId } = await params;
+
+  if (!chatId) {
+    return new ChatSDKError(
+      'bad_request:api',
+      'Chat ID is required',
+    ).toResponse();
+  }
+
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+
+  if (!session?.user) {
+    return new ChatSDKError('unauthorized:chat').toResponse();
+  }
+
+  try {
+    await deleteChat(chatId);
+    return new Response(null, { status: 204 });
+  } catch (error) {
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
+
+    console.error('Error deleting chat:', error);
+    return new ChatSDKError(
+      'bad_request:database',
+      'Failed to delete chat',
+    ).toResponse();
+  }
 }
