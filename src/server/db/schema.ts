@@ -158,7 +158,8 @@ export const document = sqliteTable('document', {
   userId: text('user_id', { length: 36 })
     .notNull()
     .references(() => user.id),
-  fileUrl: text('file_url'),
+  stlUrl: text('stl_url'),
+  stpUrl: text('stp_url'),
 });
 export type Document = InferSelectModel<typeof document>;
 export const documentRelations = relations(document, ({ one }) => ({

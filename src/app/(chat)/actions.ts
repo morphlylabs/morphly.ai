@@ -46,13 +46,14 @@ export async function executeDocumentCodeAndPopulateUrl(
 ): Promise<Document> {
   const document = await getDocumentById(documentId);
   if (!document?.content) throw new Error('Document not found');
-  if (document.fileUrl) return document;
+  if (document.stlUrl && document.stpUrl) return document;
 
   const cadQueryResponse = await executeCadQuery(document.content);
 
   const documents = await updateDocumentUrl({
     id: documentId,
-    stl_url: cadQueryResponse.body.stl_url,
+    stlUrl: cadQueryResponse.body.stl_url,
+    stpUrl: cadQueryResponse.body.stp_url,
   });
 
   void updateChatPreviewImageUrl({

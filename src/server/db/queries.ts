@@ -227,16 +227,18 @@ export const getDocumentById = async (
 
 export const updateDocumentUrl = async ({
   id,
-  stl_url,
+  stlUrl,
+  stpUrl,
 }: {
   id: string;
-  stl_url: string;
+  stlUrl: string;
+  stpUrl: string;
 }) => {
   const session = await requireUser();
 
   return await db
     .update(document)
-    .set({ fileUrl: stl_url })
+    .set({ stlUrl, stpUrl })
     .where(and(eq(document.id, id), eq(document.userId, session.user.id)))
     .returning();
 };

@@ -11,6 +11,7 @@ const cadQuerySuccessResponseSchema = z.object({
   body: z.object({
     stl_url: z.string().url(),
     svg_url: z.string().url(),
+    stp_url: z.string().url(),
   }),
 });
 

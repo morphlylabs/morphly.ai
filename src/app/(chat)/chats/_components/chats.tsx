@@ -63,35 +63,37 @@ export default async function Chats({
               <ChatPreview key={chat.id} chat={chat} />
             ))}
           </div>
-          <Pagination>
-            <PaginationContent>
-              {pagesToShow.map(pageNum => (
-                <PaginationItem key={pageNum}>
-                  <PaginationLink
-                    href={`/chats?offset=${(pageNum - 1) * limit}&limit=${limit}`}
-                    isActive={currentPage === pageNum}
-                  >
-                    {pageNum}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              {pages > 4 && endPage < pages && (
-                <>
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                  <PaginationItem>
+          {pages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                {pagesToShow.map(pageNum => (
+                  <PaginationItem key={pageNum}>
                     <PaginationLink
-                      href={`/chats?offset=${(pages - 1) * limit}&limit=${limit}`}
-                      isActive={currentPage === pages}
+                      href={`/chats?offset=${(pageNum - 1) * limit}&limit=${limit}`}
+                      isActive={currentPage === pageNum}
                     >
-                      {pages}
+                      {pageNum}
                     </PaginationLink>
                   </PaginationItem>
-                </>
-              )}
-            </PaginationContent>
-          </Pagination>
+                ))}
+                {pages > 4 && endPage < pages && (
+                  <>
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink
+                        href={`/chats?offset=${(pages - 1) * limit}&limit=${limit}`}
+                        isActive={currentPage === pages}
+                      >
+                        {pages}
+                      </PaginationLink>
+                    </PaginationItem>
+                  </>
+                )}
+              </PaginationContent>
+            </Pagination>
+          )}
         </div>
       )}
     </>

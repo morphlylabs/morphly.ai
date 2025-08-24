@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1755394124888,
-      "tag": "0005_curvy_nova",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1755407808819,
-      "tag": "0001_flippant_firelord",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1755657304744,
-      "tag": "0002_dry_spectrum",
+      "when": 1756061365287,
+      "tag": "0000_silly_shooting_star",
       "breakpoints": true
     }
   ]
