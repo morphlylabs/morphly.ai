@@ -9,7 +9,6 @@ import {
   updateChatPreviewImageUrl,
   updateDocumentUrl,
 } from '~/server/db/queries';
-import { myProvider } from '~/lib/ai/providers';
 import { executeCadQuery } from '../../server/aws/lambda';
 import type { Document } from '~/server/db/schema';
 
@@ -29,7 +28,7 @@ export async function generateTitleFromUserMessage({
   message: UIMessage;
 }) {
   const { text: title } = await generateText({
-    model: myProvider.languageModel('title-model'),
+    model: 'openai/gpt-oss-20b',
     system: `\n
     - you will generate a short title based on the first message a user begins a conversation with
     - ensure it is not more than 80 characters long
@@ -45,7 +44,17 @@ export async function executeDocumentCodeAndPopulateUrl(
   documentId: string,
 ): Promise<Document> {
   const document = await getDocumentById(documentId);
-  if (!document?.content) throw new Error('Document not found');
+
+  if (!document) {
+    console.error('Document not found');
+    throw new Error('Document not found');
+  }
+
+  if (!document.content) {
+    console.error('Document content not found');
+    throw new Error('Document content not found');
+  }
+
   if (document.stlUrl && document.stpUrl) return document;
 
   const cadQueryResponse = await executeCadQuery(document.content);

@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@ai-sdk/groq':
-        specifier: 2.0.2
-        version: 2.0.2(zod@3.25.76)
       '@ai-sdk/provider':
         specifier: ^2.0.0
         version: 2.0.0
@@ -141,9 +138,6 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3.3.1
         version: 3.3.1
-      '@playwright/test':
-        specifier: ^1.54.2
-        version: 1.54.2
       '@tailwindcss/postcss':
         specifier: ^4.1.12
         version: 4.1.12
@@ -200,12 +194,6 @@ packages:
 
   '@ai-sdk/gateway@1.0.3':
     resolution: {integrity: sha512-QRGz2vH1WR9NvCv8gWocoebAKiXcuqj22mug6i8COeVsp33x5K5cK2DT4TwiQx5SfYbqJbVoBT+UqnHF7A3PHA==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4
-
-  '@ai-sdk/groq@2.0.2':
-    resolution: {integrity: sha512-oiMkruBlXdCN8jPHr0bzZlPB5XCse0daQW8qPcnqx2gCARsAmM1xhoZdpWXxlBPwCueOjkqo1AGA7npKlnzC2Q==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -4054,12 +4042,6 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.1(zod@3.25.76)
       zod: 3.25.76
 
-  '@ai-sdk/groq@2.0.2(zod@3.25.76)':
-    dependencies:
-      '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.1(zod@3.25.76)
-      zod: 3.25.76
-
   '@ai-sdk/provider-utils@3.0.1(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
@@ -4982,6 +4964,7 @@ snapshots:
   '@playwright/test@1.54.2':
     dependencies:
       playwright: 1.54.2
+    optional: true
 
   '@radix-ui/number@1.1.1': {}
 
@@ -7503,13 +7486,15 @@ snapshots:
 
   picomatch@4.0.3: {}
 
-  playwright-core@1.54.2: {}
+  playwright-core@1.54.2:
+    optional: true
 
   playwright@1.54.2:
     dependencies:
       playwright-core: 1.54.2
     optionalDependencies:
       fsevents: 2.3.2
+    optional: true
 
   possible-typed-array-names@1.1.0: {}
 

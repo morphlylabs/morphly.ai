@@ -12,12 +12,14 @@ interface CreateDocumentProps {
   session: Session;
   dataStream: UIMessageStreamWriter<ChatMessage>;
   chatId: string;
+  model: string;
 }
 
 export const createDocument = ({
   session,
   dataStream,
   chatId,
+  model,
 }: CreateDocumentProps) =>
   tool({
     description: 'Use this tool to create cadquery code.',
@@ -64,6 +66,7 @@ export const createDocument = ({
       const document = await documentHandler.onCreateDocument({
         id,
         title,
+        model,
         dataStream,
         session,
         chatId,

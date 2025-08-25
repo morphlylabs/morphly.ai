@@ -11,7 +11,7 @@ export const env = createEnv({
     TURSO_AUTH_TOKEN: z.string(),
     BETTER_AUTH_SECRET: z.string(),
     REDIS_URL: z.string().url(),
-    GROQ_API_KEY: z.string(),
+    AI_GATEWAY_API_KEY: z.string(),
     BLOB_READ_WRITE_TOKEN: z.string(),
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
@@ -45,7 +45,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
     REDIS_URL: process.env.REDIS_URL,
-    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
     AWS_REGION: process.env.AWS_REGION,
     AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,

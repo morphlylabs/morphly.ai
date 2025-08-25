@@ -1,4 +1,3 @@
-import { myProvider } from '~/lib/ai/providers';
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -8,7 +7,6 @@ import {
 import { getStreamContext } from '~/lib/stream-context';
 import { postRequestBodySchema, type PostRequestBody } from './schema';
 import { ChatSDKError } from '~/lib/errors';
-import type { ChatMessage } from '~/lib/types';
 import { auth } from '~/lib/auth';
 import {
   createMessages,
@@ -35,14 +33,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    const {
-      id,
-      message: userMessage,
-    }: {
-      id: string;
-      message: ChatMessage;
-    } = requestBody;
-
     const session = await auth.api.getSession({
       headers: request.headers,
     });
@@ -51,15 +41,15 @@ export async function POST(request: Request) {
       return new ChatSDKError('unauthorized:chat').toResponse();
     }
 
-    const chat = await getChatById(id);
+    const chat = await getChatById(requestBody.id);
 
     if (!chat) {
       const title = await generateTitleFromUserMessage({
-        message: userMessage,
+        message: requestBody.message,
       });
 
       await createChat({
-        id,
+        id: requestBody.id,
         userId: session.user.id,
         title,
       });
@@ -72,35 +62,40 @@ export async function POST(request: Request) {
     await createMessages({
       messages: [
         {
-          id: userMessage.id,
-          chatId: id,
-          parts: userMessage.parts,
+          id: requestBody.message.id,
+          chatId: requestBody.id,
+          parts: requestBody.message.parts,
           role: 'user',
           createdAt: new Date(),
         },
       ],
     });
 
-    const messagesFromDb = await getMessagesByChatId(id);
-    const uiMessages = [...convertToUIMessages(messagesFromDb), userMessage];
+    const messagesFromDb = await getMessagesByChatId(requestBody.id);
+    const uiMessages = convertToUIMessages(messagesFromDb);
 
     const streamId = v4();
 
-    await createStream({ streamId, chatId: id });
+    await createStream({ streamId, chatId: requestBody.id });
 
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
-          model: myProvider.languageModel('chat-model'),
+          model: requestBody.model,
           messages: convertToModelMessages(uiMessages),
           experimental_activeTools: ['createDocument', 'updateDocument'],
           tools: {
             createDocument: createDocument({
               session,
+              model: requestBody.model,
               dataStream,
-              chatId: id,
+              chatId: requestBody.id,
             }),
-            updateDocument: updateDocument({ session, dataStream }),
+            updateDocument: updateDocument({
+              session,
+              model: requestBody.model,
+              dataStream,
+            }),
           },
         });
 
@@ -120,7 +115,7 @@ export async function POST(request: Request) {
             role: message.role,
             parts: message.parts,
             createdAt: new Date(),
-            chatId: id,
+            chatId: requestBody.id,
           })),
         });
       },

@@ -9,7 +9,7 @@ import { useDataStream } from '~/stores/chat.store';
 import { v4 } from 'uuid';
 import { useAutoResume } from '~/hooks/use-auto-resume';
 import { toast } from 'sonner';
-import Model from './model';
+import Asset from './asset';
 import { Button } from '~/components/ui/button';
 import {
   Box,
@@ -53,11 +53,12 @@ import { useChatStore, useSelectedDocument } from '~/stores/chat.store';
 import type { Document, Vote } from '~/server/db/schema';
 import { Action, Actions } from './ai-elements/actions';
 import useSWR, { mutate } from 'swr';
-
-const models = [
-  { id: 'gpt-4o', name: 'GPT-4o' },
-  { id: 'claude-opus-4-20250514', name: 'Claude 4 Opus' },
-];
+import {
+  SUPPORTED_MODELS,
+  toModelDisplayName,
+  toModelId,
+  type SupportedModel,
+} from '~/lib/ai/models';
 
 const suggestions = [
   'Create a lamp that has a base and a shade',
@@ -87,7 +88,7 @@ export function Chat({
   }, [id, initialDocuments, setChatId, setDocuments]);
 
   const [text, setText] = useState<string>('');
-  const [model, setModel] = useState<string>(models[0]!.id);
+  const [model, setModel] = useState<SupportedModel>(SUPPORTED_MODELS[0]);
   const selectedDocument = useSelectedDocument();
   const [, copy] = useCopyToClipboard();
 
@@ -124,13 +125,27 @@ export function Chat({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    void sendMessage({ text: text });
+    void sendMessage(
+      { text: text },
+      {
+        body: {
+          model: model,
+        },
+      },
+    );
     setText('');
     window.history.replaceState({}, '', `/chat/${id}`);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    void sendMessage({ text: suggestion });
+    void sendMessage(
+      { text: suggestion },
+      {
+        body: {
+          model: model,
+        },
+      },
+    );
     setText('');
     window.history.replaceState({}, '', `/chat/${id}`);
   };
@@ -205,7 +220,7 @@ export function Chat({
     >
       {selectedDocument?.stlUrl && (
         <div className="bg-accent relative col-span-3 h-full border-r">
-          <Model src={selectedDocument.stlUrl} />
+          <Asset src={selectedDocument.stlUrl} />
           <div className="absolute top-2 right-2 z-10 flex gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -480,7 +495,7 @@ export function Chat({
 
                 <PromptInputModelSelect
                   onValueChange={value => {
-                    setModel(value);
+                    setModel(toModelId(value));
                   }}
                   value={model}
                 >
@@ -488,12 +503,9 @@ export function Chat({
                     <PromptInputModelSelectValue />
                   </PromptInputModelSelectTrigger>
                   <PromptInputModelSelectContent>
-                    {models.map(model => (
-                      <PromptInputModelSelectItem
-                        key={model.id}
-                        value={model.id}
-                      >
-                        {model.name}
+                    {SUPPORTED_MODELS.map(model => (
+                      <PromptInputModelSelectItem key={model} value={model}>
+                        {toModelDisplayName(model)}
                       </PromptInputModelSelectItem>
                     ))}
                   </PromptInputModelSelectContent>

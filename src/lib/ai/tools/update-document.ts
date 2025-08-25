@@ -7,10 +7,15 @@ import type { Session } from '~/lib/auth';
 
 interface UpdateDocumentProps {
   session: Session;
+  model: string;
   dataStream: UIMessageStreamWriter<ChatMessage>;
 }
 
-export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
+export const updateDocument = ({
+  session,
+  model,
+  dataStream,
+}: UpdateDocumentProps) =>
   tool({
     description: 'Update a document with the given description.',
     inputSchema: z.object({
@@ -46,6 +51,7 @@ export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
       const newDocument = await documentHandler.onUpdateDocument({
         document,
         description,
+        model,
         dataStream,
         session,
       });
