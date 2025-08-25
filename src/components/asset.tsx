@@ -16,7 +16,7 @@ function Loader() {
   return <Html center>{progress.toFixed(2)}%</Html>;
 }
 
-function ModelMesh({ src }: { src: string }) {
+function AssetMesh({ src }: { src: string }) {
   const geometry = useLoader(STLLoader, src).center();
 
   return (
@@ -26,11 +26,11 @@ function ModelMesh({ src }: { src: string }) {
   );
 }
 
-interface Props {
+interface AssetProps {
   src: string;
 }
 
-export default function Model({ src }: Props) {
+export default function Asset({ src }: AssetProps) {
   return (
     <div className="h-full w-full">
       <Canvas camera={{ position: [45, 45, 45] }}>
@@ -41,7 +41,7 @@ export default function Model({ src }: Props) {
           adjustCamera={1.5}
         >
           <Suspense fallback={<Loader />}>
-            <ModelMesh src={src} />
+            <AssetMesh src={src} />
           </Suspense>
         </Stage>
         <Grid infiniteGrid />
