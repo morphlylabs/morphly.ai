@@ -53,10 +53,8 @@ export async function POST(request: Request) {
         userId: session.user.id,
         title,
       });
-    } else {
-      if (chat.userId !== session.user.id) {
-        return new ChatSDKError('forbidden:chat').toResponse();
-      }
+    } else if (chat.userId !== session.user.id) {
+      return new ChatSDKError('forbidden:chat').toResponse();
     }
 
     await createMessages({
@@ -136,10 +134,12 @@ export async function POST(request: Request) {
       return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
     }
   } catch (error) {
+    console.error(error);
+
     if (error instanceof ChatSDKError) {
       return error.toResponse();
     }
 
-    console.error(error);
+    return new ChatSDKError('bad_request:database').toResponse();
   }
 }
