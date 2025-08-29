@@ -4,7 +4,7 @@ import {
   getChatById,
 } from '~/server/db/queries';
 import { ChatSDKError } from '~/lib/errors';
-import { auth } from '../../../../lib/auth';
+import { getSession } from '~/lib/auth';
 import { postRequestBodySchema } from './schema';
 
 export async function GET(request: Request) {
@@ -18,9 +18,7 @@ export async function GET(request: Request) {
     ).toResponse();
   }
 
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
+  const session = await getSession();
 
   if (!session?.user) {
     return new ChatSDKError('unauthorized:document').toResponse();
@@ -52,9 +50,7 @@ export async function POST(request: Request) {
     ).toResponse();
   }
 
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
+  const session = await getSession();
 
   if (!session?.user) {
     return new ChatSDKError('not_found:document').toResponse();

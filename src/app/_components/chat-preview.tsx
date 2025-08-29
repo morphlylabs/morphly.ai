@@ -11,7 +11,13 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Chat } from '~/server/db/schema';
 import { Clock } from 'lucide-react';
 
-export function ChatPreview({ chat }: { chat: Chat }) {
+export function ChatPreview({
+  chat,
+  priority = false,
+}: {
+  chat: Chat;
+  priority?: boolean;
+}) {
   return (
     <Link href={`/chat/${chat.id}`} aria-label={`Open chat "${chat.title}"`}>
       <Card className="hover:border-primary/20 h-full transition-all hover:scale-[1.02] hover:shadow-lg">
@@ -35,6 +41,7 @@ export function ChatPreview({ chat }: { chat: Chat }) {
                 fill
                 className="object-contain"
                 unoptimized
+                priority={priority}
               />
             ) : (
               <div className="text-muted-foreground text-sm">

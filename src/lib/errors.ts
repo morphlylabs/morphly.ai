@@ -1,10 +1,13 @@
+import { z } from 'zod';
+
 export type ErrorType =
   | 'bad_request'
   | 'unauthorized'
   | 'forbidden'
   | 'not_found'
   | 'rate_limit'
-  | 'offline';
+  | 'offline'
+  | 'payment_required';
 
 export type Surface =
   | 'chat'
@@ -50,7 +53,7 @@ export class ChatSDKError extends Error {
     this.statusCode = getStatusCodeByType(this.type);
   }
 
-  public toResponse() {
+  public toResponse(): Response {
     const code: ErrorCode = `${this.type}:${this.surface}`;
     const visibility = visibilityBySurface[this.surface];
 
@@ -107,6 +110,9 @@ export function getMessageByErrorCode(errorCode: ErrorCode): string {
     case 'bad_request:document':
       return 'The request to create or update the document was invalid. Please check your input and try again.';
 
+    case 'payment_required:chat':
+      return 'You need to upgrade your plan to use this feature. Please upgrade and try again.';
+
     default:
       return 'Something went wrong. Please try again later.';
   }
@@ -118,6 +124,8 @@ function getStatusCodeByType(type: ErrorType) {
       return 400;
     case 'unauthorized':
       return 401;
+    case 'payment_required':
+      return 402;
     case 'forbidden':
       return 403;
     case 'not_found':
@@ -130,3 +138,16 @@ function getStatusCodeByType(type: ErrorType) {
       return 500;
   }
 }
+
+const errorCodeSchema = z
+  .string()
+  .regex(
+    /^(bad_request|unauthorized|forbidden|not_found|rate_limit|offline|payment_required):(chat|auth|api|stream|database|history|vote|document|suggestions)$/,
+    "Code must be in format 'ErrorType:Surface' with valid ErrorType and Surface values",
+  ) as z.ZodType<ErrorCode>;
+
+export const chatSDKErrorSchema = z.object({
+  code: errorCodeSchema,
+  message: z.string(),
+  cause: z.string().optional(),
+});

@@ -7,7 +7,7 @@ import {
 import { getStreamContext } from '~/lib/stream-context';
 import { postRequestBodySchema, type PostRequestBody } from './schema';
 import { ChatSDKError } from '~/lib/errors';
-import { auth } from '~/lib/auth';
+import { getSession } from '~/lib/auth';
 import {
   createMessages,
   createStream,
@@ -19,7 +19,9 @@ import { v4 } from 'uuid';
 import { convertToUIMessages } from '~/lib/utils';
 import { createDocument } from '~/lib/ai/tools/create-document';
 import { updateDocument } from '~/lib/ai/tools/update-document';
+import { MODEL_BILLING_NAME } from '~/lib/ai/models';
 import { generateTitleFromUserMessage } from '../../actions';
+import { Autumn as autumn } from 'autumn-js';
 
 export const maxDuration = 60;
 
@@ -33,12 +35,19 @@ export async function POST(request: Request) {
   }
 
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+    const session = await getSession();
 
     if (!session?.user) {
       return new ChatSDKError('unauthorized:chat').toResponse();
+    }
+
+    const { data } = await autumn.check({
+      customer_id: session.user.id,
+      feature_id: MODEL_BILLING_NAME[requestBody.model],
+    });
+
+    if (!data?.allowed) {
+      return new ChatSDKError('payment_required:chat').toResponse();
     }
 
     const chat = await getChatById(requestBody.id);
@@ -115,6 +124,11 @@ export async function POST(request: Request) {
             createdAt: new Date(),
             chatId: requestBody.id,
           })),
+        });
+
+        await autumn.track({
+          customer_id: session.user.id,
+          feature_id: MODEL_BILLING_NAME[requestBody.model],
         });
       },
       onError: () => {

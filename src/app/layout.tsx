@@ -4,6 +4,8 @@ import React from 'react';
 import { type Metadata } from 'next';
 import { Toaster } from '~/components/ui/sonner';
 import { Navbar } from '~/components/navbar';
+import { env } from '~/env';
+import { AutumnProvider } from 'autumn-js/react';
 
 export const metadata: Metadata = {
   title: 'Create T3 App',
@@ -17,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        <main>{children}</main>
-        <Toaster position="bottom-left" />
+        <AutumnProvider betterAuthUrl={env.NEXT_PUBLIC_BETTER_AUTH_URL}>
+          <Navbar />
+          <main>{children}</main>
+          <Toaster position="bottom-left" />
+        </AutumnProvider>
       </body>
     </html>
   );

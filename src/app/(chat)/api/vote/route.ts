@@ -1,4 +1,4 @@
-import { auth } from '~/lib/auth';
+import { getSession } from '~/lib/auth';
 import { ChatSDKError } from '~/lib/errors';
 import {
   createOrUpdateVote,
@@ -18,9 +18,7 @@ export async function GET(request: Request) {
     ).toResponse();
   }
 
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
+  const session = await getSession();
 
   if (!session?.user) {
     return new ChatSDKError('unauthorized:vote').toResponse();
@@ -53,9 +51,7 @@ export async function PATCH(request: Request) {
 
   const { chatId, messageId, type } = parsed.data;
 
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
+  const session = await getSession();
 
   if (!session?.user) {
     return new ChatSDKError('unauthorized:vote').toResponse();

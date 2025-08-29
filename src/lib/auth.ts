@@ -6,6 +6,7 @@ import { headers } from 'next/headers';
 import { db } from '~/server/db';
 import { nextCookies } from 'better-auth/next-js';
 import { env } from '~/env';
+import { autumn } from 'autumn-js/better-auth';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -24,7 +25,7 @@ export const auth = betterAuth({
       accessType: 'offline',
     },
   },
-  plugins: [nextCookies()],
+  plugins: [nextCookies(), autumn()],
 });
 
 export async function getSession() {

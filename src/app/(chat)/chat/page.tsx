@@ -1,4 +1,4 @@
-import { Chat } from '~/components/chat';
+import { Chat } from '~/app/(chat)/chat/_components/chat';
 import { v4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';

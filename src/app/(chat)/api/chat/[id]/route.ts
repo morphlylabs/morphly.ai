@@ -4,7 +4,7 @@ import type { ChatMessage } from '~/lib/types';
 import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
 import { differenceInSeconds } from 'date-fns';
 import { getStreamContext } from '~/lib/stream-context';
-import { auth } from '~/lib/auth';
+import { getSession } from '~/lib/auth';
 
 export async function GET(
   request: Request,
@@ -23,9 +23,7 @@ export async function GET(
     return new ChatSDKError('bad_request:api').toResponse();
   }
 
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
+  const session = await getSession();
 
   if (!session?.user) {
     return new ChatSDKError('unauthorized:chat').toResponse();
