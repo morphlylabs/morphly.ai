@@ -3,9 +3,8 @@
 import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { useState, useEffect } from 'react';
-import { ChatSDKError } from '~/lib/errors';
 import type { ChatMessage } from '~/lib/types';
-import { useDataStream } from '~/stores/chat.store';
+import { useDataStream } from '~/app/(chat)/chat/_stores/chat.store';
 import { v4 } from 'uuid';
 import { useAutoResume } from '~/hooks/use-auto-resume';
 import { toast } from 'sonner';
@@ -33,32 +32,31 @@ import {
   PromptInputToolbar,
   PromptInputTools,
   PromptInputButton,
-  PromptInputModelSelect,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
   PromptInputSubmit,
-} from './ai-elements/prompt-input';
+} from '~/components/ai-elements/prompt-input';
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from './ai-elements/conversation';
-import { MessageContent, Message, MessageAvatar } from './ai-elements/message';
-import { DocumentToolResult } from './document';
-import { Suggestion, Suggestions } from './ai-elements/suggestion';
-import { Separator } from '~/components/ui/separator';
-import { useChatStore, useSelectedDocument } from '~/stores/chat.store';
-import type { Document, Vote } from '~/server/db/schema';
-import { Action, Actions } from './ai-elements/actions';
-import useSWR, { mutate } from 'swr';
+} from '~/components/ai-elements/conversation';
 import {
-  SUPPORTED_MODELS,
-  toModelDisplayName,
-  toModelId,
-  type SupportedModel,
-} from '~/lib/ai/models';
+  MessageContent,
+  Message,
+  MessageAvatar,
+} from '~/components/ai-elements/message';
+import { DocumentToolResult } from '~/components/document';
+import { Suggestion, Suggestions } from '~/components/ai-elements/suggestion';
+import { Separator } from '~/components/ui/separator';
+import {
+  useChatStore,
+  useSelectedDocument,
+} from '~/app/(chat)/chat/_stores/chat.store';
+import type { Document, Vote } from '~/server/db/schema';
+import { Action, Actions } from '~/components/ai-elements/actions';
+import useSWR, { mutate } from 'swr';
+import { chatSDKErrorSchema } from '~/lib/errors';
+import { ModelSelector } from './model-selector';
+import { useSelectedModel } from '../_stores/model.store';
 
 const suggestions = [
   'Create a lamp that has a base and a shade',
@@ -88,7 +86,7 @@ export function Chat({
   }, [id, initialDocuments, setChatId, setDocuments]);
 
   const [text, setText] = useState<string>('');
-  const [model, setModel] = useState<SupportedModel>(SUPPORTED_MODELS[0]);
+  const model = useSelectedModel();
   const selectedDocument = useSelectedDocument();
   const [, copy] = useCopyToClipboard();
 
@@ -114,12 +112,15 @@ export function Chat({
         processDataStreamUpdate(dataPart);
       },
       onError: error => {
-        if (error instanceof ChatSDKError) {
-          toast.error(error.message);
-        } else {
-          console.error('Chat error:', error);
+        const parsed = chatSDKErrorSchema.safeParse(JSON.parse(error.message));
+
+        if (!parsed.success) {
+          console.error('Chat error:', error.message);
           toast.error('An error occurred during chat');
+          return;
         }
+
+        toast.error(parsed.data.message);
       },
     });
 
@@ -228,6 +229,7 @@ export function Chat({
                   variant="ghost"
                   size="icon"
                   className="bg-background"
+                  aria-label="Copy code"
                   onClick={copyCode}
                 >
                   <Code className="h-4 w-4" />
@@ -243,6 +245,7 @@ export function Chat({
                   variant="ghost"
                   size="icon"
                   className="bg-background"
+                  aria-label="Download STL"
                   onClick={downloadSTL}
                 >
                   <Box className="h-4 w-4" />
@@ -258,6 +261,7 @@ export function Chat({
                   variant="ghost"
                   size="icon"
                   className="bg-background"
+                  aria-label="Download STP"
                   onClick={downloadSTP}
                 >
                   <Footprints className="h-4 w-4" />
@@ -492,24 +496,7 @@ export function Chat({
                 <PromptInputButton>
                   <MicIcon size={16} />
                 </PromptInputButton>
-
-                <PromptInputModelSelect
-                  onValueChange={value => {
-                    setModel(toModelId(value));
-                  }}
-                  value={model}
-                >
-                  <PromptInputModelSelectTrigger>
-                    <PromptInputModelSelectValue />
-                  </PromptInputModelSelectTrigger>
-                  <PromptInputModelSelectContent>
-                    {SUPPORTED_MODELS.map(model => (
-                      <PromptInputModelSelectItem key={model} value={model}>
-                        {toModelDisplayName(model)}
-                      </PromptInputModelSelectItem>
-                    ))}
-                  </PromptInputModelSelectContent>
-                </PromptInputModelSelect>
+                <ModelSelector />
               </PromptInputTools>
               <PromptInputSubmit disabled={!text} status={status} />
             </PromptInputToolbar>

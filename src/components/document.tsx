@@ -2,7 +2,10 @@ import { memo } from 'react';
 import type { ArtifactKind } from '~/lib/artifacts/server';
 import { Button } from './ui/button';
 import { CheckIcon } from 'lucide-react';
-import { useChatStore, useDocumentById } from '../stores/chat.store';
+import {
+  useChatStore,
+  useDocumentById,
+} from '../app/(chat)/chat/_stores/chat.store';
 
 interface DocumentToolResultProps {
   result: { id: string; title: string; kind: ArtifactKind; content: string };

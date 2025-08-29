@@ -7,10 +7,14 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '~/components/ui/dropdown-menu';
+import { Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useCustomer } from 'autumn-js/react';
+import CheckoutDialog from './autumn/checkout-dialog';
 
 export function UserAvatar() {
   const { data: session } = authClient.useSession();
+  const { checkout, check } = useCustomer();
   const router = useRouter();
 
   const signOut = async () => {
@@ -39,6 +43,23 @@ export function UserAvatar() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
+        {check({
+          productId: 'plus',
+        }).data?.allowed === false && (
+          <DropdownMenuItem
+            onClick={async () => {
+              await checkout({
+                productId: 'plus',
+                dialog: CheckoutDialog,
+              });
+            }}
+            className="border border-violet-200/20 bg-gradient-to-r from-violet-500/10 to-purple-500/10 font-medium text-violet-600 hover:border-violet-300/30 hover:from-violet-500/20 hover:to-purple-500/20 dark:text-violet-400"
+          >
+            <Sparkles className="h-4 w-4 text-violet-500" />
+            Upgrade Plan
+          </DropdownMenuItem>
+        )}
+
         <DropdownMenuItem onClick={signOut}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

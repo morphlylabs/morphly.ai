@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import type { UseChatHelpers } from '@ai-sdk/react';
 import type { ChatMessage } from '~/lib/types';
-import { useDataStream } from '~/stores/chat.store';
+import { useDataStream } from '~/app/(chat)/chat/_stores/chat.store';
 
 export interface UseAutoResumeParams {
   autoResume: boolean;
