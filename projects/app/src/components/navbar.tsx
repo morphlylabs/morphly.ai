@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { authClient } from "@/lib/auth-client";
-import { AuthenticatedNavbar } from "./authenticated-navbar";
-import { GuestNavbar } from "./guest-navbar";
+import { authClient } from '@/lib/auth-client';
+import { AuthenticatedNavbar } from './authenticated-navbar';
+import { GuestNavbar } from './guest-navbar';
 
 export function Navbar() {
   const { data: session } = authClient.useSession();

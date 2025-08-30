@@ -1,30 +1,30 @@
-"use client";
+'use client';
 
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import React, { useEffect, useState } from "react";
-import { cn } from "@workspace/ui/lib/utils";
-import { Button } from "@workspace/ui/components/button";
+import * as AccordionPrimitive from '@radix-ui/react-accordion';
+import React, { useEffect, useState } from 'react';
+import { cn } from '@workspace/ui/lib/utils';
+import { Button } from '@workspace/ui/components/button';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogTitle,
-} from "@workspace/ui/components/dialog";
-import { getCheckoutContent } from "@/lib/autumn/checkout-content";
-import { useCustomer } from "autumn-js/react";
-import { ArrowRight, ChevronDown, Loader2 } from "lucide-react";
-import { UsageModel, type CheckoutResult, type ProductItem } from "autumn-js";
+} from '@workspace/ui/components/dialog';
+import { getCheckoutContent } from '@/lib/autumn/checkout-content';
+import { useCustomer } from 'autumn-js/react';
+import { ArrowRight, ChevronDown, Loader2 } from 'lucide-react';
+import { UsageModel, type CheckoutResult, type ProductItem } from 'autumn-js';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-} from "@workspace/ui/components/accordion";
+} from '@workspace/ui/components/accordion';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@workspace/ui/components/popover";
-import { Input } from "@workspace/ui/components/input";
+} from '@workspace/ui/components/popover';
+import { Input } from '@workspace/ui/components/input';
 
 export interface CheckoutDialogProps {
   open: boolean;
@@ -39,8 +39,8 @@ const formatCurrency = ({
   amount: number;
   currency: string;
 }) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
     currency: currency,
   }).format(amount);
 };
@@ -71,7 +71,7 @@ export default function CheckoutDialog(params: CheckoutDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="text-foreground gap-0 p-0 pt-4 text-sm">
         <DialogTitle className="mb-1 px-6">{title}</DialogTitle>
-        <div className="text-muted-foreground mt-1 mb-4 px-6">{message}</div>
+        <div className="text-muted-foreground mb-4 mt-1 px-6">{message}</div>
 
         {isPaid && (
           <PriceInformation
@@ -80,13 +80,13 @@ export default function CheckoutDialog(params: CheckoutDialogProps) {
           />
         )}
 
-        <DialogFooter className="bg-secondary flex flex-col justify-between gap-x-4 border-t py-2 pr-3 pl-6 shadow-inner sm:flex-row">
+        <DialogFooter className="bg-secondary flex flex-col justify-between gap-x-4 border-t py-2 pl-6 pr-3 shadow-inner sm:flex-row">
           <Button
             size="sm"
             onClick={async () => {
               setLoading(true);
 
-              const options = checkoutResult.options.map((option) => {
+              const options = checkoutResult.options.map(option => {
                 return {
                   featureId: option.feature_id,
                   quantity: option.quantity,
@@ -148,7 +148,7 @@ function DueAmounts({ checkoutResult }: { checkoutResult: CheckoutResult }) {
     : undefined;
 
   const hasUsagePrice = product.items.some(
-    (item) => item.usage_model === UsageModel.PayPerUse,
+    item => item.usage_model === UsageModel.PayPerUse,
   );
 
   const showNextCycle = next_cycle && next_cycle.total !== checkoutResult.total;
@@ -193,7 +193,7 @@ function ProductItems({
   setCheckoutResult: (checkoutResult: CheckoutResult) => void;
 }) {
   const isUpdateQuantity =
-    checkoutResult.product.scenario === "active" &&
+    checkoutResult.product.scenario === 'active' &&
     checkoutResult.product.properties.updateable;
 
   const isOneOff = checkoutResult.product.properties.is_one_off;
@@ -202,7 +202,7 @@ function ProductItems({
     <div className="flex flex-col gap-2">
       <p className="text-sm font-medium">Price</p>
       {checkoutResult.product.items
-        .filter((item) => item.type !== "feature")
+        .filter(item => item.type !== 'feature')
         .map((item, index) => {
           if (item.usage_model === UsageModel.Prepaid) {
             return (
@@ -225,8 +225,8 @@ function ProductItems({
                 {item.feature
                   ? item.feature.name
                   : isOneOff
-                    ? "Price"
-                    : "Subscription"}
+                    ? 'Price'
+                    : 'Subscription'}
               </p>
               <p>
                 {item.display?.primary_text} {item.display?.secondary_text}
@@ -251,16 +251,16 @@ function CheckoutLines({ checkoutResult }: { checkoutResult: CheckoutResult }) {
             />
           </div>
         </CustomAccordionTrigger>
-        <AccordionContent className="mt-2 mb-0 flex flex-col gap-2 pb-2">
+        <AccordionContent className="mb-0 mt-2 flex flex-col gap-2 pb-2">
           {checkoutResult.lines
-            .filter((line) => line.amount != 0)
+            .filter(line => line.amount != 0)
             .map((line, index) => {
               return (
                 <div key={index} className="flex justify-between">
                   <p className="text-muted-foreground">{line.description}</p>
                   <p className="text-muted-foreground">
-                    {new Intl.NumberFormat("en-US", {
-                      style: "currency",
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
                       currency: checkoutResult.currency,
                     }).format(line.amount)}
                   </p>
@@ -283,7 +283,7 @@ function CustomAccordionTrigger({
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]_svg]:rotate-0",
+          'focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]_svg]:rotate-0',
           className,
         )}
         {...props}
@@ -316,8 +316,8 @@ const PrepaidItem = ({
     setLoading(true);
     try {
       const newOptions = checkoutResult.options
-        .filter((option) => option.feature_id !== item.feature_id)
-        .map((option) => {
+        .filter(option => option.feature_id !== item.feature_id)
+        .map(option => {
           return {
             featureId: option.feature_id,
             quantity: option.quantity,
@@ -352,7 +352,7 @@ const PrepaidItem = ({
     }
   };
 
-  const disableSelection = scenario === "renew";
+  const disableSelection = scenario === 'renew';
 
   return (
     <div className="flex justify-between gap-2">
@@ -361,9 +361,9 @@ const PrepaidItem = ({
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger
             className={cn(
-              "text-muted-foreground bg-accent/80 flex shrink-0 items-center gap-1 rounded-md px-1 py-0.5 text-xs",
+              'text-muted-foreground bg-accent/80 flex shrink-0 items-center gap-1 rounded-md px-1 py-0.5 text-xs',
               disableSelection !== true &&
-                "hover:bg-accent hover:text-foreground",
+                'hover:bg-accent hover:text-foreground',
             )}
             disabled={disableSelection}
           >
@@ -386,7 +386,7 @@ const PrepaidItem = ({
                 <Input
                   className="h-7 w-16 focus:!ring-2"
                   value={quantityInput}
-                  onChange={(e) => setQuantityInput(e.target.value)}
+                  onChange={e => setQuantityInput(e.target.value)}
                 />
                 <p className="text-muted-foreground">
                   {billingUnits > 1 && `x ${billingUnits} `}
@@ -403,7 +403,7 @@ const PrepaidItem = ({
                 {loading ? (
                   <Loader2 className="text-muted-foreground !h-4 !w-4 animate-spin" />
                 ) : (
-                  "Save"
+                  'Save'
                 )}
               </Button>
             </div>
@@ -428,7 +428,7 @@ export const PriceItem = ({
   return (
     <div
       className={cn(
-        "flex flex-col justify-between gap-1 pb-4 sm:h-7 sm:flex-row sm:items-center sm:gap-2 sm:pb-0",
+        'flex flex-col justify-between gap-1 pb-4 sm:h-7 sm:flex-row sm:items-center sm:gap-2 sm:pb-0',
         className,
       )}
       {...props}
@@ -446,7 +446,7 @@ export const PricingDialogButton = ({
   className,
 }: {
   children: React.ReactNode;
-  size?: "sm" | "lg" | "default" | "icon";
+  size?: 'sm' | 'lg' | 'default' | 'icon';
   onClick: () => void;
   disabled?: boolean;
   className?: string;
@@ -456,7 +456,7 @@ export const PricingDialogButton = ({
       onClick={onClick}
       disabled={disabled}
       size={size}
-      className={cn(className, "shadow-sm shadow-stone-400")}
+      className={cn(className, 'shadow-sm shadow-stone-400')}
     >
       {children}
       <ArrowRight className="!h-3" />

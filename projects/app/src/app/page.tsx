@@ -1,7 +1,7 @@
-import { HeroPrompt } from "@/components/hero-prompt";
-import { Stats } from "./_components/stats";
-import { Suspense } from "react";
-import { StatsLoader } from "./_components/stats-loader";
+import { HeroPrompt } from '@/components/hero-prompt';
+import { Stats } from './_components/stats';
+import { Suspense } from 'react';
+import { StatsLoader } from './_components/stats-loader';
 
 export default function HomePage() {
   return (

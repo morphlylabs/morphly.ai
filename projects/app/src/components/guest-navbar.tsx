@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { CuboidIcon, Menu } from "lucide-react";
+import { CuboidIcon, Menu } from 'lucide-react';
 import {
   Sheet,
   SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from "@workspace/ui/components/sheet";
+} from '@workspace/ui/components/sheet';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,10 +15,10 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "@workspace/ui/components/navigation-menu";
-import { Button } from "@workspace/ui/components/button";
-import Link from "next/link";
-import { useState } from "react";
+} from '@workspace/ui/components/navigation-menu';
+import { Button } from '@workspace/ui/components/button';
+import Link from 'next/link';
+import { useState } from 'react';
 
 const navigationItems: {
   title: string;
@@ -26,12 +26,12 @@ const navigationItems: {
   items?: { title: string; href: string; description: string }[];
 }[] = [
   {
-    title: "Pricing",
-    href: "/pricing",
+    title: 'Pricing',
+    href: '/pricing',
   },
   {
-    title: "About",
-    href: "/about",
+    title: 'About',
+    href: '/about',
   },
 ];
 
@@ -60,7 +60,7 @@ function MobileNavigation() {
           </SheetTitle>
         </SheetHeader>
         <nav className="mt-8 flex flex-col space-y-4">
-          {navigationItems.map((item) => (
+          {navigationItems.map(item => (
             <div key={item.title}>
               {item.items ? (
                 <div className="space-y-2">
@@ -68,7 +68,7 @@ function MobileNavigation() {
                     {item.title}
                   </h4>
                   <div className="space-y-1 pl-4">
-                    {item.items.map((subItem) => (
+                    {item.items.map(subItem => (
                       <Link
                         key={subItem.title}
                         href={subItem.href}
@@ -115,7 +115,7 @@ export function GuestNavbar() {
         {/* Desktop Navigation */}
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
-            {navigationItems.map((item) => (
+            {navigationItems.map(item => (
               <NavigationMenuItem key={item.title}>
                 {item.items ? (
                   <>
@@ -124,10 +124,10 @@ export function GuestNavbar() {
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <div className="grid w-[400px] gap-3 p-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                        {item.items.map((subItem) => (
+                        {item.items.map(subItem => (
                           <NavigationMenuLink key={subItem.title} asChild>
                             <Link href={subItem.href} className="p-3">
-                              <div className="text-sm leading-none font-medium">
+                              <div className="text-sm font-medium leading-none">
                                 {subItem.title}
                               </div>
                               <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">

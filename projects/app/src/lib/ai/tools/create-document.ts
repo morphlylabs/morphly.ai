@@ -1,10 +1,10 @@
-import { tool, type UIMessageStreamWriter } from "ai";
-import { z } from "zod";
-import { artifactKinds } from "@/lib/artifacts/server";
-import type { ChatMessage } from "@/lib/types";
-import { v4 } from "uuid";
-import type { Session } from "@/lib/auth";
-import { codeDocumentHandler } from "../../../artifacts/code/server";
+import { tool, type UIMessageStreamWriter } from 'ai';
+import { z } from 'zod';
+import { artifactKinds } from '@/lib/artifacts/server';
+import type { ChatMessage } from '@/lib/types';
+import { v4 } from 'uuid';
+import type { Session } from '@/lib/auth';
+import { codeDocumentHandler } from '../../../artifacts/code/server';
 
 interface CreateDocumentProps {
   session: Session;
@@ -20,7 +20,7 @@ export const createDocument = ({
   model,
 }: CreateDocumentProps) =>
   tool({
-    description: "Use this tool to create cadquery code.",
+    description: 'Use this tool to create cadquery code.',
     inputSchema: z.object({
       title: z.string(),
       kind: z.enum(artifactKinds),
@@ -29,25 +29,25 @@ export const createDocument = ({
       const id = v4();
 
       dataStream.write({
-        type: "data-kind",
+        type: 'data-kind',
         data: kind,
         transient: true,
       });
 
       dataStream.write({
-        type: "data-id",
+        type: 'data-id',
         data: id,
         transient: true,
       });
 
       dataStream.write({
-        type: "data-title",
+        type: 'data-title',
         data: title,
         transient: true,
       });
 
       dataStream.write({
-        type: "data-clear",
+        type: 'data-clear',
         data: null,
         transient: true,
       });
@@ -64,7 +64,7 @@ export const createDocument = ({
       });
 
       dataStream.write({
-        type: "data-finish",
+        type: 'data-finish',
         data: document,
         transient: true,
       });
@@ -73,7 +73,7 @@ export const createDocument = ({
         id,
         title,
         kind,
-        content: "A document was created and is now visible to the user.",
+        content: 'A document was created and is now visible to the user.',
       };
     },
   });

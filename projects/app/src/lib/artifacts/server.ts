@@ -1,14 +1,14 @@
-import "server-only";
+import 'server-only';
 
-import type { Document } from "@/server/db/schema";
-import { createDocument } from "@/server/db/queries";
-import type { UIMessageStreamWriter } from "ai";
-import type { ChatMessage } from "@/lib/types";
-import type { Session } from "@/lib/auth";
-import { executeDocumentCodeAndPopulateUrl } from "@/app/(chat)/actions";
-import { v4 } from "uuid";
+import type { Document } from '@/server/db/schema';
+import { createDocument } from '@/server/db/queries';
+import type { UIMessageStreamWriter } from 'ai';
+import type { ChatMessage } from '@/lib/types';
+import type { Session } from '@/lib/auth';
+import { executeDocumentCodeAndPopulateUrl } from '@/app/(chat)/actions';
+import { v4 } from 'uuid';
 
-export type ArtifactKind = "code";
+export type ArtifactKind = 'code';
 
 export interface SaveDocumentProps {
   id: string;
@@ -98,4 +98,4 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
   };
 }
 
-export const artifactKinds = ["code"] as const;
+export const artifactKinds = ['code'] as const;

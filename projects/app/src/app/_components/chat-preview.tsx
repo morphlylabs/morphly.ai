@@ -1,15 +1,15 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { formatDistanceToNow } from "date-fns";
-import type { Chat } from "@/server/db/schema";
-import { Clock } from "lucide-react";
+} from '@workspace/ui/components/card';
+import { formatDistanceToNow } from 'date-fns';
+import type { Chat } from '@/server/db/schema';
+import { Clock } from 'lucide-react';
 
 export function ChatPreview({
   chat,

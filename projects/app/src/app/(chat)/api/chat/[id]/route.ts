@@ -1,10 +1,10 @@
-import { getChatById, getMessagesByChatId } from "@/server/db/queries";
-import { ChatSDKError } from "@/lib/errors";
-import type { ChatMessage } from "@/lib/types";
-import { createUIMessageStream, JsonToSseTransformStream } from "ai";
-import { differenceInSeconds } from "date-fns";
-import { getStreamContext } from "@/lib/stream-context";
-import { getSession } from "@/lib/auth";
+import { getChatById, getMessagesByChatId } from '@/server/db/queries';
+import { ChatSDKError } from '@/lib/errors';
+import type { ChatMessage } from '@/lib/types';
+import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
+import { differenceInSeconds } from 'date-fns';
+import { getStreamContext } from '@/lib/stream-context';
+import { getSession } from '@/lib/auth';
 
 export async function GET(
   request: Request,
@@ -20,33 +20,33 @@ export async function GET(
   }
 
   if (!chatId) {
-    return new ChatSDKError("bad_request:api").toResponse();
+    return new ChatSDKError('bad_request:api').toResponse();
   }
 
   const session = await getSession();
 
   if (!session?.user) {
-    return new ChatSDKError("unauthorized:chat").toResponse();
+    return new ChatSDKError('unauthorized:chat').toResponse();
   }
 
   const chat = await getChatById(chatId);
 
   if (!chat) {
-    return new ChatSDKError("not_found:chat").toResponse();
+    return new ChatSDKError('not_found:chat').toResponse();
   }
 
   if (chat.userId !== session.user.id) {
-    return new ChatSDKError("forbidden:chat").toResponse();
+    return new ChatSDKError('forbidden:chat').toResponse();
   }
 
   if (!chat.stream.length) {
-    return new ChatSDKError("not_found:stream").toResponse();
+    return new ChatSDKError('not_found:stream').toResponse();
   }
 
   const recentStream = chat.stream.at(-1);
 
   if (!recentStream) {
-    return new ChatSDKError("not_found:stream").toResponse();
+    return new ChatSDKError('not_found:stream').toResponse();
   }
 
   const emptyDataStream = createUIMessageStream<ChatMessage>({
@@ -69,7 +69,7 @@ export async function GET(
       return new Response(emptyDataStream, { status: 200 });
     }
 
-    if (mostRecentMessage.role !== "assistant") {
+    if (mostRecentMessage.role !== 'assistant') {
       return new Response(emptyDataStream, { status: 200 });
     }
 
@@ -82,7 +82,7 @@ export async function GET(
     const restoredStream = createUIMessageStream<ChatMessage>({
       execute: ({ writer }) => {
         writer.write({
-          type: "data-appendMessage",
+          type: 'data-appendMessage',
           data: JSON.stringify(mostRecentMessage),
           transient: true,
         });

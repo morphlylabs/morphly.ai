@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
 import {
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
   PromptInputModelSelectTrigger,
   PromptInputModelSelectValue,
-} from "@/components/ai-elements/prompt-input";
-import { PromptInputModelSelect } from "@/components/ai-elements/prompt-input";
-import { SUPPORTED_MODELS, toModelId } from "@/lib/ai/models";
-import { toModelBillingName } from "@/lib/ai/models";
-import { toModelDisplayName } from "@/lib/ai/models";
-import { useCustomer } from "autumn-js/react";
-import { useSelectedModel, useSetSelectedModel } from "@/stores/model.store";
+} from '@/components/ai-elements/prompt-input';
+import { PromptInputModelSelect } from '@/components/ai-elements/prompt-input';
+import { SUPPORTED_MODELS, toModelId } from '@/lib/ai/models';
+import { toModelBillingName } from '@/lib/ai/models';
+import { toModelDisplayName } from '@/lib/ai/models';
+import { useCustomer } from 'autumn-js/react';
+import { useSelectedModel, useSetSelectedModel } from '@/stores/model.store';
 
 export const ModelSelector = () => {
   const { check } = useCustomer();
@@ -21,7 +21,7 @@ export const ModelSelector = () => {
 
   return (
     <PromptInputModelSelect
-      onValueChange={(value) => {
+      onValueChange={value => {
         setModel(toModelId(value));
       }}
       value={model}
@@ -30,7 +30,7 @@ export const ModelSelector = () => {
         <PromptInputModelSelectValue />
       </PromptInputModelSelectTrigger>
       <PromptInputModelSelectContent>
-        {SUPPORTED_MODELS.map((model) => (
+        {SUPPORTED_MODELS.map(model => (
           <PromptInputModelSelectItem
             key={model}
             value={model}

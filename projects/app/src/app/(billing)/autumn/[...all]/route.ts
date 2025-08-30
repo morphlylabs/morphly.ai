@@ -1,5 +1,5 @@
-import { autumnHandler } from "autumn-js/next";
-import { getSession } from "@/lib/auth";
+import { autumnHandler } from 'autumn-js/next';
+import { getSession } from '@/lib/auth';
 
 export const { GET, POST } = autumnHandler({
   identify: async () => {

@@ -3,9 +3,9 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@workspace/ui/components/tabs";
-import SignIn from "./_components/sign-in";
-import SignUp from "./_components/sign-up";
+} from '@workspace/ui/components/tabs';
+import SignIn from './_components/sign-in';
+import SignUp from './_components/sign-up';
 
 export default function SignInPage() {
   return (

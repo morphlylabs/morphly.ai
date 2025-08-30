@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@workspace/ui/components/button";
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Button } from '@workspace/ui/components/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { Input } from "@workspace/ui/components/input";
-import { Label } from "@workspace/ui/components/label";
-import { GoogleIcon } from "@workspace/ui/components/google-icon";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+} from '@workspace/ui/components/card';
+import { Input } from '@workspace/ui/components/input';
+import { Label } from '@workspace/ui/components/label';
+import { GoogleIcon } from '@workspace/ui/components/google-icon';
+import { authClient } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
@@ -30,7 +30,7 @@ export default function SignUp() {
       name,
       email,
       password,
-      callbackURL: "/",
+      callbackURL: '/',
       fetchOptions: {
         onResponse: () => {
           setIsLoading(false);
@@ -38,11 +38,11 @@ export default function SignUp() {
         onRequest: () => {
           setIsLoading(true);
         },
-        onError: (ctx) => {
+        onError: ctx => {
           toast.error(ctx.error.message);
         },
         onSuccess: async () => {
-          router.push("/");
+          router.push('/');
         },
       },
     });
@@ -52,20 +52,20 @@ export default function SignUp() {
     setIsGoogleLoading(true);
     try {
       await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
+        provider: 'google',
+        callbackURL: '/',
         fetchOptions: {
-          onError: (ctx) => {
+          onError: ctx => {
             toast.error(ctx.error.message);
             setIsGoogleLoading(false);
           },
           onSuccess: async () => {
-            router.push("/");
+            router.push('/');
           },
         },
       });
     } catch {
-      toast.error("Failed to sign up with Google");
+      toast.error('Failed to sign up with Google');
       setIsGoogleLoading(false);
     }
   };
@@ -86,7 +86,7 @@ export default function SignUp() {
           disabled={isGoogleLoading}
         >
           {isGoogleLoading ? (
-            "Signing up..."
+            'Signing up...'
           ) : (
             <>
               <GoogleIcon className="mr-2 h-4 w-4" />
@@ -114,7 +114,7 @@ export default function SignUp() {
             type="text"
             placeholder="Enter your name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -124,7 +124,7 @@ export default function SignUp() {
             type="email"
             placeholder="Enter your email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -134,7 +134,7 @@ export default function SignUp() {
             type="password"
             placeholder="Enter your password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
           />
         </div>
         <Button
@@ -143,7 +143,7 @@ export default function SignUp() {
           onClick={signUp}
           disabled={isLoading}
         >
-          {isLoading ? "Signing up..." : "Sign Up"}
+          {isLoading ? 'Signing up...' : 'Sign Up'}
         </Button>
       </CardContent>
     </Card>

@@ -1,9 +1,9 @@
-import "server-only";
+import 'server-only';
 
-import { getLambdaClient } from "./lambda-client";
-import { InvokeCommand } from "@aws-sdk/client-lambda";
-import { z } from "zod";
-import { env } from "@/env";
+import { getLambdaClient } from './lambda-client';
+import { InvokeCommand } from '@aws-sdk/client-lambda';
+import { z } from 'zod';
+import { env } from '@/env';
 
 const cadQuerySuccessResponseSchema = z.object({
   statusCode: z.literal(200),
@@ -43,7 +43,7 @@ export async function executeCadQuery(code: string): Promise<CadQueryResponse> {
   try {
     const response = await client.send(command);
     if (!response.Payload) {
-      throw new Error("Lambda function returned no payload");
+      throw new Error('Lambda function returned no payload');
     }
 
     const payloadString = new TextDecoder().decode(response.Payload);
@@ -65,7 +65,7 @@ export async function executeCadQuery(code: string): Promise<CadQueryResponse> {
 
     return responseBody;
   } catch (error) {
-    console.error("executeCadQuery failed", error);
+    console.error('executeCadQuery failed', error);
     if (error instanceof z.ZodError) {
       throw new Error(`Invalid Lambda response format: ${error.message}`);
     }

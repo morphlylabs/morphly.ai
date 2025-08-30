@@ -3,25 +3,25 @@ import {
   createUIMessageStream,
   JsonToSseTransformStream,
   streamText,
-} from "ai";
-import { getStreamContext } from "@/lib/stream-context";
-import { postRequestBodySchema, type PostRequestBody } from "./schema";
-import { ChatSDKError } from "@/lib/errors";
-import { getSession } from "@/lib/auth";
+} from 'ai';
+import { getStreamContext } from '@/lib/stream-context';
+import { postRequestBodySchema, type PostRequestBody } from './schema';
+import { ChatSDKError } from '@/lib/errors';
+import { getSession } from '@/lib/auth';
 import {
   createMessages,
   createStream,
   createChat,
   getChatById,
   getMessagesByChatId,
-} from "@/server/db/queries";
-import { v4 } from "uuid";
-import { convertToUIMessages } from "@/lib/utils";
-import { createDocument } from "@/lib/ai/tools/create-document";
-import { updateDocument } from "@/lib/ai/tools/update-document";
-import { MODEL_BILLING_NAME } from "@/lib/ai/models";
-import { generateTitleFromUserMessage } from "../../actions";
-import { Autumn as autumn } from "autumn-js";
+} from '@/server/db/queries';
+import { v4 } from 'uuid';
+import { convertToUIMessages } from '@/lib/utils';
+import { createDocument } from '@/lib/ai/tools/create-document';
+import { updateDocument } from '@/lib/ai/tools/update-document';
+import { MODEL_BILLING_NAME } from '@/lib/ai/models';
+import { generateTitleFromUserMessage } from '../../actions';
+import { Autumn as autumn } from 'autumn-js';
 
 export const maxDuration = 60;
 
@@ -31,14 +31,14 @@ export async function POST(request: Request) {
   try {
     requestBody = postRequestBodySchema.parse(await request.json());
   } catch {
-    return new ChatSDKError("bad_request:api").toResponse();
+    return new ChatSDKError('bad_request:api').toResponse();
   }
 
   try {
     const session = await getSession();
 
     if (!session?.user) {
-      return new ChatSDKError("unauthorized:chat").toResponse();
+      return new ChatSDKError('unauthorized:chat').toResponse();
     }
 
     const { data } = await autumn.check({
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     });
 
     if (!data?.allowed) {
-      return new ChatSDKError("payment_required:chat").toResponse();
+      return new ChatSDKError('payment_required:chat').toResponse();
     }
 
     const chat = await getChatById(requestBody.id);
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
         title,
       });
     } else if (chat.userId !== session.user.id) {
-      return new ChatSDKError("forbidden:chat").toResponse();
+      return new ChatSDKError('forbidden:chat').toResponse();
     }
 
     await createMessages({
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
           id: requestBody.message.id,
           chatId: requestBody.id,
           parts: requestBody.message.parts,
-          role: "user",
+          role: 'user',
           createdAt: new Date(),
         },
       ],
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
         const result = streamText({
           model: requestBody.model,
           messages: convertToModelMessages(uiMessages),
-          experimental_activeTools: ["createDocument", "updateDocument"],
+          experimental_activeTools: ['createDocument', 'updateDocument'],
           tools: {
             createDocument: createDocument({
               session,
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
       generateId: v4,
       onFinish: async ({ messages }) => {
         await createMessages({
-          messages: messages.map((message) => ({
+          messages: messages.map(message => ({
             id: message.id,
             role: message.role,
             parts: message.parts,
@@ -132,7 +132,7 @@ export async function POST(request: Request) {
         });
       },
       onError: () => {
-        return "Oops, an error occurred!";
+        return 'Oops, an error occurred!';
       },
     });
 
@@ -154,6 +154,6 @@ export async function POST(request: Request) {
       return error.toResponse();
     }
 
-    return new ChatSDKError("bad_request:database").toResponse();
+    return new ChatSDKError('bad_request:database').toResponse();
   }
 }

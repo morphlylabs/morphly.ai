@@ -1,6 +1,6 @@
-import { Skeleton } from "@workspace/ui/components/skeleton";
-import { ChatPreviewLoader } from "./chat-preview-loader";
-import { RECENT_CHATS_LIMIT } from "./stats";
+import { Skeleton } from '@workspace/ui/components/skeleton';
+import { ChatPreviewLoader } from './chat-preview-loader';
+import { RECENT_CHATS_LIMIT } from './stats';
 
 export function StatsLoader() {
   return (

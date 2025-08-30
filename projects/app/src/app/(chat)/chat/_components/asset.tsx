@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Grid,
@@ -6,10 +6,10 @@ import {
   OrbitControls,
   Stage,
   useProgress,
-} from "@react-three/drei";
-import { Canvas, useLoader } from "@react-three/fiber";
-import { Suspense } from "react";
-import { STLLoader } from "three/addons/loaders/STLLoader.js";
+} from '@react-three/drei';
+import { Canvas, useLoader } from '@react-three/fiber';
+import { Suspense } from 'react';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 
 function Loader() {
   const { progress } = useProgress();

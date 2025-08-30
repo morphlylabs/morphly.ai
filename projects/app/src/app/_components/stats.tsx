@@ -1,11 +1,11 @@
-import { BarChart3, MessageCircle, Box, Zap, Clock } from "lucide-react";
+import { BarChart3, MessageCircle, Box, Zap, Clock } from 'lucide-react';
 import {
   getChatAmountForUserThisMonth,
   getChats,
   getDocumentAmountForUser,
-} from "@/server/db/queries";
-import { Card } from "@workspace/ui/components/card";
-import { ChatPreview } from "./chat-preview";
+} from '@/server/db/queries';
+import { Card } from '@workspace/ui/components/card';
+import { ChatPreview } from './chat-preview';
 
 export const RECENT_CHATS_LIMIT = 3;
 
@@ -82,7 +82,7 @@ export async function Stats() {
             Continue Where You Left Off
           </h2>
           <div className="grid gap-4 md:grid-cols-3">
-            {recentChats.items.map((chat) => (
+            {recentChats.items.map(chat => (
               <ChatPreview key={chat.id} chat={chat} />
             ))}
           </div>

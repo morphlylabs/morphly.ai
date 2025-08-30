@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { Suspense } from "react";
-import Chats from "./_components/chats";
-import { ChatsLoading } from "./_components/chats-loading";
+import { z } from 'zod';
+import { Suspense } from 'react';
+import Chats from './_components/chats';
+import { ChatsLoading } from './_components/chats-loading';
 
 const paramsSchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),

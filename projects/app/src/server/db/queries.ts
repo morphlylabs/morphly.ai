@@ -1,6 +1,6 @@
-import "server-only";
+import 'server-only';
 
-import { db } from "./index";
+import { db } from './index';
 import {
   chat,
   document,
@@ -10,12 +10,12 @@ import {
   type Document,
   type Message,
   type Vote,
-} from "./schema";
-import type { ArtifactKind } from "@/lib/artifacts/server";
-import { ChatSDKError } from "@/lib/errors";
-import { and, count, eq, gte } from "drizzle-orm";
-import { v4 } from "uuid";
-import { requireUser } from "@/lib/require-user";
+} from './schema';
+import type { ArtifactKind } from '@/lib/artifacts/server';
+import { ChatSDKError } from '@/lib/errors';
+import { and, count, eq, gte } from 'drizzle-orm';
+import { v4 } from 'uuid';
+import { requireUser } from '@/lib/require-user';
 
 export const getChatById = async (id: string) => {
   const session = await requireUser();
@@ -105,7 +105,7 @@ export const createChat = async ({
   const session = await requireUser();
 
   if (session.user.id !== userId) {
-    throw new ChatSDKError("forbidden:auth", "Forbidden");
+    throw new ChatSDKError('forbidden:auth', 'Forbidden');
   }
 
   return await db.insert(chat).values({ id, createdAt, userId, title });
@@ -154,11 +154,11 @@ export const createOrUpdateVote = async ({
 }: {
   chatId: string;
   messageId: string;
-  type: "up" | "down";
+  type: 'up' | 'down';
 }) => {
   await requireUser();
 
-  const isUpvote = type === "up";
+  const isUpvote = type === 'up';
 
   return await db
     .insert(vote)
@@ -200,7 +200,7 @@ export const createDocument = async ({
       })
       .returning();
   } catch {
-    throw new ChatSDKError("bad_request:database", "Failed to save document");
+    throw new ChatSDKError('bad_request:database', 'Failed to save document');
   }
 };
 

@@ -1,12 +1,12 @@
-import { z } from "zod";
-import { streamObject } from "ai";
-import { codePrompt, updateDocumentPrompt } from "@/lib/ai/prompts";
-import { createDocumentHandler } from "@/lib/artifacts/server";
+import { z } from 'zod';
+import { streamObject } from 'ai';
+import { codePrompt, updateDocumentPrompt } from '@/lib/ai/prompts';
+import { createDocumentHandler } from '@/lib/artifacts/server';
 
-export const codeDocumentHandler = createDocumentHandler<"code">({
-  kind: "code",
+export const codeDocumentHandler = createDocumentHandler<'code'>({
+  kind: 'code',
   onCreateDocument: async ({ model, title, dataStream }) => {
-    let draftContent = "";
+    let draftContent = '';
 
     const { fullStream } = streamObject({
       model,
@@ -20,13 +20,13 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
     for await (const delta of fullStream) {
       const { type } = delta;
 
-      if (type === "object") {
+      if (type === 'object') {
         const { object } = delta;
         const { code } = object;
 
         if (code) {
           dataStream.write({
-            type: "data-codeDelta",
+            type: 'data-codeDelta',
             data: code,
             transient: true,
           });
@@ -39,7 +39,7 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
     return draftContent;
   },
   onUpdateDocument: async ({ model, document, description, dataStream }) => {
-    let draftContent = "";
+    let draftContent = '';
 
     const { fullStream } = streamObject({
       model,
@@ -53,13 +53,13 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
     for await (const delta of fullStream) {
       const { type } = delta;
 
-      if (type === "object") {
+      if (type === 'object') {
         const { object } = delta;
         const { code } = object;
 
         if (code) {
           dataStream.write({
-            type: "data-codeDelta",
+            type: 'data-codeDelta',
             data: code,
             transient: true,
           });

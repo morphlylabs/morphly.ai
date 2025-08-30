@@ -1,5 +1,5 @@
-import { Skeleton } from "@workspace/ui/components/skeleton";
-import { ChatPreviewLoader } from "../../../_components/chat-preview-loader";
+import { Skeleton } from '@workspace/ui/components/skeleton';
+import { ChatPreviewLoader } from '../../../_components/chat-preview-loader';
 
 export function ChatsLoading({ count = 9 }: { count?: number }) {
   return (

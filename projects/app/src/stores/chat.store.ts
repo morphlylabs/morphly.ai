@@ -1,11 +1,11 @@
-import "client-only";
+import 'client-only';
 
-import { create } from "zustand";
-import { useShallow } from "zustand/react/shallow";
-import type { Document } from "@/server/db/schema";
-import type { DataUIPart } from "ai";
-import type { CustomUIDataTypes } from "@/lib/types";
-import type { ArtifactKind } from "@/lib/artifacts/server";
+import { create } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
+import type { Document } from '@/server/db/schema';
+import type { DataUIPart } from 'ai';
+import type { CustomUIDataTypes } from '@/lib/types';
+import type { ArtifactKind } from '@/lib/artifacts/server';
 
 export interface UIArtifact {
   title: string;
@@ -13,7 +13,7 @@ export interface UIArtifact {
   kind: ArtifactKind;
   content: string;
   isVisible: boolean;
-  status: "streaming" | "idle";
+  status: 'streaming' | 'idle';
   boundingBox: {
     top: number;
     left: number;
@@ -23,11 +23,11 @@ export interface UIArtifact {
 }
 
 export const initialArtifactData: UIArtifact = {
-  documentId: "init",
-  content: "",
-  kind: "code",
-  title: "",
-  status: "idle",
+  documentId: 'init',
+  content: '',
+  kind: 'code',
+  title: '',
+  status: 'idle',
   isVisible: false,
   boundingBox: {
     top: 0,
@@ -88,12 +88,12 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
   setDataStream: (dataStream: DataUIPart<CustomUIDataTypes>[]) =>
     set({ dataStream }),
   addToDataStream: (dataPart: DataUIPart<CustomUIDataTypes>) =>
-    set((state) => ({ dataStream: [...state.dataStream, dataPart] })),
+    set(state => ({ dataStream: [...state.dataStream, dataPart] })),
   clearDataStream: () => set({ dataStream: [] }),
   processDataStreamUpdate: (dataPart: DataUIPart<CustomUIDataTypes>) => {
     get().addToDataStream(dataPart);
 
-    if (dataPart.type === "data-finish") {
+    if (dataPart.type === 'data-finish') {
       if (dataPart.data) {
         get().setDocument(dataPart.data);
       }
@@ -102,19 +102,19 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
 }));
 
 export const useSelectedDocument = () =>
-  useChatStore((state) =>
+  useChatStore(state =>
     state.selectedDocumentId
       ? state.documents[state.selectedDocumentId]
       : undefined,
   );
 
 export const useDocumentById = (id: string) =>
-  useChatStore((state) => state.documents[id]);
+  useChatStore(state => state.documents[id]);
 
 // Data stream selectors
 export const useDataStream = () =>
   useChatStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       dataStream: state.dataStream,
       setDataStream: state.setDataStream,
       addToDataStream: state.addToDataStream,

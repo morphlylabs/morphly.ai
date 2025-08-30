@@ -1,7 +1,7 @@
-import { Chat } from "./_components/chat";
-import { v4 } from "uuid";
+import { Chat } from './_components/chat';
+import { v4 } from 'uuid';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default function ChatPage() {
   const id = v4();

@@ -1,16 +1,16 @@
-import "server-only";
+import 'server-only';
 
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { headers } from "next/headers";
-import { db } from "@/server/db";
-import { nextCookies } from "better-auth/next-js";
-import { env } from "@/env";
-import { autumn } from "autumn-js/better-auth";
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { headers } from 'next/headers';
+import { db } from '@/server/db';
+import { nextCookies } from 'better-auth/next-js';
+import { env } from '@/env';
+import { autumn } from 'autumn-js/better-auth';
 
 export const auth: ReturnType<typeof betterAuth> = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "sqlite",
+    provider: 'sqlite',
   }),
   emailAndPassword: {
     enabled: true,
@@ -20,9 +20,9 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       // Optional: Always ask to select account
-      prompt: "select_account",
+      prompt: 'select_account',
       // Optional: Always get refresh token
-      accessType: "offline",
+      accessType: 'offline',
     },
   },
   plugins: [nextCookies(), autumn()],

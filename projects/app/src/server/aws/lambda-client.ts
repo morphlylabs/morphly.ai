@@ -1,5 +1,5 @@
-import { LambdaClient } from "@aws-sdk/client-lambda";
-import { env } from "@/env";
+import { LambdaClient } from '@aws-sdk/client-lambda';
+import { env } from '@/env';
 
 let _client: LambdaClient | null = null;
 

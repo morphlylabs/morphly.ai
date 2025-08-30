@@ -1,6 +1,6 @@
-import { Chat } from "../_components/chat";
-import { convertToUIMessages } from "@/lib/utils";
-import { getChat } from "@/app/(chat)/actions";
+import { Chat } from '../_components/chat';
+import { convertToUIMessages } from '@/lib/utils';
+import { getChat } from '@/app/(chat)/actions';
 
 interface ChatPageProps {
   params: Promise<{ id: string }>;

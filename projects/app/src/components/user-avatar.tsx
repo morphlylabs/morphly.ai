@@ -1,20 +1,20 @@
-import { authClient } from "@/lib/auth-client";
+import { authClient } from '@/lib/auth-client';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@workspace/ui/components/avatar";
-import React from "react";
+} from '@workspace/ui/components/avatar';
+import React from 'react';
 import {
   DropdownMenuContent,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuItem,
-} from "@workspace/ui/components/dropdown-menu";
-import { Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useCustomer } from "autumn-js/react";
-import CheckoutDialog from "./autumn/checkout-dialog";
+} from '@workspace/ui/components/dropdown-menu';
+import { Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCustomer } from 'autumn-js/react';
+import CheckoutDialog from './autumn/checkout-dialog';
 
 export function UserAvatar() {
   const { data: session } = authClient.useSession();
@@ -25,7 +25,7 @@ export function UserAvatar() {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/sign-in");
+          router.push('/sign-in');
         },
       },
     });
@@ -36,24 +36,24 @@ export function UserAvatar() {
       <DropdownMenuTrigger asChild>
         <Avatar className="hover:cursor-pointer hover:opacity-80">
           <AvatarImage
-            src={session?.user.image ?? "https://github.com/shadcn.png"}
-            alt={session?.user.name ?? "User avatar"}
+            src={session?.user.image ?? 'https://github.com/shadcn.png'}
+            alt={session?.user.name ?? 'User avatar'}
           />
           <AvatarFallback>
             {session?.user.name.charAt(0).toUpperCase() ??
               session?.user.email.charAt(0).toUpperCase() ??
-              "U"}
+              'U'}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {check({
-          productId: "plus",
+          productId: 'plus',
         }).data.allowed === false && (
           <DropdownMenuItem
             onClick={async () => {
               await checkout({
-                productId: "plus",
+                productId: 'plus',
                 dialog: CheckoutDialog,
               });
             }}

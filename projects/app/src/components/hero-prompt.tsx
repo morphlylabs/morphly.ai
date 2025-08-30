@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { v4 } from "uuid";
-import { Input } from "@workspace/ui/components/input";
-import { Button } from "@workspace/ui/components/button";
-import { Play } from "lucide-react";
-import { toast } from "sonner";
-import { ChatSDKError } from "@/lib/errors";
-import { useChat } from "@ai-sdk/react";
-import type { ChatMessage } from "@/lib/types";
-import { DefaultChatTransport } from "ai";
-import { Loader } from "@/components/ai-elements/loader";
+import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { v4 } from 'uuid';
+import { Input } from '@workspace/ui/components/input';
+import { Button } from '@workspace/ui/components/button';
+import { Play } from 'lucide-react';
+import { toast } from 'sonner';
+import { ChatSDKError } from '@/lib/errors';
+import { useChat } from '@ai-sdk/react';
+import type { ChatMessage } from '@/lib/types';
+import { DefaultChatTransport } from 'ai';
+import { Loader } from '@/components/ai-elements/loader';
 
 export function HeroPrompt() {
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -26,7 +26,7 @@ export function HeroPrompt() {
     experimental_throttle: 100,
     generateId: v4,
     transport: new DefaultChatTransport({
-      api: "/api/chat",
+      api: '/api/chat',
       prepareSendMessagesRequest({ messages, id, body }) {
         return {
           body: {
@@ -39,16 +39,16 @@ export function HeroPrompt() {
     }),
     onFinish: () => {
       setIsLoading(false);
-      setText("");
+      setText('');
       router.push(`/chat/${id.current}`);
     },
-    onError: (error) => {
+    onError: error => {
       setIsLoading(false);
       if (error instanceof ChatSDKError) {
         toast.error(error.message);
       } else {
-        console.error("Chat error:", error);
-        toast.error("An error occurred during chat");
+        console.error('Chat error:', error);
+        toast.error('An error occurred during chat');
       }
     },
   });
@@ -74,12 +74,12 @@ export function HeroPrompt() {
         {/* TODO: add a view transition */}
         <Input
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={e => setText(e.target.value)}
           placeholder="Describe what you want to create..."
           className="py-6 pr-12 text-lg shadow-lg"
           disabled={isLoading}
         />
-        <div className="absolute top-1/2 right-3 -translate-y-1/2 transform">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 transform">
           {isLoading ? (
             <div className="flex h-8 w-8 items-center justify-center">
               <Loader size={16} className="text-primary" />

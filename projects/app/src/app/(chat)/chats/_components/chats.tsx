@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { getChats } from "@/server/db/queries";
+import Link from 'next/link';
+import { getChats } from '@/server/db/queries';
 
 import {
   Pagination,
@@ -7,8 +7,8 @@ import {
   PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-} from "@workspace/ui/components/pagination";
-import { ChatPreview } from "../../../_components/chat-preview";
+} from '@workspace/ui/components/pagination';
+import { ChatPreview } from '../../../_components/chat-preview';
 
 export default async function Chats({
   offset,
@@ -45,7 +45,7 @@ export default async function Chats({
         <div className="flex flex-col items-center justify-center py-12">
           <div className="text-center">
             <h3 className="text-lg font-semibold">No chats yet</h3>
-            <p className="text-muted-foreground mt-2 mb-4">
+            <p className="text-muted-foreground mb-4 mt-2">
               Start a new conversation to see your chats here
             </p>
             <Link
@@ -59,14 +59,14 @@ export default async function Chats({
       ) : (
         <div className="flex flex-col gap-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((chat) => (
+            {items.map(chat => (
               <ChatPreview key={chat.id} chat={chat} />
             ))}
           </div>
           {pages > 1 && (
             <Pagination>
               <PaginationContent>
-                {pagesToShow.map((pageNum) => (
+                {pagesToShow.map(pageNum => (
                   <PaginationItem key={pageNum}>
                     <PaginationLink
                       href={`/chats?offset=${(pageNum - 1) * limit}&limit=${limit}`}
