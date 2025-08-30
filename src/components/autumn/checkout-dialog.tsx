@@ -71,7 +71,7 @@ export default function CheckoutDialog(params: CheckoutDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="text-foreground gap-0 overflow-hidden p-0 pt-4 text-sm">
+      <DialogContent className="text-foreground gap-0 p-0 pt-4 text-sm">
         <DialogTitle className="mb-1 px-6">{title}</DialogTitle>
         <div className="text-muted-foreground mt-1 mb-4 px-6">{message}</div>
 
@@ -197,6 +197,9 @@ function ProductItems({
   const isUpdateQuantity =
     checkoutResult?.product.scenario === 'active' &&
     checkoutResult.product.properties.updateable;
+
+  const isOneOff = checkoutResult?.product.properties.is_one_off;
+
   return (
     <div className="flex flex-col gap-2">
       <p className="text-sm font-medium">Price</p>
@@ -221,7 +224,11 @@ function ProductItems({
           return (
             <div key={index} className="flex justify-between">
               <p className="text-muted-foreground">
-                {item.feature ? item.feature.name : 'Subscription'}
+                {item.feature
+                  ? item.feature.name
+                  : isOneOff
+                    ? 'Price'
+                    : 'Subscription'}
               </p>
               <p>
                 {item.display?.primary_text} {item.display?.secondary_text}
@@ -327,6 +334,7 @@ const PrepaidItem = ({
       const { data, error } = await checkout({
         productId: checkoutResult.product.id,
         options: newOptions,
+        dialog: CheckoutDialog,
       });
 
       if (error) {
@@ -345,13 +353,13 @@ const PrepaidItem = ({
   const disableSelection = scenario === 'renew';
 
   return (
-    <div className="flex justify-between">
-      <div className="flex gap-2">
+    <div className="flex justify-between gap-2">
+      <div className="flex items-start gap-2">
         <p className="text-muted-foreground">{item.feature?.name}</p>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger
             className={cn(
-              'text-muted-foreground bg-accent/80 flex items-center gap-1 rounded-md px-1 py-0.5 text-xs',
+              'text-muted-foreground bg-accent/80 flex shrink-0 items-center gap-1 rounded-md px-1 py-0.5 text-xs',
               disableSelection !== true &&
                 'hover:bg-accent hover:text-foreground',
             )}
@@ -386,7 +394,8 @@ const PrepaidItem = ({
 
               <Button
                 onClick={handleSave}
-                className="text-foreground !h-7 w-14 items-center border border-zinc-200 bg-white text-sm shadow-sm hover:bg-zinc-100"
+                className="!h-7 w-14"
+                // text-sm items-center bg-white text-foreground shadow-sm border border-zinc-200 hover:bg-zinc-100
                 disabled={loading}
               >
                 {loading ? (
@@ -399,7 +408,7 @@ const PrepaidItem = ({
           </PopoverContent>
         </Popover>
       </div>
-      <p>
+      <p className="text-end">
         {item.display?.primary_text} {item.display?.secondary_text}
       </p>
     </div>
