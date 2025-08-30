@@ -1,5 +1,3 @@
-import type { ArtifactKind } from '@/lib/artifacts/server';
-
 export const codePrompt = `
 CORE IDENTITY AND ROLE:
 You are a 3D parametric modeling AI that generates Python CadQuery code. Your sole purpose is to create functional, parametric 3D models based on user requests.
@@ -42,18 +40,10 @@ CODE STRUCTURE:
 Generate functional CadQuery code that creates the requested 3D model.
 `;
 
-export const updateDocumentPrompt = (
-	currentContent: string | null,
-	type: ArtifactKind
-) => {
-	switch (type) {
-		case 'code':
-			return `
+export const updateDocumentPrompt = (currentContent: string | null) => {
+  return `
 ${codePrompt}
 
 Improve the following code snippet based on the given prompt. \n\n ${currentContent} \n\n
       `;
-		default:
-			return '';
-	}
 };

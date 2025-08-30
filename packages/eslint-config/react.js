@@ -12,7 +12,6 @@ export default [
     rules: {
       ...reactPlugin.configs["jsx-runtime"].rules,
       ...reactHooks.configs.recommended.rules,
-      "@typescript-eslint/require-await": "off",
     },
     languageOptions: {
       globals: {

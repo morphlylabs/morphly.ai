@@ -1,65 +1,65 @@
-'use client';
+"use client";
 
-import { Button } from '@workspace/ui/components/button';
+import { Button } from "@workspace/ui/components/button";
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '@workspace/ui/components/tooltip';
-import { cn } from '@workspace/ui/lib/utils';
-import type { ComponentProps } from 'react';
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip";
+import { cn } from "@workspace/ui/lib/utils";
+import type { ComponentProps } from "react";
 
-export type ActionsProps = ComponentProps<'div'>;
+export type ActionsProps = ComponentProps<"div">;
 
 export const Actions = ({ className, children, ...props }: ActionsProps) => (
-	<div className={cn('flex items-center gap-1', className)} {...props}>
-		{children}
-	</div>
+  <div className={cn("flex items-center gap-1", className)} {...props}>
+    {children}
+  </div>
 );
 
 export type ActionProps = ComponentProps<typeof Button> & {
-	tooltip?: string;
-	label?: string;
+  tooltip?: string;
+  label?: string;
 };
 
 export const Action = ({
-	tooltip,
-	children,
-	label,
-	className,
-	variant = 'ghost',
-	size = 'sm',
-	...props
+  tooltip,
+  children,
+  label,
+  className,
+  variant = "ghost",
+  size = "sm",
+  ...props
 }: ActionProps) => {
-	const button = (
-		<Button
-			className={cn(
-				'text-muted-foreground hover:text-foreground size-9 p-1.5',
-				className
-			)}
-			size={size}
-			type="button"
-			variant={variant}
-			{...props}
-		>
-			{children}
-			<span className="sr-only">{label ?? tooltip}</span>
-		</Button>
-	);
+  const button = (
+    <Button
+      className={cn(
+        "text-muted-foreground hover:text-foreground size-9 p-1.5",
+        className,
+      )}
+      size={size}
+      type="button"
+      variant={variant}
+      {...props}
+    >
+      {children}
+      <span className="sr-only">{label ?? tooltip}</span>
+    </Button>
+  );
 
-	if (tooltip) {
-		return (
-			<TooltipProvider>
-				<Tooltip>
-					<TooltipTrigger asChild>{button}</TooltipTrigger>
-					<TooltipContent>
-						<p>{tooltip}</p>
-					</TooltipContent>
-				</Tooltip>
-			</TooltipProvider>
-		);
-	}
+  if (tooltip) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>{button}</TooltipTrigger>
+          <TooltipContent>
+            <p>{tooltip}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
 
-	return button;
+  return button;
 };
