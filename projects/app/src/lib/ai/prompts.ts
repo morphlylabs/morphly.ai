@@ -1,4 +1,4 @@
-import type { ArtifactKind } from "~/lib/artifacts/server";
+import type { ArtifactKind } from '@/lib/artifacts/server';
 
 export const codePrompt = `
 CORE IDENTITY AND ROLE:
@@ -43,17 +43,17 @@ Generate functional CadQuery code that creates the requested 3D model.
 `;
 
 export const updateDocumentPrompt = (
-  currentContent: string | null,
-  type: ArtifactKind,
+	currentContent: string | null,
+	type: ArtifactKind
 ) => {
-  switch (type) {
-    case "code":
-      return `
+	switch (type) {
+		case 'code':
+			return `
 ${codePrompt}
 
 Improve the following code snippet based on the given prompt. \n\n ${currentContent} \n\n
       `;
-    default:
-      return "";
-  }
+		default:
+			return '';
+	}
 };

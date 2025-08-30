@@ -1,16 +1,16 @@
-import { LambdaClient } from "@aws-sdk/client-lambda";
-import { env } from "~/env";
+import { LambdaClient } from '@aws-sdk/client-lambda';
+import { env } from '@/env';
 
 let _client: LambdaClient | null = null;
 
 export function getLambdaClient(): LambdaClient {
-  if (_client) return _client;
+	if (_client) return _client;
 
-  const region = env.AWS_REGION;
+	const region = env.AWS_REGION;
 
-  _client = new LambdaClient({
-    region,
-  });
+	_client = new LambdaClient({
+		region,
+	});
 
-  return _client;
+	return _client;
 }
