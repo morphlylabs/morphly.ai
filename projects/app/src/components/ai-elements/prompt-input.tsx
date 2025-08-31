@@ -121,9 +121,9 @@ export const PromptInputButton = ({
   return (
     <Button
       className={cn(
-        'shrink-0 gap-1.5 rounded-lg',
+        'h-10 w-10 shrink-0 gap-1.5 rounded-lg md:h-8 md:w-8',
         variant === 'ghost' && 'text-muted-foreground',
-        newSize === 'default' && 'px-3',
+        newSize === 'default' && 'h-10 w-auto px-3 md:h-8',
         className,
       )}
       size={newSize}
@@ -146,19 +146,19 @@ export const PromptInputSubmit = ({
   children,
   ...props
 }: PromptInputSubmitProps) => {
-  let Icon = <SendIcon className="size-4" />;
+  let Icon = <SendIcon className="size-5 md:size-4" />;
 
   if (status === 'submitted') {
-    Icon = <Loader2Icon className="size-4 animate-spin" />;
+    Icon = <Loader2Icon className="size-5 animate-spin md:size-4" />;
   } else if (status === 'streaming') {
-    Icon = <SquareIcon className="size-4" />;
+    Icon = <SquareIcon className="size-5 md:size-4" />;
   } else if (status === 'error') {
-    Icon = <XIcon className="size-4" />;
+    Icon = <XIcon className="size-5 md:size-4" />;
   }
 
   return (
     <Button
-      className={cn('gap-1.5 rounded-lg', className)}
+      className={cn('h-12 w-12 gap-1.5 rounded-lg md:h-8 md:w-8', className)}
       size={size}
       type="submit"
       variant={variant}
