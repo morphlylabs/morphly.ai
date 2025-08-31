@@ -14,15 +14,14 @@ catalog:
 
 catalogs:
   react19:
-    '@types/react': ^19.1.12
-    '@types/react-dom': ^19.1.9
+    "@types/react": ^19.1.12
+    "@types/react-dom": ^19.1.9
     react: ^19.1.1
     react-dom: ^19.1.1
 
 onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
+  - "@tailwindcss/oxide"
   - core-js-pure
   - esbuild
-  - lefthook
   - sharp
   - unrs-resolver

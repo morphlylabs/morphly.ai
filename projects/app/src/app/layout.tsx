@@ -3,7 +3,7 @@ import '@workspace/ui/globals.css';
 import React from 'react';
 import { type Metadata } from 'next';
 import { Toaster } from '@workspace/ui/components/sonner';
-import { Navbar } from '@/components/navbar';
+import { Navbar } from '@/app/_components/navbar';
 import { env } from '@/env';
 import { AutumnProvider } from 'autumn-js/react';
 
