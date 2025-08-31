@@ -12,7 +12,6 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string(),
     REDIS_URL: z.string().url(),
     AI_GATEWAY_API_KEY: z.string(),
-    BLOB_READ_WRITE_TOKEN: z.string(),
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),
@@ -47,7 +46,6 @@ export const env = createEnv({
     NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
     REDIS_URL: process.env.REDIS_URL,
     AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
-    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
     AWS_REGION: process.env.AWS_REGION,
     AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
