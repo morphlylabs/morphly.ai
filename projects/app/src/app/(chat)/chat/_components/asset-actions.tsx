@@ -69,7 +69,7 @@ export default function AssetActions() {
           <Button
             variant="ghost"
             size="default"
-            className="bg-background h-12 w-12 md:h-8 md:w-8"
+            className="bg-background h-12 w-12 border md:h-8 md:w-8"
             aria-label="Copy code"
             onClick={copyCode}
           >
@@ -85,7 +85,7 @@ export default function AssetActions() {
           <Button
             variant="ghost"
             size="default"
-            className="bg-background h-12 w-12 md:h-8 md:w-8"
+            className="bg-background h-12 w-12 border md:h-8 md:w-8"
             aria-label="Download STL"
             onClick={downloadSTL}
           >
@@ -101,7 +101,7 @@ export default function AssetActions() {
           <Button
             variant="ghost"
             size="default"
-            className="bg-background h-12 w-12 md:h-8 md:w-8"
+            className="bg-background h-12 w-12 border md:h-8 md:w-8"
             aria-label="Download STP"
             onClick={downloadSTP}
           >

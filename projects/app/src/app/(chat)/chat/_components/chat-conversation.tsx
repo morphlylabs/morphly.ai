@@ -134,7 +134,7 @@ export default function ChatConversation({
   });
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full max-w-3xl flex-col">
       <div className="flex-1 overflow-y-auto">
         <Conversation>
           <ConversationContent>

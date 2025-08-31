@@ -43,13 +43,13 @@ export function Chat({
     <div className="flex h-full flex-col">
       <div
         className={`relative h-[calc(100vh-4rem-1px)] ${
-          selectedDocument?.stlUrl ? 'grid grid-cols-4' : 'flex justify-center'
+          selectedDocument?.stlUrl ? 'grid grid-cols-6' : 'flex justify-center'
         }`}
       >
         {selectedDocument?.stlUrl && (
           <div
-            className={`bg-accent relative border-r md:col-span-3 md:block ${
-              mobileView === 'asset' ? 'col-span-4' : 'hidden'
+            className={`bg-accent relative border-r md:col-span-4 md:block ${
+              mobileView === 'asset' ? 'col-span-6' : 'hidden'
             }`}
           >
             <Asset src={selectedDocument.stlUrl} />
@@ -60,8 +60,8 @@ export function Chat({
         )}
 
         <div
-          className={`h-[calc(100vh-4rem-1px)] overflow-hidden md:col-span-1 md:block ${
-            mobileView === 'chat' ? 'col-span-4' : 'hidden'
+          className={`h-[calc(100vh-4rem-1px)] overflow-hidden md:col-span-2 md:block ${
+            mobileView === 'chat' ? 'col-span-6' : 'hidden'
           }`}
         >
           <ChatConversation
