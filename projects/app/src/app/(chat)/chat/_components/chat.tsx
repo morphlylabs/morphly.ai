@@ -74,11 +74,11 @@ export function Chat({
         {/* Mobile view toggle */}
         {selectedDocument?.stlUrl && (
           <div className="absolute left-2 top-2 z-50 lg:hidden">
-            <div className="bg-background/80 rounded-full border p-1 shadow-lg backdrop-blur-sm">
+            <div className="bg-background/80 rounded-lg border p-1 shadow-lg backdrop-blur-sm">
               <div className="relative flex gap-1">
                 {/* Sliding background indicator */}
                 <div
-                  className={`bg-primary absolute top-0 h-full w-1/2 rounded-full shadow-sm transition-transform duration-200 ease-out ${
+                  className={`bg-primary absolute top-0 h-full w-1/2 rounded-lg shadow-sm transition-transform duration-200 ease-out ${
                     mobileView === 'chat' ? 'translate-x-full' : 'translate-x-0'
                   }`}
                 />

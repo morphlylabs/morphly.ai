@@ -6,24 +6,12 @@ settings:
 
 catalogs:
   default:
-    '@types/node':
-      specifier: ^24.3.0
-      version: 24.3.0
-    eslint:
-      specifier: ^9.32.0
-      version: 9.34.0
     lucide-react:
       specifier: 0.540.0
       version: 0.540.0
-    next:
-      specifier: ^15.5.2
-      version: 15.5.2
     next-themes:
       specifier: ^0.4.6
       version: 0.4.6
-    prettier:
-      specifier: ^3.6.2
-      version: 3.6.2
     tailwindcss:
       specifier: ^4.1.12
       version: 4.1.12
@@ -167,9 +155,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      framer-motion:
-        specifier: ^12.23.12
-        version: 12.23.12(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       lucide-react:
         specifier: 'catalog:'
         version: 0.540.0(react@19.1.1)
