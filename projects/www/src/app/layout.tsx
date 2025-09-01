@@ -2,6 +2,7 @@ import '@workspace/ui/globals.css';
 
 import React from 'react';
 import { Toaster } from '@workspace/ui/components/sonner';
+import Header from '@/components/mvpblocks/header-2';
 
 export const metadata = {
   title: 'morphly',
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Header />
         <main>{children}</main>
         <Toaster position="bottom-left" />
       </body>
