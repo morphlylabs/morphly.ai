@@ -50,6 +50,7 @@ function MobileNavigation({
               href="/"
               className="flex items-center space-x-2"
               onClick={() => setOpen(false)}
+              prefetch={true}
             >
               <CuboidIcon className="h-8 w-8" />
               <span className="text-xl font-bold">Morphly</span>
@@ -64,6 +65,7 @@ function MobileNavigation({
                   href="/chat"
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-2"
+                  prefetch={true}
                 >
                   <MessageCirclePlus className="h-3 w-3" />
                   New Chat
@@ -76,6 +78,7 @@ function MobileNavigation({
                     href={item.href}
                     className="hover:bg-accent hover:text-accent-foreground block rounded-md p-2 text-sm font-medium transition-colors"
                     onClick={() => setOpen(false)}
+                    prefetch={true}
                   >
                     {item.title}
                   </Link>
@@ -118,6 +121,7 @@ export function Navbar() {
                     <Link
                       href="/chat"
                       className="flex flex-row items-center gap-1 border"
+                      prefetch={true}
                     >
                       <MessageCirclePlus className="h-3 w-3 text-black" /> New
                       Chat
@@ -127,7 +131,7 @@ export function Navbar() {
                 {navigationItems.map(item => (
                   <NavigationMenuItem key={item.title}>
                     <NavigationMenuLink asChild>
-                      <Link href={item.href} className="p-2">
+                      <Link href={item.href} className="p-2" prefetch={true}>
                         {item.title}
                       </Link>
                     </NavigationMenuLink>
@@ -148,7 +152,9 @@ export function Navbar() {
               <MobileNavigation session={session} />
             </>
           ) : (
-            <Link href="/login">Log in</Link>
+            <Link href="/login" prefetch={true}>
+              Log in
+            </Link>
           )}
         </div>
       </div>
