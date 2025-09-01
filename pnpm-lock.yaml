@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@types/node':
+      specifier: ^24.3.0
+      version: 24.3.0
     eslint:
       specifier: ^9.32.0
       version: 9.34.0
@@ -305,7 +308,7 @@ importers:
         version: 5.0.8(@types/react@19.1.12)(react@19.1.1)(use-sync-external-store@1.5.0(react@19.1.1))
     devDependencies:
       '@types/node':
-        specifier: ^24.3.0
+        specifier: 'catalog:'
         version: 24.3.0
       '@types/react':
         specifier: catalog:react19
@@ -325,6 +328,46 @@ importers:
       drizzle-kit:
         specifier: ^0.31.4
         version: 0.31.4
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+
+  projects/www:
+    dependencies:
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: 'catalog:'
+        version: 0.540.0(react@19.1.1)
+      next:
+        specifier: 'catalog:'
+        version: 15.5.2(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      next-themes:
+        specifier: 'catalog:'
+        version: 0.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      react:
+        specifier: catalog:react19
+        version: 19.1.1
+      react-dom:
+        specifier: catalog:react19
+        version: 19.1.1(react@19.1.1)
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.3.0
+      '@types/react':
+        specifier: catalog:react19
+        version: 19.1.12
+      '@types/react-dom':
+        specifier: catalog:react19
+        version: 19.1.9(@types/react@19.1.12)
+      '@workspace/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -6688,7 +6731,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 24.3.0
+      '@types/node': 20.19.11
 
   '@typescript-eslint/eslint-plugin@8.41.0(@typescript-eslint/parser@8.41.0(eslint@9.34.0(jiti@2.5.1))(typescript@5.9.2))(eslint@9.34.0(jiti@2.5.1))(typescript@5.9.2)':
     dependencies:
