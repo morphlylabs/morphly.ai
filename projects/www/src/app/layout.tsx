@@ -1,3 +1,5 @@
+import '@workspace/ui/globals.css';
+
 import React from 'react';
 import { Toaster } from '@workspace/ui/components/sonner';
 

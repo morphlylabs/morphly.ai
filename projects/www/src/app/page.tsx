@@ -1,3 +1,5 @@
+import GradientHero from '@/components/mvpblocks/gradient-hero';
+
 export default function HomePage() {
-  return <div>Hello World</div>;
+  return <GradientHero />;
 }
