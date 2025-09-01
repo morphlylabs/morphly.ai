@@ -12,7 +12,6 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: 'Home', href: '/' },
-  { name: 'Features', href: '/features' },
   { name: 'Pricing', href: '/pricing' },
   { name: 'Contact', href: '/contact' },
 ];
@@ -93,7 +92,7 @@ export default function Header2() {
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               <Link
-                prefetch={false}
+                prefetch={true}
                 href="/"
                 className="flex items-center space-x-3"
               >
@@ -108,7 +107,7 @@ export default function Header2() {
                     morphly
                   </span>
                   <span className="text-muted-foreground -mt-1 text-xs">
-                    Build faster
+                    build faster
                   </span>
                 </div>
               </Link>
@@ -124,7 +123,7 @@ export default function Header2() {
                   onMouseLeave={() => setHoveredItem(null)}
                 >
                   <Link
-                    prefetch={false}
+                    prefetch={true}
                     href={item.href}
                     className="text-foreground/80 hover:text-foreground relative rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200"
                   >
@@ -212,7 +211,7 @@ export default function Header2() {
                   {navItems.map(item => (
                     <motion.div key={item.name} variants={mobileItemVariants}>
                       <Link
-                        prefetch={false}
+                        prefetch={true}
                         href={item.href}
                         className="text-foreground hover:bg-muted block rounded-lg px-4 py-3 font-medium transition-colors duration-200"
                         onClick={() => setIsMobileMenuOpen(false)}
