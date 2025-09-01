@@ -76,6 +76,7 @@ export default function GradientHero() {
               </Button>
             </Link>
 
+            {/* TODO: add link */}
             <Button
               variant="outline"
               size="lg"

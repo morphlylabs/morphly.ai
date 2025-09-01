@@ -149,6 +149,7 @@ export default function Header2() {
                 className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-lg p-2 transition-colors duration-200"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                aria-label="Search"
               >
                 <Search className="h-5 w-5" />
               </motion.button>
@@ -164,7 +165,7 @@ export default function Header2() {
               >
                 <Link
                   prefetch={true}
-                  href="https://app.morphly.ai/login"
+                  href="https://app.morphly.ai"
                   className="bg-foreground text-background hover:bg-foreground/90 inline-flex items-center space-x-2 rounded-lg px-5 py-2.5 text-sm font-medium shadow-sm transition-all duration-200"
                 >
                   <span>Get Started</span>
@@ -178,6 +179,7 @@ export default function Header2() {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               variants={itemVariants}
               whileTap={{ scale: 0.95 }}
+              aria-label={isMobileMenuOpen ? 'Close Menu' : 'Open Menu'}
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -228,7 +230,7 @@ export default function Header2() {
                 >
                   <Link
                     prefetch={true}
-                    href="https://app.morphly.ai/login"
+                    href="https://app.morphly.ai"
                     className="bg-foreground text-background hover:bg-foreground/90 block w-full rounded-lg py-3 text-center font-medium transition-all duration-200"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
