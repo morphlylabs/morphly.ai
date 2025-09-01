@@ -6,6 +6,14 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0"
   },
+  "peerDependencies": {
+    "react": "catalog:react19",
+    "zod": "catalog:",
+    "tailwindcss": "catalog:",
+    "postcss": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
+    "react-dom": "catalog:react19"
+  },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -24,22 +32,23 @@
     "clsx": "^2.1.1",
     "lucide-react": "catalog:",
     "next-themes": "catalog:",
-    "react": "catalog:react19",
-    "react-dom": "catalog:react19",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
-    "tw-animate-css": "^1.3.6",
-    "zod": "catalog:"
+    "tw-animate-css": "^1.3.6"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.11",
+    "react-dom": "catalog:react19",
+    "react": "catalog:react19",
+    "zod": "catalog:",
+    "tailwindcss": "catalog:",
+    "postcss": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
     "@turbo/gen": "^2.5.5",
     "@types/node": "^20.19.9",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
   "exports": {

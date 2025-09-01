@@ -20,9 +20,12 @@
     "next-themes": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "tailwindcss": "catalog:",
+    "postcss": "catalog:"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",

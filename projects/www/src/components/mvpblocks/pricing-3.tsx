@@ -92,7 +92,7 @@ export default function PricingThree() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.3 + index * 0.08 }}
-                className={`rounded-(--radius) flex flex-col justify-between space-y-8 border p-6 lg:p-10 ${
+                className={`flex flex-col justify-between space-y-8 rounded-lg border p-6 lg:p-10 ${
                   plan.highlight
                     ? 'dark:bg-muted shadow-lg shadow-gray-950/5 md:col-span-3 dark:[--color-muted:var(--color-zinc-900)]'
                     : 'md:col-span-2 md:my-2 md:rounded-r-none md:border-r-0'
@@ -115,7 +115,7 @@ export default function PricingThree() {
                     variant={plan.buttonVariant}
                     className="w-full"
                   >
-                    <Link prefetch={true} href="https://app.morphly.ai/login">
+                    <Link prefetch={true} href="https://app.morphly.ai">
                       Get Started
                     </Link>
                   </Button>
