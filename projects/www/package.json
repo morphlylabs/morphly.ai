@@ -13,12 +13,13 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "dependencies": {
-    "next-themes": "catalog:",
-    "next": "catalog:",
-    "react": "catalog:react19",
-    "react-dom": "catalog:react19",
     "@workspace/ui": "workspace:*",
-    "lucide-react": "catalog:"
+    "framer-motion": "^12.23.12",
+    "lucide-react": "catalog:",
+    "next": "catalog:",
+    "next-themes": "catalog:",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
   },
   "devDependencies": {
     "@types/node": "catalog:",
