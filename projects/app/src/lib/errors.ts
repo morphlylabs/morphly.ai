@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { NextResponse } from 'next/server';
 
 export type ErrorType =
   | 'bad_request'
@@ -53,7 +54,7 @@ export class ChatSDKError extends Error {
     this.statusCode = getStatusCodeByType(this.type);
   }
 
-  public toResponse(): Response {
+  public toResponse(): NextResponse {
     const code: ErrorCode = `${this.type}:${this.surface}`;
     const visibility = visibilityBySurface[this.surface];
 
@@ -66,13 +67,13 @@ export class ChatSDKError extends Error {
         cause,
       });
 
-      return Response.json(
+      return NextResponse.json(
         { code: '', message: 'Something went wrong. Please try again later.' },
         { status: statusCode },
       );
     }
 
-    return Response.json({ code, message, cause }, { status: statusCode });
+    return NextResponse.json({ code, message, cause }, { status: statusCode });
   }
 }
 

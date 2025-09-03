@@ -1,7 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -10,17 +13,20 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import type { Chat } from '@/server/db/schema';
 import { Clock } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 export function ChatPreview({
   chat,
   priority = false,
+  cardAction,
 }: {
   chat: Chat;
   priority?: boolean;
+  cardAction?: ReactNode;
 }) {
   return (
     <Link href={`/chat/${chat.id}`} aria-label={`Open chat "${chat.title}"`}>
-      <Card className="hover:border-primary/20 h-full transition-all hover:scale-[1.02] hover:shadow-lg">
+      <Card className="hover:border-primary/20 h-full transition-all hover:shadow-lg">
         <CardHeader>
           <CardTitle className="truncate text-base">{chat.title}</CardTitle>
           <CardDescription>
@@ -31,6 +37,7 @@ export function ChatPreview({
               })}
             </div>
           </CardDescription>
+          {cardAction && <CardAction>{cardAction}</CardAction>}
         </CardHeader>
         <CardContent>
           <div className="bg-muted relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg">

@@ -98,7 +98,7 @@ export const message = sqliteTable('message', {
   id: text('id', { length: 36 }).primaryKey(),
   chatId: text('chat_id', { length: 36 })
     .notNull()
-    .references(() => chat.id),
+    .references(() => chat.id, { onDelete: 'cascade' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
@@ -146,7 +146,7 @@ export const document = sqliteTable('document', {
   id: text('id', { length: 36 }).primaryKey(),
   chatId: text('chat_id', { length: 36 })
     .notNull()
-    .references(() => chat.id),
+    .references(() => chat.id, { onDelete: 'cascade' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
@@ -174,7 +174,7 @@ export const stream = sqliteTable('stream', {
   id: text('id', { length: 36 }).primaryKey(),
   chatId: text('chat_id', { length: 36 })
     .notNull()
-    .references(() => chat.id),
+    .references(() => chat.id, { onDelete: 'cascade' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),

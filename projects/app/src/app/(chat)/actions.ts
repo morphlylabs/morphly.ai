@@ -3,7 +3,6 @@
 import { generateText, type UIMessage } from 'ai';
 import { redirect } from 'next/navigation';
 import {
-  createOrUpdateVote,
   getChatById,
   getDocumentById,
   updateChatPreviewImageUrl,
@@ -73,16 +72,4 @@ export async function executeDocumentCodeAndPopulateUrl(
   if (!documents[0]) throw new Error('Document not found');
 
   return documents[0];
-}
-
-export async function voteMessage({
-  chatId,
-  messageId,
-  type,
-}: {
-  chatId: string;
-  messageId: string;
-  type: 'up' | 'down';
-}) {
-  await createOrUpdateVote({ chatId, messageId, type });
 }
