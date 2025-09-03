@@ -20,11 +20,13 @@ import { useState } from 'react';
 import { UserAvatar } from '@/components/user-avatar';
 import { authClient } from '@/lib/auth-client';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import type { Route } from 'next';
+import type { NavItem } from '@/lib/types';
 
-const navigationItems = [
+const navigationItems: NavItem<Route>[] = [
   {
-    title: 'My Creations',
     href: '/chats',
+    label: 'My Creations',
   },
 ];
 
@@ -73,14 +75,14 @@ function MobileNavigation({
               </Button>
 
               {navigationItems.map(item => (
-                <div key={item.title}>
+                <div key={item.label}>
                   <Link
                     href={item.href}
                     className="hover:bg-accent hover:text-accent-foreground block rounded-md p-2 text-sm font-medium transition-colors"
                     onClick={() => setOpen(false)}
                     prefetch={true}
                   >
-                    {item.title}
+                    {item.label}
                   </Link>
                 </div>
               ))}
@@ -129,10 +131,10 @@ export function Navbar() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 {navigationItems.map(item => (
-                  <NavigationMenuItem key={item.title}>
+                  <NavigationMenuItem key={item.label}>
                     <NavigationMenuLink asChild>
                       <Link href={item.href} className="p-2" prefetch={true}>
-                        {item.title}
+                        {item.label}
                       </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>

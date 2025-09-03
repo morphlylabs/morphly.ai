@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Mail, Twitter, Linkedin, Users } from 'lucide-react';
 import Link from 'next/link';
 import BackgroundGradient from '@/components/background-gradient';
+import type { Route } from 'next';
 
 const socials = [
   {
@@ -75,7 +76,7 @@ export default function ContactPage() {
                 >
                   <Link
                     prefetch={false}
-                    href={social.href}
+                    href={social.href as Route}
                     className="hover:bg-muted/50 group relative flex flex-col items-center gap-4 rounded-2xl border p-6 text-center transition-all duration-200"
                   >
                     <div className="flex flex-col items-center gap-1">
