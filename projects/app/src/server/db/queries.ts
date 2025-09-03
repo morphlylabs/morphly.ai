@@ -7,6 +7,7 @@ import {
   message,
   stream,
   vote,
+  type Chat,
   type Document,
   type Message,
   type Vote,
@@ -16,6 +17,7 @@ import { ChatSDKError } from '@/lib/errors';
 import { and, count, eq, gte } from 'drizzle-orm';
 import { v4 } from 'uuid';
 import { requireUser } from '@/lib/require-user';
+import type { Pageable } from '@/lib/types';
 
 export const getChatById = async (id: string) => {
   const session = await requireUser();
@@ -41,7 +43,10 @@ export const getChatById = async (id: string) => {
  * @param limit - The number of chats to fetch. Floored to an integer and clamped to >= 1.
  * @returns Object containing `{ items, total, offset, limit }`
  */
-export const getChats = async (offset: number, limit: number) => {
+export const getChats = async (
+  offset: number,
+  limit: number,
+): Promise<Pageable<Chat>> => {
   const safeOffset = Math.max(0, Math.floor(offset));
   const safeLimit = Math.max(1, Math.floor(limit));
 
@@ -109,6 +114,14 @@ export const createChat = async ({
   }
 
   return await db.insert(chat).values({ id, createdAt, userId, title });
+};
+
+export const deleteChatById = async (id: string) => {
+  const session = await requireUser();
+
+  return await db
+    .delete(chat)
+    .where(and(eq(chat.id, id), eq(chat.userId, session.user.id)));
 };
 
 export const getMessagesByChatId = async (

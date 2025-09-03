@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c023ec91-582c-4cb1-a9c4-07a76ec131f0",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "d5af29fa-45eb-436e-aadb-cf854f975f7e",
+  "prevId": "c023ec91-582c-4cb1-a9c4-07a76ec131f0",
   "tables": {
     "account": {
       "name": "account",
@@ -258,7 +258,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "document_user_id_user_id_fk": {
@@ -330,7 +330,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -463,7 +463,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

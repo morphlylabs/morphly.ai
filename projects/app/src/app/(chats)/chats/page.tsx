@@ -1,7 +1,5 @@
 import { z } from 'zod';
-import { Suspense } from 'react';
 import Chats from './_components/chats';
-import { ChatsLoading } from './_components/chats-loading';
 
 const paramsSchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),
@@ -9,7 +7,7 @@ const paramsSchema = z.object({
 });
 
 export default async function ChatsPage(props: PageProps<'/chats'>) {
-  const params = paramsSchema.parse(props.searchParams);
+  const params = paramsSchema.parse(await props.searchParams);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -20,12 +18,7 @@ export default async function ChatsPage(props: PageProps<'/chats'>) {
         </p>
       </div>
 
-      <Suspense
-        key={params.offset + params.limit}
-        fallback={<ChatsLoading count={params.limit} />}
-      >
-        <Chats offset={params.offset} limit={params.limit} />
-      </Suspense>
+      <Chats offset={params.offset} limit={params.limit} />
     </div>
   );
 }

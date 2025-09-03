@@ -44,3 +44,10 @@ export type NavItem<T extends string = string> = {
   href: T;
   label: string;
 };
+
+export type Pageable<T> = {
+  offset: number;
+  limit: number;
+  total: number;
+  items: readonly T[];
+};

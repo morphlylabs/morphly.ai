@@ -6,10 +6,10 @@ import {
   getVotesByChatId,
 } from '@/server/db/queries';
 import { voteSchema } from './schema';
+import { type NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const chatId = searchParams.get('chatId');
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const chatId = request.nextUrl.searchParams.get('chatId');
 
   if (!chatId) {
     return new ChatSDKError(
@@ -36,10 +36,10 @@ export async function GET(request: Request) {
 
   const votes = await getVotesByChatId(chatId);
 
-  return Response.json(votes, { status: 200 });
+  return NextResponse.json(votes);
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest): Promise<NextResponse> {
   const parsed = voteSchema.safeParse(await request.json());
 
   if (!parsed.success) {
@@ -80,5 +80,5 @@ export async function PATCH(request: Request) {
     type: type,
   });
 
-  return new Response('Message voted', { status: 200 });
+  return new NextResponse('Message voted');
 }
