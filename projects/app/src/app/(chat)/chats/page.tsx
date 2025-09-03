@@ -8,12 +8,8 @@ const paramsSchema = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(9),
 });
 
-export default async function ChatsPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = paramsSchema.parse(await searchParams);
+export default async function ChatsPage(props: PageProps<'/chats'>) {
+  const params = paramsSchema.parse(props.searchParams);
 
   return (
     <div className="container mx-auto px-4 py-8">

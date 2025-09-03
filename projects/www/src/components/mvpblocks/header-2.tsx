@@ -4,16 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, easeInOut } from 'framer-motion';
 import { Menu, X, ArrowRight, Search, Cuboid } from 'lucide-react';
 import Link from 'next/link';
+import type { Route } from 'next';
+import type { NavItem } from '@/lib/types';
 
-interface NavItem {
-  name: string;
-  href: string;
-}
-
-const navItems: NavItem[] = [
-  { name: 'Home', href: '/' },
-  { name: 'Pricing', href: '/pricing' },
-  { name: 'Contact', href: '/contact' },
+const navItems: NavItem<Route>[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 export default function Header2() {
@@ -116,10 +113,10 @@ export default function Header2() {
             <nav className="hidden items-center space-x-1 lg:flex">
               {navItems.map(item => (
                 <motion.div
-                  key={item.name}
+                  key={item.label}
                   variants={itemVariants}
                   className="relative"
-                  onMouseEnter={() => setHoveredItem(item.name)}
+                  onMouseEnter={() => setHoveredItem(item.label)}
                   onMouseLeave={() => setHoveredItem(null)}
                 >
                   <Link
@@ -127,7 +124,7 @@ export default function Header2() {
                     href={item.href}
                     className="text-foreground/80 hover:text-foreground relative rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200"
                   >
-                    {hoveredItem === item.name && (
+                    {hoveredItem === item.label && (
                       <motion.div
                         className="bg-muted absolute inset-0 rounded-lg"
                         layoutId="navbar-hover"
@@ -141,7 +138,7 @@ export default function Header2() {
                         }}
                       />
                     )}
-                    <span className="relative z-10">{item.name}</span>
+                    <span className="relative z-10">{item.label}</span>
                   </Link>
                 </motion.div>
               ))}
@@ -211,14 +208,14 @@ export default function Header2() {
               <div className="space-y-6 p-6">
                 <div className="space-y-1">
                   {navItems.map(item => (
-                    <motion.div key={item.name} variants={mobileItemVariants}>
+                    <motion.div key={item.label} variants={mobileItemVariants}>
                       <Link
                         prefetch={true}
                         href={item.href}
                         className="text-foreground hover:bg-muted block rounded-lg px-4 py-3 font-medium transition-colors duration-200"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        {item.name}
+                        {item.label}
                       </Link>
                     </motion.div>
                   ))}
