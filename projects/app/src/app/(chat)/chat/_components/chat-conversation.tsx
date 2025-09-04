@@ -20,19 +20,20 @@ import {
 } from '@/components/ai-elements/message';
 import type { ChatMessage } from '@/lib/types';
 import { DocumentToolResult } from '@/components/document';
-import { ThumbsUp, ThumbsDown, X, MicIcon } from 'lucide-react';
+import { X, MicIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import useSWR, { mutate } from 'swr';
+import useSWR from 'swr';
 import { useDataStream, useSelectedDocument } from '@/stores/chat.store';
 import { Suggestions, Suggestion } from '@/components/ai-elements/suggestion';
-import { Action, Actions } from '@/components/ai-elements/actions';
+import { Actions } from '@/components/ai-elements/actions';
+import { VoteAction } from './vote-action';
 import type { Vote } from '@/server/db/schema';
 import { fetcher } from '@/lib/utils';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useAutoResume } from '@/hooks/use-auto-resume';
 import { v4 } from 'uuid';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { chatSDKErrorSchema } from '@/lib/errors';
 import { useSelectedModel } from '@/stores/model.store';
 import { Separator } from '@workspace/ui/components/separator';
@@ -94,7 +95,7 @@ export default function ChatConversation({
       },
     });
 
-  const { data: votes } = useSWR<Array<Vote>>(
+  const { data: votes } = useSWR<readonly Vote[]>(
     messages.length >= 2 ? `/api/vote?chatId=${chatId}` : null,
     fetcher,
   );
@@ -139,193 +140,15 @@ export default function ChatConversation({
         <Conversation>
           <ConversationContent>
             {messages.map(message => (
-              <div className="group flex flex-col" key={message.id}>
-                <Message from={message.role}>
-                  <MessageContent>
-                    {message.parts.map(part => {
-                      switch (part.type) {
-                        case 'text':
-                          return <p key={part.text}>{part.text}</p>;
-                        case 'tool-createDocument':
-                          if (part.state === 'input-available') {
-                            return (
-                              <p key={part.toolCallId}>Generating asset...</p>
-                            );
-                          } else if (part.state === 'output-available') {
-                            return (
-                              <DocumentToolResult
-                                key={part.toolCallId}
-                                result={part.output}
-                              />
-                            );
-                          } else if (part.state === 'output-error') {
-                            return (
-                              <div key={part.toolCallId}>
-                                <X className="mr-1 inline h-4 w-4 text-red-500" />
-                                An error occurred. Please try again.
-                              </div>
-                            );
-                          }
-                          return null;
-                        case 'tool-updateDocument':
-                          if (part.state === 'input-available') {
-                            return (
-                              <p key={part.toolCallId}>Updating asset...</p>
-                            );
-                          } else if (
-                            part.state === 'output-available' &&
-                            part.output.id
-                          ) {
-                            return (
-                              <DocumentToolResult
-                                key={part.toolCallId}
-                                result={part.output}
-                              />
-                            );
-                          } else if (part.state === 'output-error') {
-                            return (
-                              <div key={part.toolCallId}>
-                                <X className="mr-1 inline h-4 w-4 text-red-500" />
-                                An error occurred. Please try again.
-                              </div>
-                            );
-                          }
-                          return null;
-                        default:
-                          return null;
-                      }
-                    })}
-                  </MessageContent>
-
-                  <MessageAvatar
-                    src={
-                      message.role === 'user'
-                        ? 'https://github.com/shadcn.png'
-                        : ''
-                    }
-                    name="AI"
-                  />
-                </Message>
-                {message.role === 'assistant' && (
-                  <Actions className="ml-10 inline-flex">
-                    {(() => {
-                      const vote = votes?.find(
-                        vote => vote.messageId === message.id,
-                      );
-                      return (
-                        <>
-                          <Action
-                            label="Like"
-                            disabled={vote?.isUpvote === true}
-                            onClick={async () => {
-                              const upvote = fetch('/api/vote', {
-                                method: 'PATCH',
-                                body: JSON.stringify({
-                                  chatId,
-                                  messageId: message.id,
-                                  type: 'up',
-                                }),
-                              });
-
-                              toast.promise(upvote, {
-                                loading: 'Upvoting Response...',
-                                success: () => {
-                                  void mutate<Array<Vote>>(
-                                    `/api/vote?chatId=${chatId}`,
-                                    currentVotes => {
-                                      if (!currentVotes)
-                                        return [
-                                          {
-                                            chatId,
-                                            messageId: message.id,
-                                            isUpvote: true,
-                                          },
-                                        ];
-
-                                      const votesWithoutCurrent =
-                                        currentVotes.filter(
-                                          vote => vote.messageId !== message.id,
-                                        );
-
-                                      return [
-                                        ...votesWithoutCurrent,
-                                        {
-                                          chatId,
-                                          messageId: message.id,
-                                          isUpvote: true,
-                                        },
-                                      ];
-                                    },
-                                    { revalidate: false },
-                                  );
-
-                                  return 'Upvoted Response!';
-                                },
-                                error: 'Failed to upvote response.',
-                              });
-                            }}
-                          >
-                            <ThumbsUp className="h-5 w-5 md:h-4 md:w-4" />
-                          </Action>
-                          <Action
-                            label="Dislike"
-                            disabled={vote?.isUpvote === false}
-                            onClick={async () => {
-                              const downvote = fetch('/api/vote', {
-                                method: 'PATCH',
-                                body: JSON.stringify({
-                                  chatId,
-                                  messageId: message.id,
-                                  type: 'down',
-                                }),
-                              });
-
-                              toast.promise(downvote, {
-                                loading: 'Downvoting Response...',
-                                success: () => {
-                                  void mutate<Array<Vote>>(
-                                    `/api/vote?chatId=${chatId}`,
-                                    currentVotes => {
-                                      if (!currentVotes)
-                                        return [
-                                          {
-                                            chatId,
-                                            messageId: message.id,
-                                            isUpvote: false,
-                                          },
-                                        ];
-
-                                      const votesWithoutCurrent =
-                                        currentVotes.filter(
-                                          vote => vote.messageId !== message.id,
-                                        );
-
-                                      return [
-                                        ...votesWithoutCurrent,
-                                        {
-                                          chatId,
-                                          messageId: message.id,
-                                          isUpvote: false,
-                                        },
-                                      ];
-                                    },
-                                    { revalidate: false },
-                                  );
-
-                                  return 'Downvoted Response!';
-                                },
-                                error: 'Failed to downvote response.',
-                              });
-                            }}
-                          >
-                            <ThumbsDown className="h-5 w-5 md:h-4 md:w-4" />
-                          </Action>
-                        </>
-                      );
-                    })()}
-                  </Actions>
-                )}
-              </div>
+              <MessageRow
+                key={message.id}
+                chatId={chatId}
+                message={message}
+                isUpvote={
+                  votes?.find(vote => vote.messageId === message.id)
+                    ?.isUpvote ?? null
+                }
+              />
             ))}
           </ConversationContent>
           <ConversationScrollButton />
@@ -365,3 +188,100 @@ export default function ChatConversation({
     </div>
   );
 }
+
+const PureMessageRow = ({
+  chatId,
+  message,
+  isUpvote,
+}: {
+  chatId: string;
+  message: ChatMessage;
+  isUpvote: boolean | null;
+}) => {
+  return (
+    <div className="group flex flex-col">
+      <Message from={message.role}>
+        <MessageContent>
+          {message.parts.map(part => {
+            switch (part.type) {
+              case 'text':
+                return <p key={part.text}>{part.text}</p>;
+              case 'tool-createDocument':
+                if (part.state === 'input-available') {
+                  return <p key={part.toolCallId}>Generating asset...</p>;
+                } else if (part.state === 'output-available') {
+                  return (
+                    <DocumentToolResult
+                      key={part.toolCallId}
+                      result={part.output}
+                    />
+                  );
+                } else if (part.state === 'output-error') {
+                  return (
+                    <div key={part.toolCallId}>
+                      <X className="mr-1 inline h-4 w-4 text-red-500" />
+                      An error occurred. Please try again.
+                    </div>
+                  );
+                }
+                return null;
+              case 'tool-updateDocument':
+                if (part.state === 'input-available') {
+                  return <p key={part.toolCallId}>Updating asset...</p>;
+                } else if (
+                  part.state === 'output-available' &&
+                  part.output.id
+                ) {
+                  return (
+                    <DocumentToolResult
+                      key={part.toolCallId}
+                      result={part.output}
+                    />
+                  );
+                } else if (part.state === 'output-error') {
+                  return (
+                    <div key={part.toolCallId}>
+                      <X className="mr-1 inline h-4 w-4 text-red-500" />
+                      An error occurred. Please try again.
+                    </div>
+                  );
+                }
+                return null;
+              default:
+                return null;
+            }
+          })}
+        </MessageContent>
+
+        <MessageAvatar
+          src={message.role === 'user' ? 'https://github.com/shadcn.png' : ''}
+          name={message.role === 'user' ? 'You' : 'AI'}
+        />
+      </Message>
+      {message.role === 'assistant' && (
+        <Actions className="ml-10 inline-flex">
+          <VoteAction
+            type="up"
+            chatId={chatId}
+            messageId={message.id}
+            isUpvote={isUpvote}
+          />
+          <VoteAction
+            type="down"
+            chatId={chatId}
+            messageId={message.id}
+            isUpvote={isUpvote}
+          />
+        </Actions>
+      )}
+    </div>
+  );
+};
+
+const MessageRow = memo(PureMessageRow, (prevProps, nextProps) => {
+  if (prevProps.message !== nextProps.message) return false;
+  if (prevProps.isUpvote !== nextProps.isUpvote) return false;
+  if (prevProps.chatId !== nextProps.chatId) return false;
+
+  return true;
+});
