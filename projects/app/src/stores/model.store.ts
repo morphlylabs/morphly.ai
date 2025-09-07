@@ -13,7 +13,7 @@ interface ModelActions {
 export const useModelStore = create<ModelState & ModelActions>()(
   persist(
     set => ({
-      selectedModel: 'meta/llama-4-maverick',
+      selectedModel: 'openai/gpt-5',
       setSelectedModel: model => set({ selectedModel: model }),
     }),
     { name: 'model-store' },

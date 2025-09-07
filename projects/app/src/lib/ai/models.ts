@@ -1,18 +1,18 @@
 export const SUPPORTED_MODELS = [
   'anthropic/claude-sonnet-4',
-  'meta/llama-4-maverick',
+  'openai/gpt-5',
 ] as const;
 
 export type SupportedModel = (typeof SUPPORTED_MODELS)[number];
 
 export const MODEL_DISPLAY_NAME: Record<SupportedModel, string> = {
-  'meta/llama-4-maverick': 'Llama 4 Maverick',
   'anthropic/claude-sonnet-4': 'Claude Sonnet 4',
+  'openai/gpt-5': 'GPT-5',
 };
 
 export const MODEL_BILLING_NAME: Record<SupportedModel, string> = {
-  'meta/llama-4-maverick': 'llama-4-maverick-uses',
   'anthropic/claude-sonnet-4': 'claude-4-sonnet-uses',
+  'openai/gpt-5': 'gpt-5-uses',
 };
 
 export const toModelId = (modelId: string) => {
