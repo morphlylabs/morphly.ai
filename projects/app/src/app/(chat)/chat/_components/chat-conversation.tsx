@@ -38,6 +38,7 @@ import { chatSDKErrorSchema } from '@/lib/errors';
 import { useSelectedModel } from '@/stores/model.store';
 import { Separator } from '@workspace/ui/components/separator';
 import { ModelSelector } from './model-selector';
+import { useSubscriptionAccess } from '@/hooks/use-subscription-access';
 
 const suggestions = [
   'Create a lamp that has a base and a shade',
@@ -60,6 +61,7 @@ export default function ChatConversation({
   const [text, setText] = useState<string>('');
   const model = useSelectedModel();
   const selectedDocument = useSelectedDocument();
+  const canSendMessage = useSubscriptionAccess();
 
   const { messages, setMessages, sendMessage, status, resumeStream } =
     useChat<ChatMessage>({
@@ -102,6 +104,11 @@ export default function ChatConversation({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!canSendMessage) {
+      return;
+    }
+
     void sendMessage(
       { text: text },
       {
@@ -115,6 +122,10 @@ export default function ChatConversation({
   };
 
   const handleSuggestionClick = (suggestion: string) => {
+    if (!canSendMessage) {
+      return;
+    }
+
     void sendMessage(
       { text: suggestion },
       {
@@ -163,6 +174,7 @@ export default function ChatConversation({
                 key={suggestion}
                 onClick={handleSuggestionClick}
                 suggestion={suggestion}
+                disabled={!canSendMessage}
               />
             ))}
           </Suggestions>
@@ -172,6 +184,12 @@ export default function ChatConversation({
           <PromptInputTextarea
             onChange={e => setText(e.target.value)}
             value={text}
+            disabled={!canSendMessage}
+            placeholder={
+              !canSendMessage
+                ? 'Please upgrade to send messages...'
+                : 'What would you like to know?'
+            }
           />
           <Separator />
           <PromptInputToolbar>
@@ -181,7 +199,10 @@ export default function ChatConversation({
               </PromptInputButton>
               <ModelSelector />
             </PromptInputTools>
-            <PromptInputSubmit disabled={!text} status={status} />
+            <PromptInputSubmit
+              disabled={!text || !canSendMessage}
+              status={status}
+            />
           </PromptInputToolbar>
         </PromptInput>
       </div>

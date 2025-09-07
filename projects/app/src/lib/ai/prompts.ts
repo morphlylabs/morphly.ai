@@ -36,6 +36,7 @@ CODE STRUCTURE:
 - Define parameters clearly
 - Build geometry step by step
 - End with: result = [final_object]
+- The 'result' must be a CadQuery Workplane or Shape/Solid.
 
 Generate functional CadQuery code that creates the requested 3D model.
 `;
