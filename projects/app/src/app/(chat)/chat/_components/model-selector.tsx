@@ -8,20 +8,19 @@ import {
 } from '@/components/ai-elements/prompt-input';
 import { PromptInputModelSelect } from '@/components/ai-elements/prompt-input';
 import { SUPPORTED_MODELS, toModelId } from '@/lib/ai/models';
-import { toModelBillingName } from '@/lib/ai/models';
 import { toModelDisplayName } from '@/lib/ai/models';
 import { useSelectedModel, useSetSelectedModel } from '@/stores/model.store';
 import { Sparkles } from 'lucide-react';
 import CheckoutDialog from '@/components/autumn/checkout-dialog';
-import { useSubscriptionAccess } from '@/hooks/use-subscription-access';
 import { useCustomer } from 'autumn-js/react';
 import { Button } from '@workspace/ui/components/button';
+import { useSubscriptionAccess } from '@/hooks/use-subscription-access';
 
 export const ModelSelector = () => {
   const selectedModel = useSelectedModel();
   const setModel = useSetSelectedModel();
-  const hasSubscription = useSubscriptionAccess();
-  const { check, checkout } = useCustomer();
+  const hasAccess = useSubscriptionAccess();
+  const { checkout } = useCustomer();
 
   return (
     <div className="flex items-center gap-2">
@@ -39,11 +38,7 @@ export const ModelSelector = () => {
             <PromptInputModelSelectItem
               key={model}
               value={model}
-              disabled={
-                check({
-                  featureId: toModelBillingName(model),
-                }).data.allowed === false
-              }
+              disabled={!hasAccess}
             >
               {toModelDisplayName(model)}
             </PromptInputModelSelectItem>
@@ -51,7 +46,7 @@ export const ModelSelector = () => {
         </PromptInputModelSelectContent>
       </PromptInputModelSelect>
 
-      {!hasSubscription && (
+      {!hasAccess && (
         <Button
           onClick={async () => {
             await checkout({

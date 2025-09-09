@@ -1,15 +1,17 @@
 'use client';
 
 import { useCustomer } from 'autumn-js/react';
+import { useSelectedModel } from '../stores/model.store';
+import { toModelBillingName } from '../lib/ai/models';
 
 export const useSubscriptionAccess = (): boolean => {
   const { check } = useCustomer();
+  const selectedModel = useSelectedModel();
 
   // Check if user has a valid subscription
-  const hasSubscription =
-    check({
-      productId: 'plus',
-    }).data.allowed !== false;
+  const hasAccess = check({
+    featureId: toModelBillingName(selectedModel),
+  }).data.allowed;
 
-  return hasSubscription;
+  return hasAccess;
 };
