@@ -15,15 +15,15 @@
   },
   "dependencies": {
     "@workspace/ui": "workspace:*",
-    "framer-motion": "^12.23.12",
+    "framer-motion": "^12.23.24",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-themes": "catalog:",
+    "postcss": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
-    "zod": "catalog:",
     "tailwindcss": "catalog:",
-    "postcss": "catalog:"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "catalog:",
