@@ -71,7 +71,7 @@ export default function CheckoutDialog(params: CheckoutDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="text-foreground gap-0 p-0 pt-4 text-sm">
         <DialogTitle className="mb-1 px-6">{title}</DialogTitle>
-        <div className="text-muted-foreground mb-4 mt-1 px-6">{message}</div>
+        <div className="text-muted-foreground mt-1 mb-4 px-6">{message}</div>
 
         {isPaid && (
           <PriceInformation
@@ -80,7 +80,7 @@ export default function CheckoutDialog(params: CheckoutDialogProps) {
           />
         )}
 
-        <DialogFooter className="bg-secondary flex flex-col justify-between gap-x-4 border-t py-2 pl-6 pr-3 shadow-inner sm:flex-row">
+        <DialogFooter className="bg-secondary flex flex-col justify-between gap-x-4 border-t py-2 pr-3 pl-6 shadow-inner sm:flex-row">
           <Button
             size="sm"
             onClick={async () => {
@@ -251,7 +251,7 @@ function CheckoutLines({ checkoutResult }: { checkoutResult: CheckoutResult }) {
             />
           </div>
         </CustomAccordionTrigger>
-        <AccordionContent className="mb-0 mt-2 flex flex-col gap-2 pb-2">
+        <AccordionContent className="mt-2 mb-0 flex flex-col gap-2 pb-2">
           {checkoutResult.lines
             .filter(line => line.amount != 0)
             .map((line, index) => {
@@ -283,7 +283,7 @@ function CustomAccordionTrigger({
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          'focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]_svg]:rotate-0',
+          'focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]_svg]:rotate-0',
           className,
         )}
         {...props}

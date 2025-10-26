@@ -4,7 +4,7 @@ export default function BackgroundGradient() {
       <div aria-hidden="true" className="absolute inset-0 z-0">
         <div className="from-primary/20 via-background to-background absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))]"></div>
 
-        <div className="bg-primary/5 absolute left-1/2 top-0 -z-10 h-[1000px] w-[1000px] -translate-x-1/2 rounded-full blur-3xl"></div>
+        <div className="bg-primary/5 absolute top-0 left-1/2 -z-10 h-[1000px] w-[1000px] -translate-x-1/2 rounded-full blur-3xl"></div>
       </div>
       <div
         aria-hidden="true"

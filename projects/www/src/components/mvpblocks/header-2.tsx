@@ -71,7 +71,7 @@ export default function Header2() {
   return (
     <>
       <motion.header
-        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 right-0 left-0 z-50 transition-all duration-500 ${
           isScrolled
             ? 'border-border/50 bg-background/80 border-b shadow-sm backdrop-blur-md'
             : 'bg-transparent'
@@ -97,7 +97,7 @@ export default function Header2() {
                   <div className="from-primary via-primary/80 to-primary/50 flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg">
                     <Cuboid className="h-5 w-5 text-white" />
                   </div>
-                  <div className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-green-400"></div>
+                  <div className="absolute -top-1 -right-1 h-3 w-3 animate-pulse rounded-full bg-green-400"></div>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-foreground text-lg font-bold">
@@ -199,7 +199,7 @@ export default function Header2() {
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.div
-              className="border-border bg-background fixed right-4 top-16 z-50 w-80 overflow-hidden rounded-2xl border shadow-2xl lg:hidden"
+              className="border-border bg-background fixed top-16 right-4 z-50 w-80 overflow-hidden rounded-2xl border shadow-2xl lg:hidden"
               variants={mobileMenuVariants}
               initial="closed"
               animate="open"

@@ -14,7 +14,7 @@ export type MessageProps = HTMLAttributes<HTMLDivElement> & {
 export const Message = ({ className, from, ...props }: MessageProps) => (
   <div
     className={cn(
-      'group flex w-full items-end justify-end gap-2 pb-1 pt-4',
+      'group flex w-full items-end justify-end gap-2 pt-4 pb-1',
       from === 'user' ? 'is-user' : 'is-assistant flex-row-reverse justify-end',
       '[&>div]:max-w-[80%]',
       className,
@@ -55,7 +55,7 @@ export const MessageAvatar = ({
   ...props
 }: MessageAvatarProps) => (
   <Avatar className={cn('ring-border size-8 ring-1', className)} {...props}>
-    <AvatarImage alt="avatar image" className="mb-0 mt-0" src={src} />
+    <AvatarImage alt="avatar image" className="mt-0 mb-0" src={src} />
     <AvatarFallback>{name?.slice(0, 2) ?? 'ME'}</AvatarFallback>
   </Avatar>
 );

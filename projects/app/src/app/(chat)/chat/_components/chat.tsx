@@ -53,7 +53,7 @@ export function Chat({
             }`}
           >
             <Asset src={selectedDocument.stlUrl} />
-            <div className="absolute right-2 top-2 z-10 flex gap-2">
+            <div className="absolute top-2 right-2 z-10 flex gap-2">
               <AssetActions />
             </div>
           </div>
@@ -73,7 +73,7 @@ export function Chat({
 
         {/* Mobile view toggle */}
         {selectedDocument?.stlUrl && (
-          <div className="absolute left-2 top-2 z-50 lg:hidden">
+          <div className="absolute top-2 left-2 z-50 lg:hidden">
             <div className="bg-background/80 rounded-lg border p-1 shadow-lg backdrop-blur-sm">
               <div className="relative flex gap-1">
                 {/* Sliding background indicator */}

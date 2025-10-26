@@ -13,7 +13,7 @@ export default function GradientHero() {
     <div className="bg-background relative w-full overflow-hidden">
       <BackgroundGradient />
 
-      <div className="container relative z-10 mx-auto px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+      <div className="relative z-10 container mx-auto px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
         <div className="mx-auto max-w-5xl">
           {/* Badge */}
           <motion.div
@@ -38,7 +38,7 @@ export default function GradientHero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="from-primary/10 via-foreground/85 to-foreground/50 text-balance bg-gradient-to-tl bg-clip-text text-center text-4xl tracking-tighter text-transparent sm:text-5xl md:text-6xl lg:text-7xl"
+            className="from-primary/10 via-foreground/85 to-foreground/50 bg-gradient-to-tl bg-clip-text text-center text-4xl tracking-tighter text-balance text-transparent sm:text-5xl md:text-6xl lg:text-7xl"
           >
             Chat Your Way to <br /> Perfect CAD Models
           </motion.h1>
@@ -124,13 +124,13 @@ export default function GradientHero() {
             </div>
 
             {/* Floating elements for visual interest */}
-            <div className="border-border/40 bg-background/80 absolute -right-6 -top-6 h-12 w-12 rounded-lg border p-3 shadow-lg backdrop-blur-md">
+            <div className="border-border/40 bg-background/80 absolute -top-6 -right-6 h-12 w-12 rounded-lg border p-3 shadow-lg backdrop-blur-md">
               <Cuboid className="text-primary/60 h-full w-full" />
             </div>
             <div className="border-border/40 bg-background/80 absolute -bottom-4 -left-4 flex h-8 w-8 items-center justify-center rounded-full border shadow-lg backdrop-blur-md">
               <Sparkles className="h-4 w-4 text-blue-500/60" />
             </div>
-            <div className="border-border/40 bg-background/80 absolute -bottom-6 right-12 h-10 w-10 rounded-lg border p-2 shadow-lg backdrop-blur-md">
+            <div className="border-border/40 bg-background/80 absolute right-12 -bottom-6 h-10 w-10 rounded-lg border p-2 shadow-lg backdrop-blur-md">
               <div className="h-full w-full rounded-md bg-gradient-to-br from-purple-500/20 to-blue-500/20"></div>
             </div>
           </motion.div>

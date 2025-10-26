@@ -58,7 +58,7 @@ export default function Chats({
         <div className="flex flex-col items-center justify-center py-12">
           <div className="text-center">
             <h3 className="text-lg font-semibold">No chats yet</h3>
-            <p className="text-muted-foreground mb-4 mt-2">
+            <p className="text-muted-foreground mt-2 mb-4">
               Start a new conversation to see your chats here
             </p>
             <Link

@@ -79,7 +79,7 @@ export function HeroPrompt() {
           className="py-6 pr-12 text-lg shadow-lg"
           disabled={isLoading}
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 transform">
+        <div className="absolute top-1/2 right-3 -translate-y-1/2 transform">
           {isLoading ? (
             <div className="flex h-8 w-8 items-center justify-center">
               <Loader size={16} className="text-primary" />
