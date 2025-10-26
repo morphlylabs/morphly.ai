@@ -1,16 +1,24 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": ["config:base", ":enablePreCommit"],
+  "ignorePaths": ["**/node_modules/**"],
   "packageRules": [
     {
       "matchPackagePatterns": ["^@workspace/"],
       "enabled": false
+    },
+    {
+      "description": "Group all non-major updates together",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
     }
   ],
+  "pnpm": {
+    "enabled": true
+  },
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
   "automerge": true,
-  "npm": {
-    "fileMatch": ["(^|/)package\\.json$", "(^|/)package\\.json\\.hbs$"]
-  }
+  "platformAutomerge": false
 }
