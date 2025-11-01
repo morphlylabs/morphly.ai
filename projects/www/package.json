@@ -22,6 +22,7 @@
     "postcss": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
+    "babel-plugin-react-compiler": "catalog:react19",
     "tailwindcss": "catalog:",
     "zod": "catalog:"
   },

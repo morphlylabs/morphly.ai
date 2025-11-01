@@ -12,10 +12,10 @@
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "lefthook": "^2.0.1",
+    "lefthook": "^2.0.2",
     "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "^0.7.1",
-    "turbo": "^2.5.8",
+    "turbo": "^2.6.0",
     "typescript": "catalog:"
   },
   "packageManager": "pnpm@10.19.0",

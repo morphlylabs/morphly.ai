@@ -33,11 +33,9 @@ export function Chat({
   const selectedDocument = useSelectedDocument();
 
   // Switch to asset view on mobile when a new document with STL is available
-  useEffect(() => {
-    if (selectedDocument?.stlUrl) {
-      setMobileView('asset');
-    }
-  }, [selectedDocument?.stlUrl]);
+  if (selectedDocument?.stlUrl) {
+    setMobileView('asset');
+  }
 
   return (
     <div className="flex h-full flex-col">
