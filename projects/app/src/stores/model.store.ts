@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { type SupportedModel } from '@/lib/ai/models';
 
 interface ModelState {
@@ -10,15 +9,10 @@ interface ModelActions {
   setSelectedModel: (model: SupportedModel) => void;
 }
 
-export const useModelStore = create<ModelState & ModelActions>()(
-  persist(
-    set => ({
-      selectedModel: 'openai/gpt-5',
-      setSelectedModel: model => set({ selectedModel: model }),
-    }),
-    { name: 'model-store' },
-  ),
-);
+export const useModelStore = create<ModelState & ModelActions>()(set => ({
+  selectedModel: 'openai/gpt-5',
+  setSelectedModel: model => set({ selectedModel: model }),
+}));
 
 export const useSelectedModel = () =>
   useModelStore(state => state.selectedModel);

@@ -1,15 +1,23 @@
 import { Chat } from './_components/chat';
 import { v4 } from 'uuid';
-
-export const dynamic = 'force-dynamic';
+import { Suspense } from 'react';
+import { connection } from 'next/server';
 
 export default function ChatPage() {
-  const id = v4();
+  return (
+    <Suspense fallback={<div>Loading chat...</div>}>
+      <ChatContent />
+    </Suspense>
+  );
+}
+
+async function ChatContent() {
+  await connection();
+  const chatId = v4();
 
   return (
     <Chat
-      key={id}
-      id={id}
+      chatId={chatId}
       initialMessages={[]}
       initialDocuments={[]}
       autoResume={false}
