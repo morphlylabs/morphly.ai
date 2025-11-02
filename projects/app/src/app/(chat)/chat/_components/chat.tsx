@@ -11,12 +11,12 @@ import ChatConversation from './chat-conversation';
 import AssetActions from './asset-actions';
 
 export function Chat({
-  id,
+  chatId,
   initialMessages,
   initialDocuments,
   autoResume,
 }: {
-  id: string;
+  chatId: string;
   initialMessages: ChatMessage[];
   initialDocuments: Document[];
   autoResume: boolean;
@@ -25,19 +25,12 @@ export function Chat({
 
   // Set initial documents when component loads
   useEffect(() => {
-    setChatId(id);
+    setChatId(chatId);
     setDocuments(initialDocuments);
-  }, [id, initialDocuments, setChatId, setDocuments]);
+  }, [chatId, initialDocuments, setChatId, setDocuments]);
 
   const [mobileView, setMobileView] = useState<'asset' | 'chat'>('chat');
   const selectedDocument = useSelectedDocument();
-
-  // Switch to asset view on mobile when a new document with STL is available
-  useEffect(() => {
-    if (selectedDocument?.stlUrl) {
-      setMobileView('asset');
-    }
-  }, [selectedDocument?.stlUrl]);
 
   return (
     <div className="flex h-full flex-col">
@@ -65,7 +58,7 @@ export function Chat({
           }`}
         >
           <ChatConversation
-            chatId={id}
+            chatId={chatId}
             initialMessages={initialMessages}
             autoResume={autoResume}
           />

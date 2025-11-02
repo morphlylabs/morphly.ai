@@ -26,6 +26,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "babel-plugin-react-compiler": "catalog:react19",
     "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:react19",

@@ -10,35 +10,23 @@ import {
 } from '@workspace/ui/components/pagination';
 import { ChatPreview } from '../../../_components/chat-preview';
 import type { Pageable } from '@/lib/types';
-import useSWR from 'swr';
 import type { Chat } from '@/server/db/schema';
-import { fetcher } from '@/lib/utils';
-import { ChatsLoading } from './chats-loading';
 import { Button } from '@workspace/ui/components/button';
 import { Trash2 } from 'lucide-react';
-import { mutate } from 'swr';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
 export default function Chats({
-  offset,
+  chats,
   limit,
 }: {
-  offset: number;
+  chats: Pageable<Chat>;
   limit: number;
 }) {
   const router = useRouter();
-  const { data: chats, isLoading } = useSWR<Pageable<Chat>>(
-    `/api/chats?offset=${offset}&limit=${limit}`,
-    fetcher,
-  );
 
-  if (isLoading) {
-    return <ChatsLoading count={limit} />;
-  }
-
-  const pages = Math.ceil((chats?.total ?? 0) / limit);
-  const currentPage = Math.floor((chats?.offset ?? 0) / limit) + 1;
+  const pages = Math.ceil(chats.total / limit);
+  const currentPage = Math.floor(chats.offset / limit) + 1;
 
   let startPage = Math.max(1, currentPage - 1);
   const endPage = Math.min(pages, startPage + 3);
@@ -54,7 +42,7 @@ export default function Chats({
 
   return (
     <>
-      {chats?.items.length === 0 ? (
+      {chats.items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12">
           <div className="text-center">
             <h3 className="text-lg font-semibold">No chats yet</h3>
@@ -72,7 +60,7 @@ export default function Chats({
       ) : (
         <div className="flex flex-col gap-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {chats?.items.map(chat => (
+            {chats.items.map(chat => (
               <ChatPreview
                 key={chat.id}
                 chat={chat}
@@ -88,39 +76,14 @@ export default function Chats({
                       toast.promise(deleteChat, {
                         loading: 'Deleting chat...',
                         success: () => {
-                          // Optimistically update all chat cache entries
-                          void mutate<Pageable<Chat>>(
-                            key =>
-                              typeof key === 'string' &&
-                              key.startsWith('/api/chats'),
-                            currentData => {
-                              if (!currentData?.total)
-                                return {
-                                  items: [],
-                                  total: 0,
-                                  offset: 0,
-                                  limit: 0,
-                                };
-
-                              if (
-                                currentData.items.length <= 1 &&
-                                currentData.total > 0
-                              ) {
-                                router.push(
-                                  `/chats?offset=${currentData.offset - currentData.limit}&limit=${limit}`,
-                                );
-                              }
-
-                              return {
-                                ...currentData,
-                                items: currentData.items.filter(
-                                  c => c.id !== chat.id,
-                                ),
-                                total: currentData.total - 1,
-                              };
-                            },
-                            { revalidate: true },
-                          );
+                          // Navigate to previous page if this was the last item on current page
+                          if (chats.items.length <= 1 && chats.offset > 0) {
+                            router.push(
+                              `/chats?offset=${chats.offset - limit}&limit=${limit}`,
+                            );
+                          } else {
+                            router.refresh();
+                          }
 
                           return 'Chat deleted!';
                         },

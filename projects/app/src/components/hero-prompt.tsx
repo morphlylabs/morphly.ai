@@ -1,62 +1,61 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { v4 } from 'uuid';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { Play } from 'lucide-react';
 import { toast } from 'sonner';
-import { ChatSDKError } from '@/lib/errors';
-import { useChat } from '@ai-sdk/react';
-import type { ChatMessage } from '@/lib/types';
-import { DefaultChatTransport } from 'ai';
 import { Loader } from '@/components/ai-elements/loader';
+import { v4 } from 'uuid';
+import { useSelectedModel } from '@/stores/model.store';
 
 export function HeroPrompt() {
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const selectedModel = useSelectedModel();
 
-  const id = useRef(v4());
-
-  const { sendMessage } = useChat<ChatMessage>({
-    id: id.current,
-    messages: [],
-    experimental_throttle: 100,
-    generateId: v4,
-    transport: new DefaultChatTransport({
-      api: '/api/chat',
-      prepareSendMessagesRequest({ messages, id, body }) {
-        return {
-          body: {
-            id,
-            message: messages.at(-1),
-            ...body,
-          },
-        };
-      },
-    }),
-    onFinish: () => {
-      setIsLoading(false);
-      setText('');
-      router.push(`/chat/${id.current}`);
-    },
-    onError: error => {
-      setIsLoading(false);
-      if (error instanceof ChatSDKError) {
-        toast.error(error.message);
-      } else {
-        console.error('Chat error:', error);
-        toast.error('An error occurred during chat');
-      }
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const chatId = v4();
+    const messageId = v4();
     setIsLoading(true);
-    void sendMessage({ text: text });
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: chatId,
+          message: {
+            parts: [
+              {
+                type: 'text',
+                text: text,
+              },
+            ],
+            id: messageId,
+            role: 'user',
+          },
+          model: selectedModel,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      setText('');
+      router.push(`/chat/${chatId}`);
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast.error('An error occurred during chat');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
