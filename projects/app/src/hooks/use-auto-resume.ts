@@ -40,7 +40,7 @@ export function useAutoResume({
 
     if (dataPart?.type === 'data-appendMessage') {
       const message = JSON.parse(dataPart.data) as ChatMessage;
-      setMessages([...initialMessages, message]);
+      setMessages(prev => [...prev, message]);
     }
   }, [dataStream, initialMessages, setMessages]);
 }
