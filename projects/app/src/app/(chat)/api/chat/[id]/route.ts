@@ -1,22 +1,24 @@
 import { getChatById, getMessagesByChatId } from '@/server/db/queries';
-import { ChatSDKError } from '@/lib/errors';
+import { ChatSDKError, type ChatSDKErrorResponse } from '@/lib/errors';
 import type { ChatMessage } from '@/lib/types';
 import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
 import { differenceInSeconds } from 'date-fns';
 import { getStreamContext } from '@/lib/stream-context';
 import { getSession } from '@/lib/auth';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
-) {
+): Promise<NextResponse<ReadableStream<string> | ChatSDKErrorResponse>> {
   const { id: chatId } = await params;
 
   const streamContext = getStreamContext();
   const resumeRequestedAt = new Date();
 
   if (!streamContext) {
-    return new Response(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   }
 
   if (!chatId) {
@@ -66,17 +68,17 @@ export async function GET(
     const mostRecentMessage = messages.at(-1);
 
     if (!mostRecentMessage) {
-      return new Response(emptyDataStream, { status: 200 });
+      return new NextResponse(emptyDataStream);
     }
 
     if (mostRecentMessage.role !== 'assistant') {
-      return new Response(emptyDataStream, { status: 200 });
+      return new NextResponse(emptyDataStream);
     }
 
     const messageCreatedAt = new Date(mostRecentMessage.createdAt);
 
     if (differenceInSeconds(resumeRequestedAt, messageCreatedAt) > 15) {
-      return new Response(emptyDataStream, { status: 200 });
+      return new NextResponse(emptyDataStream);
     }
 
     const restoredStream = createUIMessageStream<ChatMessage>({
@@ -89,11 +91,10 @@ export async function GET(
       },
     });
 
-    return new Response(
+    return new NextResponse(
       restoredStream.pipeThrough(new JsonToSseTransformStream()),
-      { status: 200 },
     );
   }
 
-  return new Response(stream, { status: 200 });
+  return new NextResponse(stream);
 }

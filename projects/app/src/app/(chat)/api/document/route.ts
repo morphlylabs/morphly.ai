@@ -3,11 +3,16 @@ import {
   createDocument,
   getChatById,
 } from '@/server/db/queries';
-import { ChatSDKError } from '@/lib/errors';
+import { ChatSDKError, type ChatSDKErrorResponse } from '@/lib/errors';
 import { getSession } from '@/lib/auth';
 import { postRequestBodySchema } from './schema';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { type Document } from '@/server/db/schema';
 
-export async function GET(request: Request) {
+export async function GET(
+  request: NextRequest,
+): Promise<NextResponse<Document[] | ChatSDKErrorResponse>> {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 
@@ -24,7 +29,7 @@ export async function GET(request: Request) {
     return new ChatSDKError('unauthorized:document').toResponse();
   }
 
-  const documents = await getDocumentsById(id);
+  const documents: Document[] = await getDocumentsById(id);
 
   const [document] = documents;
 
@@ -36,10 +41,12 @@ export async function GET(request: Request) {
     return new ChatSDKError('forbidden:document').toResponse();
   }
 
-  return Response.json(documents, { status: 200 });
+  return NextResponse.json(documents);
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: NextRequest,
+): Promise<NextResponse<Document | ChatSDKErrorResponse>> {
   const { searchParams } = new URL(request.url);
   const chatId = searchParams.get('chatId');
 
@@ -53,7 +60,7 @@ export async function POST(request: Request) {
   const session = await getSession();
 
   if (!session?.user) {
-    return new ChatSDKError('not_found:document').toResponse();
+    return new ChatSDKError('unauthorized:document').toResponse();
   }
 
   const chat = await getChatById(chatId);
@@ -70,7 +77,7 @@ export async function POST(request: Request) {
     await request.json(),
   );
 
-  const document = await createDocument({
+  const documents: Document[] = await createDocument({
     chatId,
     content,
     title,
@@ -78,5 +85,9 @@ export async function POST(request: Request) {
     userId: session.user.id,
   });
 
-  return Response.json(document, { status: 200 });
+  if (!documents[0]) {
+    return new ChatSDKError('bad_request:database').toResponse();
+  }
+
+  return NextResponse.json(documents[0]);
 }

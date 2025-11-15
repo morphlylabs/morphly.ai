@@ -1,16 +1,11 @@
 import { Suspense } from 'react';
-import { z } from 'zod';
 import Chats from './_components/chats';
 import { ChatsLoading } from './_components/chats-loading';
 import { getChats } from '@/server/db/queries';
-
-const paramsSchema = z.object({
-  offset: z.coerce.number().int().min(0).default(0),
-  limit: z.coerce.number().int().min(1).max(50).default(9),
-});
+import { chatsParamsSchema } from '../api/chats/schema';
 
 async function ChatsContent(props: PageProps<'/chats'>) {
-  const { offset, limit } = paramsSchema.parse(await props.searchParams);
+  const { offset, limit } = chatsParamsSchema.parse(await props.searchParams);
   const chats = await getChats(offset, limit);
 
   return <Chats chats={chats} limit={limit} />;

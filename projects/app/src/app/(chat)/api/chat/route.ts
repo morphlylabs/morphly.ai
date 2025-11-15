@@ -6,7 +6,7 @@ import {
 } from 'ai';
 import { getStreamContext } from '@/lib/stream-context';
 import { postRequestBodySchema, type PostRequestBody } from './schema';
-import { ChatSDKError } from '@/lib/errors';
+import { ChatSDKError, type ChatSDKErrorResponse } from '@/lib/errors';
 import { getSession } from '@/lib/auth';
 import {
   createMessages,
@@ -22,10 +22,14 @@ import { updateDocument } from '@/lib/ai/tools/update-document';
 import { MODEL_BILLING_NAME } from '@/lib/ai/models';
 import { generateTitleFromUserMessage } from '../../actions';
 import { Autumn as autumn } from 'autumn-js';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
-export async function POST(request: Request) {
+export async function POST(
+  request: NextRequest,
+): Promise<NextResponse<ReadableStream<string> | ChatSDKErrorResponse>> {
   let requestBody: PostRequestBody;
 
   try {
@@ -139,13 +143,15 @@ export async function POST(request: Request) {
     const streamContext = getStreamContext();
 
     if (streamContext) {
-      return new Response(
+      return new NextResponse(
         await streamContext.resumableStream(streamId, () =>
           stream.pipeThrough(new JsonToSseTransformStream()),
         ),
       );
     } else {
-      return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
+      return new NextResponse(
+        stream.pipeThrough(new JsonToSseTransformStream()),
+      );
     }
   } catch (error) {
     console.error(error);

@@ -36,7 +36,7 @@ export function useAutoResume({
   useEffect(() => {
     if (dataStream.length === 0) return;
 
-    const dataPart = dataStream[0];
+    const dataPart = dataStream.at(-1);
 
     if (dataPart?.type === 'data-appendMessage') {
       const message = JSON.parse(dataPart.data) as ChatMessage;

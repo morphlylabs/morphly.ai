@@ -13,15 +13,13 @@ export const metadata: Metadata = {
   icons: [{ rel: 'icon', url: '/favicon.ico' }],
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout(props: LayoutProps<'/'>) {
   return (
     <html lang="en">
       <body>
         <AutumnProvider betterAuthUrl={env.NEXT_PUBLIC_BETTER_AUTH_URL}>
           <Navbar />
-          <main>{children}</main>
+          <main>{props.children}</main>
           <Toaster position="bottom-left" />
         </AutumnProvider>
       </body>

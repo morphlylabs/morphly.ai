@@ -37,10 +37,17 @@ export const visibilityBySurface: Record<Surface, ErrorVisibility> = {
   suggestions: 'response',
 };
 
+export interface ChatSDKErrorResponse {
+  code: ErrorCode;
+  message: string;
+  cause?: string;
+}
+
 export class ChatSDKError extends Error {
   public type: ErrorType;
   public surface: Surface;
   public statusCode: number;
+  public cause?: string;
 
   constructor(errorCode: ErrorCode, cause?: string) {
     super();
@@ -54,7 +61,7 @@ export class ChatSDKError extends Error {
     this.statusCode = getStatusCodeByType(this.type);
   }
 
-  public toResponse(): NextResponse {
+  public toResponse(): NextResponse<ChatSDKErrorResponse> {
     const code: ErrorCode = `${this.type}:${this.surface}`;
     const visibility = visibilityBySurface[this.surface];
 
@@ -68,7 +75,10 @@ export class ChatSDKError extends Error {
       });
 
       return NextResponse.json(
-        { code: '', message: 'Something went wrong. Please try again later.' },
+        {
+          code: 'bad_request:api',
+          message: 'Something went wrong. Please try again later.',
+        },
         { status: statusCode },
       );
     }

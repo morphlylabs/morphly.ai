@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import type { ArtifactKind } from '@/lib/artifacts/server';
 import { Button } from '@workspace/ui/components/button';
 import { CheckIcon } from 'lucide-react';
@@ -8,7 +7,7 @@ interface DocumentToolResultProps {
   result: { id: string; title: string; kind: ArtifactKind; content: string };
 }
 
-function PureDocumentToolResult({ result }: DocumentToolResultProps) {
+export function DocumentToolResult({ result }: DocumentToolResultProps) {
   const document = useDocumentById(result.id);
   const { setSelectedDocumentId, selectedDocumentId } = useChatStore();
 
@@ -31,5 +30,3 @@ function PureDocumentToolResult({ result }: DocumentToolResultProps) {
     </div>
   );
 }
-
-export const DocumentToolResult = memo(PureDocumentToolResult, () => true);
