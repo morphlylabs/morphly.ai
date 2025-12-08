@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@workspace/ui": "workspace:*",
-    "framer-motion": "^12.23.24",
+    "framer-motion": "^12.23.25",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-themes": "catalog:",
@@ -26,13 +26,13 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "babel-plugin-react-compiler": "catalog:react19",
     "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "babel-plugin-react-compiler": "catalog:react19",
     "typescript": "catalog:"
   }
 }
