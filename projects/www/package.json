@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@workspace/ui": "workspace:*",
-    "framer-motion": "^12.23.25",
+    "framer-motion": "^12.23.26",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-themes": "catalog:",
