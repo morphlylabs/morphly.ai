@@ -75,12 +75,16 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       selectedDocumentId: documents.at(-1)?.id,
     }),
   setDocument: (document: Document) => {
+    const currentState = get();
     set({
       documents: {
-        ...get().documents,
+        ...currentState.documents,
         [document.id]: document,
       },
-      selectedDocumentId: document.id,
+      // Only change selection if the new document has an stlUrl, or if no document is currently selected
+      selectedDocumentId: document.stlUrl
+        ? document.id
+        : (currentState.selectedDocumentId ?? document.id),
     });
   },
 

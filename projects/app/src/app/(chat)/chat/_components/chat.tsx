@@ -27,7 +27,9 @@ export function Chat({
   useEffect(() => {
     setChatId(chatId);
     setDocuments(initialDocuments);
-  }, [chatId, initialDocuments, setChatId, setDocuments]);
+    // Only run when chatId changes, not when initialDocuments reference changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatId]);
 
   const [mobileView, setMobileView] = useState<'asset' | 'chat'>('chat');
   const selectedDocument = useSelectedDocument();
