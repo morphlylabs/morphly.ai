@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { type SupportedModel } from '@/lib/ai/models';
+import { SUPPORTED_MODELS, type SupportedModel } from '@/lib/ai/models';
 
 interface ModelState {
   selectedModel: SupportedModel;
@@ -10,7 +10,7 @@ interface ModelActions {
 }
 
 export const useModelStore = create<ModelState & ModelActions>()(set => ({
-  selectedModel: 'openai/gpt-5',
+  selectedModel: SUPPORTED_MODELS[1],
   setSelectedModel: model => set({ selectedModel: model }),
 }));
 
