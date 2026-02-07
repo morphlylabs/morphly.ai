@@ -84,6 +84,7 @@ export async function POST(
 
     const messagesFromDb = await getMessagesByChatId(requestBody.id);
     const uiMessages = convertToUIMessages(messagesFromDb);
+    const modelMessages = await convertToModelMessages(uiMessages);
 
     const streamId = v4();
 
@@ -93,7 +94,7 @@ export async function POST(
       execute: ({ writer: dataStream }) => {
         const result = streamText({
           model: requestBody.model,
-          messages: convertToModelMessages(uiMessages),
+          messages: modelMessages,
           experimental_activeTools: ['createDocument', 'updateDocument'],
           tools: {
             createDocument: createDocument({
