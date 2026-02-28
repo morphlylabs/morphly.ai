@@ -3,25 +3,25 @@ packages:
   - packages/*
 
 catalog:
-  '@tailwindcss/postcss': ^4.1.18
-  '@types/node': ^25.0.3
-  eslint: ^9.39.2
-  lucide-react: 0.562.0
-  next: ^16.1.1
+  '@tailwindcss/postcss': ^4.2.1
+  '@types/node': ^25.3.2
+  eslint: ^10.0.2
+  lucide-react: 0.575.0
+  next: ^16.1.6
   next-themes: ^0.4.6
   postcss: ^8.5.6
-  prettier: ^3.7.4
-  tailwindcss: ^4.1.18
+  prettier: ^3.8.1
+  tailwindcss: ^4.2.1
   typescript: ^5.9.3
-  zod: ^4.3.5
+  zod: ^4.3.6
 
 catalogs:
   react19:
-    '@types/react': ^19.2.7
+    '@types/react': ^19.2.14
     '@types/react-dom': ^19.2.3
     babel-plugin-react-compiler: ^1.0.0
-    react: ^19.2.3
-    react-dom: ^19.2.3
+    react: ^19.2.4
+    react-dom: ^19.2.4
 
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
